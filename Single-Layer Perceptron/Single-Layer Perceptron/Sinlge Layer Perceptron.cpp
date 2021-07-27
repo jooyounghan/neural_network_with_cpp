@@ -1,5 +1,11 @@
 #include <iostream>
 
+constexpr int NUM_NODE = 3;	// (X, Y)의 좌표계를 나타내는 input과 편향(bias)를 위한 input
+constexpr int NUM_DATA = 4;
+constexpr float LR = 0.1;
+constexpr float ITERS = 10;
+
+
 float dot(float*& _weight, float* _input, const int& _length)
 {
 	float result = 0;
@@ -24,11 +30,6 @@ void train(float*& _weight, float* _input, const int& _length, const float& _lab
 	}
 }
 
-
-constexpr int NUM_NODE = 3;	// (X, Y)의 좌표계를 나타내는 input과 편향(bias)를 위한 input
-constexpr int NUM_DATA = 4;
-constexpr float LR = 0.1;
-constexpr float ITERS = 10;
 
 int main()
 {
