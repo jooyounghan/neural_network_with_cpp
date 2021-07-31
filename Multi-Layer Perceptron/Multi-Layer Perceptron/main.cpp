@@ -4,7 +4,7 @@
 constexpr int NUM_DATA = 4;
 constexpr int NUM_NODE1 = 8;
 
-constexpr float lr = 0.1;
+constexpr float lr = 0.1f;
 constexpr int iters = 10;
 
 int main()
@@ -20,11 +20,18 @@ int main()
 	Variable xor_label = { 0, 1, 1, 0 };
 
 	Model study_model;
-	study_model.addFunc(new DotProduct(NUM_DATA, NUM_NODE1));
+	study_model.addFunc(new DotProduct(&weight1));
 	study_model.addFunc(new Activation::Relu());
-	study_model.addFunc(new DotProduct(NUM_NODE1, NUM_DATA));
+	study_model.addFunc(new DotProduct(&weight2));
 	study_model.addFunc(new Activation::Relu());
 	study_model.addFunc(new Sum());
 
-	//study_model.train(, )
+	std::cout << std::endl;
+	//linking test
+	for (auto& f : study_model.funcQueue)
+	{
+		std::cout << f->function_name() << " / " << f->back << " " << f << " " << f->next << std::endl;
+	}
+
+	//study_model.train(input, or_label, NUM_DATA, iters, lr);
 }

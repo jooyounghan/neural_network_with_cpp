@@ -58,6 +58,17 @@ public:
 		}
 	}
 
+	//Variable operator = (const Variable& _v)
+	//{
+	//	Variable* result = new Variable;
+	//	result->row = _v.row;
+	//	result->col = _v.col;
+	//	result->data = new float[result->row * result->col];
+	//	result->data = new float[result->row * result->col];
+
+	//	return 
+	//}
+
 	void reset()
 	{
 		row = 0;
