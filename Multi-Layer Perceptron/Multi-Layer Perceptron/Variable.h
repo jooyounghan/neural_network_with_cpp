@@ -50,14 +50,9 @@ public:
 	}
 	
 	void reset() {
-		if (this != nullptr) {
-			row = 0;
-			col = 0;
-			size = 0;
-			if (data != nullptr) {
-				delete[] data;
-				data = nullptr;
-			}
+		if (data != nullptr) {
+			delete[] data;
+			data = nullptr;
 		}
 	}
 
@@ -109,7 +104,9 @@ public:
 
 
 	~Variable() {
-		if (data != nullptr)
+		if (data != nullptr) {
 			delete[] data;
+			data = nullptr;
+		}
 	}
 };

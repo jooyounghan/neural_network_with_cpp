@@ -1,6 +1,9 @@
 #pragma once
+
+#define PASS (void)0
 #include "Variable.h"
 #include "math.h"
+
 class Function
 {
 	/*
@@ -14,6 +17,7 @@ public :
 	virtual void forward(Variable& _v) = 0;
 	//virtual void backward() = 0;
 	virtual std::string function_name() = 0;
+	virtual void reset() = 0;
 };
 
 class Multiplication : public Function
@@ -51,7 +55,11 @@ public :
 	//virtual void backward() override {}
 
 	virtual std::string function_name() override {
-		return "DotProduct";
+		return "Multiplication";
+	}
+
+	virtual void reset() override {
+		PASS;
 	}
 };
 
@@ -63,6 +71,9 @@ public:
 	//virtual void backward() override {}
 	virtual std::string function_name() override {
 		return "Sum";
+	}
+	virtual void reset() override {
+		PASS;
 	}
 };
 
@@ -104,6 +115,17 @@ namespace Activation
 		//virtual void backward() override {}
 		virtual std::string function_name() override {
 			return "Relu Activation";
+		}
+
+		virtual void reset() override {
+			if (data != nullptr) {
+				delete data;
+				data = nullptr;
+			}
+			if (grad != nullptr) {
+				delete grad;
+				grad = nullptr;
+			}
 		}
 	};
 
@@ -149,6 +171,17 @@ namespace Activation
 		//virtual void backward() override {}
 		virtual std::string function_name() override {
 			return "Relu Activation";
+		}
+
+		virtual void reset() override {
+			if (data != nullptr) {
+				delete data;
+				data = nullptr;
+			}
+			if (grad != nullptr) {
+				delete grad;
+				grad = nullptr;
+			}
 		}
 	};
 }

@@ -26,7 +26,9 @@ public:
     ~Model() {
         for (int i = 0; i < funcQueue.size(); ++i) {
             if (funcQueue[i] != nullptr) {
+                funcQueue[i]->reset();
                 delete funcQueue[i];
+                funcQueue[i] = nullptr;
             }
         }
         std::cout << "Model Destructed" << std::endl;
