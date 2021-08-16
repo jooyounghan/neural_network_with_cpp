@@ -1,32 +1,53 @@
 #pragma once
 #include "Variable.h"
-
+#include "math.h"
 class Function
 {
 	/*
-		Function Class with Function* next for forward(), and Function* back for backward()
+		Function Class with Function* next for forward() (forward Propagation),
+		and Function* back for backward() (Back Propagation)
 	*/
+
 public :
 	Function* next = nullptr;
 	Function* back = nullptr;
-	virtual Variable forward(Variable& _v) = 0;
+	virtual void forward(Variable& _v) = 0;
 	//virtual void backward() = 0;
 	virtual std::string function_name() = 0;
 };
 
-class DotProduct : public Function
+class Multiplication : public Function
 {
 public :
-	Variable* w;
-	Variable* b;
-
+	Variable w;
+	
 public : 
-	DotProduct(Variable* _w, Variable* _b = nullptr) : w(_w), b(_b) {}
+	Multiplication(Variable& _w) : w(_w) {}
 
-	//DotProduct(const int& row, const int& col, Variable* _w, Variable* _b)
-	//	: w(new Variable(row, col, this)), b(new Variable(row, col, this)) {}
+	virtual void forward(Variable& v_input) override {
+		float*& w_data = w.data;
+		float*& input_data = v_input.data;
+		int row_size = w.row;
+		int col_size = v_input.col;
+		int k_size = w.col;
+		Variable result = Variable(row_size, col_size);
+		float*& result_data = result.data;
+		for (int r = 0; r < row_size; ++r) {
+			for (int c = 0; c < col_size; ++c) {
+				result_data[r * col_size + c] = 0;
+				for (int k = 0; k < k_size; ++k) {
+					result_data[r * col_size + c] += w_data[k_size * r + k] * input_data[col_size * k + c];
+				}
+			}
+		}
 
-	virtual Variable forward(Variable& _v) override { return Variable{}; }
+		if (this->next != nullptr) {
+			std::cout << "==============hi==============" << std::endl;
+			result.print();
+			this->next->forward(result);
+		}
+	}
+
 	//virtual void backward() override {}
 
 	virtual std::string function_name() override {
@@ -38,7 +59,7 @@ class Sum : public Function
 {
 public:
 	Sum(){}
-	virtual Variable forward(Variable& _v) override { return Variable{}; }
+	virtual void forward(Variable& _v) override { }
 	//virtual void backward() override {}
 	virtual std::string function_name() override {
 		return "Sum";
@@ -50,8 +71,36 @@ namespace Activation
 	class Relu : public Function
 	{
 	public:
+		Variable* grad = nullptr;
+		Variable* data = nullptr;
+	public:
 		Relu(){}
-		virtual Variable forward(Variable& _v) override { return Variable{}; }
+
+		virtual void forward(Variable& v_input) override {
+			if (data == nullptr) {
+				data = new Variable();
+			}
+			data->copy(v_input);
+			float*& relu_data = data->data;
+			if (grad == nullptr) {
+				grad = new Variable(v_input.row, v_input.col);
+				float*& grad_data = grad->data;
+				for (int i = 0; i < v_input.size; ++i) {
+					// Relu Activation Function
+					grad_data[i] = relu_data[i] < 0 ? 0 : 1;
+				}
+			}
+			for (int i = 0; i < v_input.size; ++i) {
+				// Relu Activation Function
+				relu_data[i] = relu_data[i] < 0 ? 0 : relu_data[i];
+			}
+
+			if (this->next != nullptr) {
+				std::cout << "=================================" << std::endl;
+				data->print();
+				this->next->forward(*data);
+			}
+		}
 		//virtual void backward() override {}
 		virtual std::string function_name() override {
 			return "Relu Activation";
@@ -61,24 +110,46 @@ namespace Activation
 	class Sigmoid : public Function
 	{
 	public:
+		Variable* grad = nullptr;
+		Variable* data = nullptr;
+
+	public:
 		Sigmoid() {}
-		virtual Variable forward(Variable& _v) override { return Variable{}; }
+
+		virtual void forward(Variable& v_input) override {
+			if (data == nullptr) {
+				data = new Variable();
+			}
+			data->copy(v_input);
+			float*& sig_data = data->data;
+			if (grad == nullptr) {
+				grad = new Variable(v_input.row, v_input.col);
+				float*& grad_data = grad->data;
+				for (int i = 0; i < v_input.size; ++i) {
+					float sigmoid = 1 / (1 + std::exp(-sig_data[i]));
+					// Sigmoid Activation Function
+					grad_data[i] = sigmoid * (1 - sigmoid);
+					sig_data[i] = sigmoid;
+				}
+			}
+			else {
+				for (int i = 0; i < v_input.size; ++i) {
+					// Sigmoid Activation Function
+					float sigmoid = 1 / (1 + std::exp(-sig_data[i]));
+					sig_data[i] = sigmoid;
+				}
+			}
+
+			if (this->next != nullptr) {
+				std::cout << "=================================" << std::endl;
+				data->print();
+				this->next->forward(*data);
+			}
+		}
 		//virtual void backward() override {}
 		virtual std::string function_name() override {
-			return "Sigmoid Activation";
+			return "Relu Activation";
 		}
 	};
 }
 
-//Variable& linked_forward(Function*& f, Variable& input)
-//{
-//	input = f->forward(input);
-//	if (f->next == nullptr) {
-//		return input;
-//	}
-//	return linked_forward(f->next, input);
-//}
-
-// linked_forward에서 각 함수에 대한 결과값을 어떻게 처리할 것인지 확인
-// 각 층별로 데이터가 저장되어야 하는지 드을 확인한다
-// 만약 데이터가 층별로 저장되어야 하면, 함수 내부에 들어가는 것은 어떤지 확인해보자

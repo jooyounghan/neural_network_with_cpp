@@ -16,10 +16,19 @@ public:
         funcQueue.push_back(f);
     }
 
-    void train(Variable& input, Variable& label, const int& batch_size, const int& iters, const float& lr)
+    //void train(Variable& input, Variable& label, const int& batch_size, const int& iters, const float& lr)
+    void train(Variable& input)
     {
-        Variable temp = input;
-        std::cout << "data address check" << std::endl;
-        std::cout << &input << " " << &temp << std::endl;
+        input.print();
+        funcQueue[0]->forward(input);
+    }
+
+    ~Model() {
+        for (int i = 0; i < funcQueue.size(); ++i) {
+            if (funcQueue[i] != nullptr) {
+                delete funcQueue[i];
+            }
+        }
+        std::cout << "Model Destructed" << std::endl;
     }
 };
