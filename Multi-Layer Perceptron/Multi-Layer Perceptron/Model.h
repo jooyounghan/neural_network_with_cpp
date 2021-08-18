@@ -16,11 +16,16 @@ public:
         funcQueue.push_back(f);
     }
 
-    //void train(Variable& input, Variable& label, const int& batch_size, const int& iters, const float& lr)
-    void train(Variable& input)
-    {
-        input.print();
-        funcQueue[0]->forward(input);
+    void train(const Variable& input, const Variable&label, const float& lr, const int& iters) {
+        for (int iter = 0; iter < iters; ++iter) {
+            Variable result = funcQueue[0]->forward(input);
+            result = result - label;
+            funcQueue[0]->backward(result, lr);
+        }
+    }
+    
+    Variable forward() {
+        // return the result of forward propagation
     }
 
     ~Model() {

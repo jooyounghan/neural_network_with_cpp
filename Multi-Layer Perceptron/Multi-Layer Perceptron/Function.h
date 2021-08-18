@@ -14,8 +14,8 @@ class Function
 public :
 	Function* next = nullptr;
 	Function* back = nullptr;
-	virtual void forward(Variable& _v) = 0;
-	//virtual void backward() = 0;
+	virtual Variable forward(const Variable& _v) = 0;
+	virtual void backward(const Variable& _v, const float& lr) = 0;
 	virtual std::string function_name() = 0;
 	virtual void reset() = 0;
 };
@@ -23,19 +23,18 @@ public :
 class Multiplication : public Function
 {
 public :
-	Variable w;
-	
+	Variable& w;
+
 public : 
 	Multiplication(Variable& _w) : w(_w) {}
 
-	virtual void forward(Variable& v_input) override {
+	virtual Variable forward(const Variable& v_input) override {
 		float*& w_data = w.data;
-		float*& input_data = v_input.data;
+		float* const& input_data = v_input.data;
 		int row_size = w.row;
 		int col_size = v_input.col;
 		int k_size = w.col;
-		Variable result = Variable(row_size, col_size);
-		float*& result_data = result.data;
+		float* result_data = new float[row_size * col_size];
 		for (int r = 0; r < row_size; ++r) {
 			for (int c = 0; c < col_size; ++c) {
 				result_data[r * col_size + c] = 0;
@@ -46,13 +45,14 @@ public :
 		}
 
 		if (this->next != nullptr) {
-			std::cout << "==============hi==============" << std::endl;
-			result.print();
-			this->next->forward(result);
+			return this->next->forward(Variable(row_size, col_size, result_data));
 		}
+		return Variable(row_size, col_size, result_data);
 	}
 
-	//virtual void backward() override {}
+	virtual void backward(const Variable& _v, const float& lr) override {
+		PASS;
+	}
 
 	virtual std::string function_name() override {
 		return "Multiplication";
@@ -63,19 +63,21 @@ public :
 	}
 };
 
-class Sum : public Function
-{
-public:
-	Sum(){}
-	virtual void forward(Variable& _v) override { }
-	//virtual void backward() override {}
-	virtual std::string function_name() override {
-		return "Sum";
-	}
-	virtual void reset() override {
-		PASS;
-	}
-};
+//class Sum : public Function
+//{
+//public:
+//	Sum(){}
+//	virtual void forward(Variable& _v) override { }
+//	virtual void backward() override {}
+//
+//	virtual std::string function_name() override {
+//		return "Sum";
+//	}
+//
+//	virtual void reset() override {
+//		PASS;
+//	}
+//};
 
 namespace Activation
 {
@@ -87,7 +89,7 @@ namespace Activation
 	public:
 		Relu(){}
 
-		virtual void forward(Variable& v_input) override {
+		virtual Variable forward(const Variable& v_input) override {
 			if (data == nullptr) {
 				data = new Variable();
 			}
@@ -107,12 +109,15 @@ namespace Activation
 			}
 
 			if (this->next != nullptr) {
-				std::cout << "=================================" << std::endl;
-				data->print();
-				this->next->forward(*data);
+				return this->next->forward(*data);
 			}
+			return *data;
 		}
-		//virtual void backward() override {}
+
+		virtual void backward(const Variable& _v, const float& lr) override {
+			PASS;
+		}
+		
 		virtual std::string function_name() override {
 			return "Relu Activation";
 		}
@@ -138,7 +143,7 @@ namespace Activation
 	public:
 		Sigmoid() {}
 
-		virtual void forward(Variable& v_input) override {
+		virtual Variable forward(const Variable& v_input) override {
 			if (data == nullptr) {
 				data = new Variable();
 			}
@@ -165,10 +170,15 @@ namespace Activation
 			if (this->next != nullptr) {
 				std::cout << "=================================" << std::endl;
 				data->print();
-				this->next->forward(*data);
+				return this->next->forward(*data);
 			}
+			return *data;
 		}
-		//virtual void backward() override {}
+
+		virtual void backward(const Variable& _v, const float& lr) override {
+			PASS;
+		}
+
 		virtual std::string function_name() override {
 			return "Relu Activation";
 		}
