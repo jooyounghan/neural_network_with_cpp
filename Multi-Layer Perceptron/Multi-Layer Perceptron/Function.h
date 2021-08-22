@@ -111,7 +111,7 @@ namespace Activation
 			if (this->next != nullptr) {
 				return this->next->forward(*data);
 			}
-			return *data;
+			return Variable(data->row, data->col, relu_data);
 		}
 
 		virtual void backward(const Variable& _v, const float& lr) override {
@@ -172,7 +172,7 @@ namespace Activation
 				data->print();
 				return this->next->forward(*data);
 			}
-			return *data;
+			return Variable(data->row, data->col, sig_data);
 		}
 
 		virtual void backward(const Variable& _v, const float& lr) override {

@@ -20,7 +20,6 @@ public:
         for (int iter = 0; iter < iters; ++iter) {
             Variable result = funcQueue[0]->forward(input);
             result = result - label;
-            funcQueue[0]->backward(result, lr);
         }
     }
     

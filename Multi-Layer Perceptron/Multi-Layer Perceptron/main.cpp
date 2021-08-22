@@ -8,7 +8,7 @@ constexpr int NUM_INPUT_DATA = 2;
 constexpr int NUM_OUPUT_DATA = 1;
 
 constexpr float lr = 0.1f;
-constexpr int iters = 10;
+constexpr int iters = 1;
 
 int main()
 {
@@ -41,11 +41,15 @@ int main()
 
 		//study_model.train(input, or_label, NUM_DATA, iters, lr);
 		Variable input = Variable{ {0, 0}, {0, 1}, {1, 0}, {1, 1} };
-		Variable xor_label = Variable{ 0, 1, 1, 0 };
+		Variable xor_label = Variable{ {0}, {1}, {1}, {0} };
 		input.print();
 		xor_label.print();
 
-	
 		study_model.train(input, xor_label, lr, iters);
+
+		Variable a = Variable{ {1}, {1}, {1}, {1} };
+		Variable b = Variable{ {0}, {1}, {1}, {0} };
+		Variable c = a - b;
+		c.print();
 	}
 }

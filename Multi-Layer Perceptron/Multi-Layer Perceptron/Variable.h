@@ -13,6 +13,11 @@ public:
 	Variable(const int& _row, const int& _col, float*& _data) : row(_row), col(_col), size(_row* _col), data(_data) {
 		_data = nullptr;
 	}
+
+	Variable(Variable&& v_in) : row(v_in.row), col(v_in.col), size(v_in.size), data(v_in.data) {
+		v_in.data = nullptr;
+	}
+
 	Variable(const std::initializer_list<std::initializer_list<float>>& init_list) : row(0), col(0), data(nullptr) {
 		// initializer_list constructor for test input data
 		row = init_list.size();
@@ -36,18 +41,6 @@ public:
 				temp_col += 1;
 			}
 			temp_row += 1;
-		}
-	}
-
-	Variable(const std::initializer_list<float>& init_list) : row(1), col(0), size(0), data(nullptr) {
-		// initializer_list constructor for test input data
-		int col = init_list.size();
-		size = col;
-		data = new float[size];
-		int temp_idx = 0;
-		for (auto &ls : init_list) {
-			data[temp_idx] = float(ls);
-			temp_idx += 1;
 		}
 	}
 	
@@ -140,6 +133,27 @@ public:
 			}
 		}
 		return Variable(row, col, result_data);
+	}
+
+	void operator = (Variable& v_in) {
+		reset();
+		data = new float[size];
+		float* const& v_in_data = v_in.data;
+		for (int r = 0; r < row; ++r) {
+			for (int c = 0; c < col; ++c) {
+				data[r * col + c] = v_in_data[r * col + c];
+			}
+		}
+	}
+
+	void operator = (Variable&& v_in) {
+		std::cout << " move semantic " << std::endl;
+		reset();
+		row = v_in.row;
+		col = v_in.col;
+		size = v_in.size;
+		data = v_in.data;
+		v_in.data = nullptr;
 	}
 
 	Variable operator - (const Variable& v_in) {
