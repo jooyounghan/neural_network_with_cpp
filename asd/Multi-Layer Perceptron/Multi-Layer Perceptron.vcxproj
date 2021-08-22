@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{76b51b42-2605-4649-b2af-60d07220b095}</ProjectGuid>
+    <ProjectGuid>{871cf7ad-b419-4fc4-91e2-489dc6199714}</ProjectGuid>
     <RootNamespace>MultiLayerPerceptron</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -142,9 +142,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constatns.h" />
     <ClInclude Include="Function.h" />
-    <ClInclude Include="Model.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

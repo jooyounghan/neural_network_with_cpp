@@ -1,5 +1,7 @@
 #pragma once
 #include <random>
+#include "constatns.h"
+
 class Variable
 {
 public:
@@ -88,6 +90,14 @@ public:
 		}
 	}
 
+	float sum() {
+		float total_sum = 0;
+		for (int i = 0; i < size; ++i) {
+			total_sum += std::abs(data[i]);
+		}
+		return total_sum;
+	}
+
 	void print(){
 		for (int r = 0; r < row; ++r) {
 			for (int c = 0; c < col; ++c) {
@@ -110,6 +120,10 @@ public:
 	Variable matmul(const Variable& v_in) {
 		int row_size = row;
 		int col_size = v_in.col;
+		if (col != v_in.row) {
+			std::cout << "matrix multipication index error" << std::endl;
+			return Variable();
+		}
 		int k_size = col;
 		float* v_in_data = v_in.data;
 		float* result_data = new float[row_size * col_size];
@@ -147,7 +161,6 @@ public:
 	}
 
 	void operator = (Variable&& v_in) {
-		std::cout << " move semantic " << std::endl;
 		reset();
 		row = v_in.row;
 		col = v_in.col;
@@ -167,6 +180,31 @@ public:
 		return Variable(row, col, result_data);
 	}
 
+	Variable operator + (const Variable& v_in) {
+		float* result_data = new float[size];
+		float* const& v_in_data = v_in.data;
+		for (int r = 0; r < row; ++r) {
+			for (int c = 0; c < col; ++c) {
+				result_data[r * col + c] = data[r * col + c] + v_in_data[r * col + c];
+			}
+		}
+		return Variable(row, col, result_data);
+	}
+
+	Variable operator * (const float& f_in) {
+		float* result_data = new float[size];
+		for (int r = 0; r < row; ++r) {
+			for (int c = 0; c < col; ++c) {
+				result_data[r * col + c] = data[r * col + c] * f_in;
+			}
+		}
+		return Variable(row, col, result_data);
+	}
+
+	friend Variable operator + (const float& x, const Variable& v_in);
+	friend Variable operator - (const float& x, const Variable& v_in);
+	friend Variable operator * (const float& x, const Variable& v_in);
+
 	~Variable() {
 		if (data != nullptr) {
 			delete[] data;
@@ -174,3 +212,16 @@ public:
 		}
 	}
 };
+
+Variable operator * (const float& x, Variable& v_in) {
+	float* result_data = new float[v_in.size];
+	int row = v_in.row;
+	int col = v_in.col;
+	float* data = v_in.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = data[r * col + c] * x;
+		}
+	}
+	return Variable(row, col, result_data);
+}
