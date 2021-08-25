@@ -12,11 +12,11 @@ public:
 public:
 	Variable() : row(0), col(0), size(0), data(nullptr) {}
 	Variable(const int& _row, const int& _col) : row(_row), col(_col), size(_row * _col), data(new float[size]) {}
-	Variable(const int& _row, const int& _col, float*& _data) : row(_row), col(_col), size(_row* _col), data(_data) {
+	Variable(const int& _row, const int& _col, float*& _data) : row(_row), col(_col), size(_row * _col), data(_data) {
 		_data = nullptr;
 	}
 
-	Variable(Variable&& v_in) : row(v_in.row), col(v_in.col), size(v_in.size), data(v_in.data) {
+	Variable(Variable&& v_in) : row(v_in.row), col(v_in.col), size(v_in.row * v_in.col), data(v_in.data) {
 		v_in.data = nullptr;
 	}
 
@@ -138,15 +138,27 @@ public:
 		return Variable(row_size, col_size, result_data);
 	}
 
-	Variable element_mul (const Variable& v_in) {
-		float* result_data = new float[size];
+	Variable element_mul (Variable& v_in) {
+		float* result_data = new float[v_in.size];
 		float* const& v_in_data = v_in.data;
-		for (int r = 0; r < row; ++r) {
-			for (int c = 0; c < col; ++c) {
-				result_data[r * col + c] = data[r * col + c] * v_in_data[r * col + c];
+		int& v_in_row = v_in.row;
+		int& v_in_col = v_in.col;
+		if (row == v_in_row && col == v_in_col) {
+			for (int r = 0; r < row; ++r) {
+				for (int c = 0; c < col; ++c) {
+					result_data[r * col + c] = data[r * col + c] * v_in_data[r * col + c];
+				}
 			}
+			return Variable(row, col, result_data);
 		}
-		return Variable(row, col, result_data);
+		if (row == v_in_row) {
+			for (int r = 0; r < v_in_row; ++r) {
+				for (int c = 0; c < v_in_col; ++c) {
+					result_data[r * v_in_col + c] = data[r] * v_in_data[r * v_in_col + c];
+				}
+			}
+			return Variable(v_in_row, v_in_col, result_data);
+		}
 	}
 
 	void operator = (Variable& v_in) {
@@ -201,8 +213,20 @@ public:
 		return Variable(row, col, result_data);
 	}
 
-	friend Variable operator + (const float& x, const Variable& v_in);
-	friend Variable operator - (const float& x, const Variable& v_in);
+	Variable log_mat() {
+		float* result_data = new float[this->size];
+		int row = this->row;
+		int col = this->col;
+		float*& data = this->data;
+		for (int r = 0; r < row; ++r) {
+			for (int c = 0; c < col; ++c) {
+				result_data[r * col + c] = std::exp(data[r * col + c]);
+			}
+		}
+		return Variable(row, col, result_data);
+	}
+
+	friend Variable operator - (const Variable& v_in);
 	friend Variable operator * (const float& x, const Variable& v_in);
 
 	~Variable() {
@@ -225,3 +249,17 @@ Variable operator * (const float& x, Variable& v_in) {
 	}
 	return Variable(row, col, result_data);
 }
+
+Variable operator - (const Variable& v_in) {
+	float* result_data = new float[v_in.size];
+	int row = v_in.row;
+	int col = v_in.col;
+	float* data = v_in.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = -data[r * col + c];
+		}
+	}
+	return Variable(row, col, result_data);
+}
+

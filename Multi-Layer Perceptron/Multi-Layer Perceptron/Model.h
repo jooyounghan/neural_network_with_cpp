@@ -17,7 +17,7 @@ public:
         funcQueue.push_back(f);
     }
 
-    void train(Variable& input, Variable&label, const float& lr, const int& iters) {
+    void train(const float& lr, const int& iters, Variable& input, Variable& label) {
         for (int iter = 1; iter <= iters; ++iter) {
             Variable result = funcQueue[0]->forward(input);
             result = result - label;
@@ -32,6 +32,7 @@ public:
         }
         std::cout << "train finished" << std::endl;
     }
+
 
     ~Model() {
         for (int i = 0; i < funcQueue.size(); ++i) {
