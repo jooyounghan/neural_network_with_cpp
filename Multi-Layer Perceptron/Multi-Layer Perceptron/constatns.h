@@ -16,6 +16,7 @@ constexpr int CLASS_NUM_LABEL = 4;
 
 
 constexpr float lr = 0.01f;
+
 constexpr int iters = 1000;
 
 constexpr float ERROR_MAX = 10E-6;

@@ -24,6 +24,7 @@ public:
             if (!(iter % 100)) {
                 float error = result.sum();
                 std::cout << "Iteration " << iter << " : " << error << std::endl;
+
                 if (error < ERROR_MAX) {
                     break;
                 }

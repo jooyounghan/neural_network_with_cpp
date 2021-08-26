@@ -99,8 +99,8 @@ public:
 	}
 
 	virtual void backward(Variable& _v, const float& lr) override {
-		if (this->next != nullptr) {
-			return this->next->backward(_v, lr);
+		if (this->back != nullptr) {
+			return this->back->backward(_v, lr);
 		}
 		return;
 	}

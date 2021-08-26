@@ -37,33 +37,33 @@ int main()
 	std::cout << "============================================================" << std::endl;
 	std::cout << "============================================================" << std::endl;
 
-	//Variable weight5, weight6, weight7;
-	//weight5.init_weight(CLASS_NUM_NODE1, CLASS_NUM_INPUT_DATA);
-	//weight6.init_weight(CLASS_NUM_NODE2, CLASS_NUM_NODE1);
-	//weight7.init_weight(CLASS_NUM_LABEL, CLASS_NUM_NODE2);
+	Variable weight5, weight6, weight7;
+	weight5.init_weight(CLASS_NUM_NODE1, CLASS_NUM_INPUT_DATA);
+	weight6.init_weight(CLASS_NUM_NODE2, CLASS_NUM_NODE1);
+	weight7.init_weight(CLASS_NUM_LABEL, CLASS_NUM_NODE2);
 
-	//Model study_model_classify;
-	//study_model_classify.addFunc(new Multiplication(weight5));
-	//study_model_classify.addFunc(new Activation::Relu());
-	//study_model_classify.addFunc(new Multiplication(weight6));
-	//study_model_classify.addFunc(new Activation::Relu());
-	//study_model_classify.addFunc(new Multiplication(weight7));
-	//study_model_classify.addFunc(new Softmax());
+	Model study_model_classify;
+	study_model_classify.addFunc(new Multiplication(weight5));
+	study_model_classify.addFunc(new Activation::Relu());
+	study_model_classify.addFunc(new Multiplication(weight6));
+	study_model_classify.addFunc(new Activation::Relu());
+	study_model_classify.addFunc(new Multiplication(weight7));
+	study_model_classify.addFunc(new Softmax());
 
-	//std::cout << "TEST OF THE LINKING STATE OF THE FUNCITON (Backward / Function / Forward)" << std::endl;
-	//std::cout << std::endl;
-	//for (auto& f : study_model_classify.funcQueue)
-	//{
-	//	std::cout << f->function_name() << " / " << f->back << " " << f << " " << f->next << std::endl;
-	//}
-	//std::cout << "----------------------------------------------------------" << std::endl;
-	//std::cout << std::endl;
+	std::cout << "TEST OF THE LINKING STATE OF THE FUNCITON (Backward / Function / Forward)" << std::endl;
+	std::cout << std::endl;
+	for (auto& f : study_model_classify.funcQueue)
+	{
+		std::cout << f->function_name() << " / " << f->back << " " << f << " " << f->next << std::endl;
+	}
+	std::cout << "----------------------------------------------------------" << std::endl;
+	std::cout << std::endl;
 
-	//std::cout << "Test of Classification Model with Quadrant" << std::endl;
-	//Variable input_class = Variable{ {1, 2, -1, -2, -4, -1, 5, 3}, {1, 2, 1, 1, -3, -2, -2, -6} };
-	//Variable quadrant_label = Variable{ {1, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 1} };
-	//study_model_classify.train(lr, iters, input_class, quadrant_label);
-	//std::cout << "----------------------------------------------------------" << std::endl;
-	//std::cout << std::endl;
+	std::cout << "Test of Classification Model with Quadrant" << std::endl;
+	Variable input_class = Variable{ {1, 2, -1, -2, -4, -1, 5, 3}, {1, 2, 1, 1, -3, -2, -2, -6} };
+	Variable quadrant_label = Variable{ {1, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 1} };
+	study_model_classify.train(lr, iters, input_class, quadrant_label);
+	std::cout << "----------------------------------------------------------" << std::endl;
+	std::cout << std::endl;
 
 }
