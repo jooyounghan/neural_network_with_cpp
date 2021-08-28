@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <assert.h>
 #include "constatns.h"
 
 class Variable
@@ -120,10 +121,7 @@ public:
 	Variable matmul(const Variable& v_in) {
 		int row_size = row;
 		int col_size = v_in.col;
-		if (col != v_in.row) {
-			std::cout << "matrix multipication index error" << std::endl;
-			return Variable();
-		}
+		assert(col == v_in.row && "matrix multipication index error");
 		int k_size = col;
 		float* v_in_data = v_in.data;
 		float* result_data = new float[row_size * col_size];
@@ -151,7 +149,7 @@ public:
 			}
 			return Variable(row, col, result_data);
 		}
-		if (row == v_in_row) {
+		if (col == 1 && row == v_in_row) {
 			for (int r = 0; r < v_in_row; ++r) {
 				for (int c = 0; c < v_in_col; ++c) {
 					result_data[r * v_in_col + c] = data[r] * v_in_data[r * v_in_col + c];
@@ -159,7 +157,18 @@ public:
 			}
 			return Variable(v_in_row, v_in_col, result_data);
 		}
+		assert(false && "can't elementwise multiply each other (N X 1 and N X M or N X M and N X M case only accepted)");
 	}
+
+	void move(Variable& v_in) {
+		row = v_in.row;
+		col = v_in.col;
+		size = v_in.size;
+		if (data != nullptr) { delete[] data; }
+		data = v_in.data;
+		v_in.data = nullptr;
+	}
+
 
 	void operator = (Variable& v_in) {
 		reset();
@@ -182,6 +191,7 @@ public:
 	}
 
 	Variable operator - (const Variable& v_in) {
+		assert((row == v_in.row && col == v_in.col) && "for elementwise subtraction, row and column have to be same");
 		float* result_data = new float[size];
 		float* const& v_in_data = v_in.data;
 		for (int r = 0; r < row; ++r) {
@@ -193,6 +203,7 @@ public:
 	}
 
 	Variable operator + (const Variable& v_in) {
+		assert((row == v_in.row && col == v_in.col) && "for elementwise plus, row and column have to be same");
 		float* result_data = new float[size];
 		float* const& v_in_data = v_in.data;
 		for (int r = 0; r < row; ++r) {
@@ -215,8 +226,8 @@ public:
 
 	Variable log_mat() {
 		float* result_data = new float[this->size];
-		int row = this->row;
-		int col = this->col;
+		int& row = this->row;
+		int& col = this->col;
 		float*& data = this->data;
 		for (int r = 0; r < row; ++r) {
 			for (int c = 0; c < col; ++c) {
@@ -226,6 +237,8 @@ public:
 		return Variable(row, col, result_data);
 	}
 
+
+	friend Variable operator + (const Variable& v_1, const Variable& v_2);
 	friend Variable operator - (const Variable& v_in);
 	friend Variable operator * (const float& x, const Variable& v_in);
 
@@ -237,6 +250,7 @@ public:
 	}
 };
 
+
 Variable operator * (const float& x, Variable& v_in) {
 	float* result_data = new float[v_in.size];
 	int row = v_in.row;
@@ -245,6 +259,22 @@ Variable operator * (const float& x, Variable& v_in) {
 	for (int r = 0; r < row; ++r) {
 		for (int c = 0; c < col; ++c) {
 			result_data[r * col + c] = data[r * col + c] * x;
+		}
+	}
+	return Variable(row, col, result_data);
+}
+
+
+Variable operator + (Variable& v_1, Variable& v_2) {
+	assert((v_1.row == v_2.row && v_1.col == v_2.col) && "for elementwise plus, row and column have to be same");
+	float* result_data = new float[v_1.size];
+	int row = v_1.row;
+	int col = v_1.col;
+	float*& data_1 = v_1.data;
+	float*& data_2 = v_2.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = data_1[r * col + c] + data_2[r * col + c];
 		}
 	}
 	return Variable(row, col, result_data);

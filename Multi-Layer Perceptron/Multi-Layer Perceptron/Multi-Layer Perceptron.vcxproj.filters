@@ -32,5 +32,8 @@
     <ClInclude Include="constatns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

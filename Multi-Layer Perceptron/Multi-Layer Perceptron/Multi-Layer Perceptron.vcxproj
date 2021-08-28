@@ -145,6 +145,7 @@
     <ClInclude Include="constatns.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Optimizer.h" />
     <ClInclude Include="Variable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

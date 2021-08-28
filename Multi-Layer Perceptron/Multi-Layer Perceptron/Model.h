@@ -1,11 +1,13 @@
 #pragma once
 #include "Function.h"
+#include "Optimizer.h"
 #include <vector>
 
 class Model
 {
 public:
     std::vector<Function*> funcQueue;
+    Optimizer* optimizer_method;
 
 public:
     void addFunc(Function* f)
@@ -17,7 +19,15 @@ public:
         funcQueue.push_back(f);
     }
 
-    void train(const float& lr, const int& iters, Variable& input, Variable& label) {
+    void setOptimizer(Optimizer* op)
+    {
+        if (optimizer_method != nullptr) {
+            delete optimizer_method;
+        }
+        optimizer_method = op;
+    }
+
+    void train(const int& iters, Variable& input, Variable& label) {
         for (int iter = 1; iter <= iters; ++iter) {
             Variable result = funcQueue[0]->forward(input);
             result = result - label;
@@ -29,7 +39,7 @@ public:
                     break;
                 }
             }
-            funcQueue[funcQueue.size() - 1]->backward(result, lr);
+            funcQueue[funcQueue.size() - 1]->backward(result, lr, optimizer_method);
         }
         std::cout << "train finished" << std::endl;
     }
