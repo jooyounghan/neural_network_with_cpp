@@ -54,7 +54,7 @@ public:
 		}
 	}
 
-	void init_weight(const int& _row, const int& _col) {
+	void He_initialization(const int& _row, const int& _col) {
 		reset();
 		row = _row;
 		col = _col;
@@ -62,7 +62,21 @@ public:
 		data = new float[size];
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::normal_distribution<float> gaussian(0, static_cast<float>(std::sqrt(1.0 / col)));
+		std::normal_distribution<float> gaussian(0, static_cast<float>(std::sqrt(2.0 / row)));
+		for (int i = 0; i < row * col; i += 1) {
+			data[i] = gaussian(mt);
+		}
+	}
+
+	void Xavier_initialization(const int& _row, const int& _col) {
+		reset();
+		row = _row;
+		col = _col;
+		size = row * col;
+		data = new float[size];
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::normal_distribution<float> gaussian(0, static_cast<float>(std::sqrt(2.0 / row + col)));
 		for (int i = 0; i < row * col; i += 1) {
 			data[i] = gaussian(mt);
 		}
@@ -170,7 +184,7 @@ public:
 	}
 
 
-	void operator = (Variable& v_in) {
+	Variable& operator = (Variable& v_in) {
 		reset();
 		data = new float[size];
 		float* const& v_in_data = v_in.data;
@@ -179,15 +193,17 @@ public:
 				data[r * col + c] = v_in_data[r * col + c];
 			}
 		}
+		return *this;
 	}
 
-	void operator = (Variable&& v_in) {
+	Variable& operator = (Variable&& v_in) {
 		reset();
 		row = v_in.row;
 		col = v_in.col;
 		size = v_in.size;
 		data = v_in.data;
 		v_in.data = nullptr;
+		return *this;
 	}
 
 	Variable operator - (const Variable& v_in) {

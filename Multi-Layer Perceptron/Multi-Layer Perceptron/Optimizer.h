@@ -19,16 +19,12 @@ public:
 	GradientDescent(const float& lr_in) : Optimizer(lr_in){}
 
 	virtual void optimize(Variable& gradient, Variable& present_gradient) override {
-		present_gradient = -(lr * present_gradient);
+		present_gradient = (-lr * present_gradient);
 		gradient.move(present_gradient);
 	}
 };
 
 class Momentum : public Optimizer
-	/*
-	Momentum method uses the past gradient which is calculated at the past iteration
-	which can make model escape from the local minimum poit
-	*/
 {
 public:
 	float momentum_alpha;
@@ -38,13 +34,12 @@ public:
 
 	virtual void optimize(Variable& gradient, Variable& present_gradient) override {
 		present_gradient = -(lr * present_gradient);
-		if (gradient.row != 0 && gradient.col != 0) {
-			gradient = momentum_alpha * gradient;
-			present_gradient = present_gradient + gradient;
+		if (gradient.data == nullptr) {
+			gradient.move(present_gradient);
+			return;
 		}
-		//gradient.reset();
-		//gradient.move(present_gradient);
-		gradient = -(lr * present_gradient);
+		present_gradient = present_gradient + momentum_alpha * gradient;
+		gradient.move(present_gradient);
 	}
 
 };
@@ -52,15 +47,15 @@ public:
 class NAG : public Optimizer
 {
 public:
+	float momentum_alpha;
 
+public:
+	NAG(const float& ma_in, const float& lr_in) : momentum_alpha(ma_in), Optimizer(lr_in) {}
+
+	virtual void optimize(Variable& gradient, Variable& present_gradient) override {
+
+	}
 };
-
-
-
-
-
-
-
 
 class Adagrad : public Optimizer
 {

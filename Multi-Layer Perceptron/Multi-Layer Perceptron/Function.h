@@ -18,7 +18,6 @@ public :
 	virtual Variable forward(Variable& _v) = 0;
 	virtual void backward(Variable& _v, const float& lr, Optimizer*& op) = 0;
 	virtual std::string function_name() = 0;
-	virtual void reset() = 0;
 };
 
 class Multiplication : public Function
@@ -29,7 +28,7 @@ public :
 	Variable* input_data;
 
 public : 
-	Multiplication(Variable& _w) : w(_w), gradient(Variable()), input_data(nullptr) {}
+	Multiplication(Variable& _w) : w(_w), input_data(nullptr) {}
 
 	virtual Variable forward(Variable& v_input) override {
 		input_data = &v_input;
@@ -70,10 +69,6 @@ public :
 	virtual std::string function_name() override {
 		return "Multiplication";
 	}
-
-	virtual void reset() override {
-		PASS;
-	}
 };
 
 class Softmax : public Function
@@ -112,10 +107,6 @@ public:
 
 	virtual std::string function_name() override {
 		return "Softmax";
-	}
-
-	virtual void reset() override {
-		PASS;
 	}
 };
 
@@ -162,7 +153,7 @@ namespace Activation
 			return "Relu Activation";
 		}
 
-		virtual void reset() override {
+		~Relu() {
 			if (data != nullptr) {
 				delete data;
 				data = nullptr;
@@ -219,7 +210,7 @@ namespace Activation
 			return "Relu Activation";
 		}
 
-		virtual void reset() override {
+		~Sigmoid() {
 			if (data != nullptr) {
 				delete data;
 				data = nullptr;

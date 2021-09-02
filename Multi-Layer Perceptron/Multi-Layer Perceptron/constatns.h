@@ -14,7 +14,6 @@ constexpr int CLASS_NUM_NODE2 = 32;
 constexpr int CLASS_NUM_LABEL = 4;
 
 
-
 constexpr float lr = 0.01f;
 
 constexpr int iters = 1000;
