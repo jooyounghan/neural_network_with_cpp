@@ -56,9 +56,7 @@ public :
 	virtual void backward(Variable& _v, const float& lr, Optimizer*& op) override {
 
 		Variable present_gradient = _v.matmul(input_data->transpose());
-		op->optimize(gradient, present_gradient);
-		w = w + gradient;
-
+		w = w + op->optimize(gradient, present_gradient);
 		if (this->back != nullptr) {
 			Variable param = w.transpose().matmul(_v);
 			return this->back->backward(param, lr, op);

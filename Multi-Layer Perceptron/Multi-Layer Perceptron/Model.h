@@ -32,7 +32,7 @@ public:
             Variable result = funcQueue[0]->forward(input);
             result = result - label;
             if (!(iter % 100)) {
-                float error = result.sum();
+                float error = result.error_sum();
                 std::cout << "Iteration " << iter << " : " << error << std::endl;
 
                 if (error < ERROR_MAX) {

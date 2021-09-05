@@ -17,6 +17,10 @@ public:
 		_data = nullptr;
 	}
 
+	Variable(const Variable& v_in) : row(v_in.row), col(v_in.col), size(v_in.row* v_in.col), data(nullptr) {
+		this->copy(v_in);
+	}
+
 	Variable(Variable&& v_in) : row(v_in.row), col(v_in.col), size(v_in.row * v_in.col), data(v_in.data) {
 		v_in.data = nullptr;
 	}
@@ -60,8 +64,8 @@ public:
 		col = _col;
 		size = row * col;
 		data = new float[size];
-		std::random_device rd;
-		std::mt19937 mt(rd());
+		//std::random_device rd;
+		std::mt19937 mt(seed);
 		std::normal_distribution<float> gaussian(0, static_cast<float>(std::sqrt(2.0 / row)));
 		for (int i = 0; i < row * col; i += 1) {
 			data[i] = gaussian(mt);
@@ -74,8 +78,8 @@ public:
 		col = _col;
 		size = row * col;
 		data = new float[size];
-		std::random_device rd;
-		std::mt19937 mt(rd());
+		//std::random_device rd;
+		std::mt19937 mt(seed);
 		std::normal_distribution<float> gaussian(0, static_cast<float>(std::sqrt(2.0 / row + col)));
 		for (int i = 0; i < row * col; i += 1) {
 			data[i] = gaussian(mt);
@@ -105,10 +109,18 @@ public:
 		}
 	}
 
-	float sum() {
+	float error_sum() {
 		float total_sum = 0;
 		for (int i = 0; i < size; ++i) {
 			total_sum += std::abs(data[i]);
+		}
+		return total_sum;
+	}
+
+	float sum() {
+		float total_sum = 0;
+		for (int i = 0; i < size; ++i) {
+			total_sum += data[i];
 		}
 		return total_sum;
 	}
@@ -253,10 +265,23 @@ public:
 		return Variable(row, col, result_data);
 	}
 
+	Variable sqrt() {
+		float* result_data = new float[this->size];
+		int& row = this->row;
+		int& col = this->col;
+		float*& data = this->data;
+		for (int r = 0; r < row; ++r) {
+			for (int c = 0; c < col; ++c) {
+				result_data[r * col + c] = std::sqrt(data[r * col + c]);
+			}
+		}
+		return Variable(row, col, result_data);
+	}
 
-	friend Variable operator + (const Variable& v_1, const Variable& v_2);
+	friend Variable operator + (const float& x, const Variable& v_in);
 	friend Variable operator - (const Variable& v_in);
 	friend Variable operator * (const float& x, const Variable& v_in);
+	friend Variable operator / (const float& x, const Variable& v_in);
 
 	~Variable() {
 		if (data != nullptr) {
@@ -267,30 +292,14 @@ public:
 };
 
 
-Variable operator * (const float& x, Variable& v_in) {
+Variable operator + (const float& x, const Variable& v_in) {
 	float* result_data = new float[v_in.size];
 	int row = v_in.row;
 	int col = v_in.col;
 	float* data = v_in.data;
 	for (int r = 0; r < row; ++r) {
 		for (int c = 0; c < col; ++c) {
-			result_data[r * col + c] = data[r * col + c] * x;
-		}
-	}
-	return Variable(row, col, result_data);
-}
-
-
-Variable operator + (Variable& v_1, Variable& v_2) {
-	assert((v_1.row == v_2.row && v_1.col == v_2.col) && "for elementwise plus, row and column have to be same");
-	float* result_data = new float[v_1.size];
-	int row = v_1.row;
-	int col = v_1.col;
-	float*& data_1 = v_1.data;
-	float*& data_2 = v_2.data;
-	for (int r = 0; r < row; ++r) {
-		for (int c = 0; c < col; ++c) {
-			result_data[r * col + c] = data_1[r * col + c] + data_2[r * col + c];
+			result_data[r * col + c] = x + data[r * col + c];
 		}
 	}
 	return Variable(row, col, result_data);
@@ -309,3 +318,28 @@ Variable operator - (const Variable& v_in) {
 	return Variable(row, col, result_data);
 }
 
+Variable operator * (const float& x, const Variable& v_in) {
+	float* result_data = new float[v_in.size];
+	int row = v_in.row;
+	int col = v_in.col;
+	float* data = v_in.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = x * data[r * col + c];
+		}
+	}
+	return Variable(row, col, result_data);
+}
+
+Variable operator / (const float& x, const Variable& v_in) {
+	float* result_data = new float[v_in.size];
+	int row = v_in.row;
+	int col = v_in.col;
+	float* data = v_in.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = x / data[r * col + c];
+		}
+	}
+	return Variable(row, col, result_data);
+}

@@ -13,8 +13,9 @@ constexpr int CLASS_NUM_NODE1 = 64;
 constexpr int CLASS_NUM_NODE2 = 32;
 constexpr int CLASS_NUM_LABEL = 4;
 
+constexpr int seed = 100;
 
-constexpr float lr = 0.01f;
+constexpr float lr = 0.001f;
 
 constexpr int iters = 1000;
 
