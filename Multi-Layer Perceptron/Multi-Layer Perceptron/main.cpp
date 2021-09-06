@@ -12,13 +12,18 @@ int main()
 
 		Model m_study_model;
 
-		Multiplication m_node1{ m_weight1 };
+		Momentum Momentum_Optimizer1(0.9, lr);
+		Momentum Momentum_Optimizer2(0.9, lr);
+		Momentum Momentum_Optimizer3(0.9, lr);
+		Momentum Momentum_Optimizer4(0.9, lr);
+
+		Multiplication m_node1{ m_weight1, &Momentum_Optimizer1 };
 		Activation::Sigmoid m_active1 = Activation::Sigmoid();
-		Multiplication m_node2{ m_weight2 };
+		Multiplication m_node2{ m_weight2, &Momentum_Optimizer2 };
 		Activation::Sigmoid m_active2 = Activation::Sigmoid();
-		Multiplication m_node3{ m_weight3 };
+		Multiplication m_node3{ m_weight3, &Momentum_Optimizer3 };
 		Activation::Sigmoid m_active3 = Activation::Sigmoid();
-		Multiplication m_node4{ m_weight4 };
+		Multiplication m_node4{ m_weight4, &Momentum_Optimizer4 };
 
 		m_study_model.addFunc(m_node1);
 		m_study_model.addFunc(m_active1);
@@ -27,11 +32,6 @@ int main()
 		m_study_model.addFunc(m_node3);
 		m_study_model.addFunc(m_active3);
 		m_study_model.addFunc(m_node4);
-
-		Momentum Momentum_Optimizer(0.9, lr);
-
-		m_study_model.setOptimizer(&Momentum_Optimizer);
-
 
 		std::cout << "TEST OF THE LINKING STATE OF THE FUNCITON (Backward / Function / Forward)" << "\n";
 		std::cout << "\n";
@@ -58,13 +58,18 @@ int main()
 
 		Model n_study_model;
 
-		Multiplication n_node1{ n_weight1 };
+		NAG NAG_Optimizer1(0.9, lr);
+		NAG NAG_Optimizer2(0.9, lr);
+		NAG NAG_Optimizer3(0.9, lr);
+		NAG NAG_Optimizer4(0.9, lr);
+
+		Multiplication n_node1{ n_weight1, &NAG_Optimizer1 };
 		Activation::Sigmoid n_active1 = Activation::Sigmoid();
-		Multiplication n_node2{ n_weight2 };
+		Multiplication n_node2{ n_weight2, &NAG_Optimizer2 };
 		Activation::Sigmoid n_active2 = Activation::Sigmoid();
-		Multiplication n_node3{ n_weight3 };
+		Multiplication n_node3{ n_weight3, &NAG_Optimizer3 };
 		Activation::Sigmoid n_active3 = Activation::Sigmoid();
-		Multiplication n_node4{ n_weight4 };
+		Multiplication n_node4{ n_weight4, &NAG_Optimizer4 };
 
 		n_study_model.addFunc(n_node1);
 		n_study_model.addFunc(n_active1);
@@ -74,15 +79,12 @@ int main()
 		n_study_model.addFunc(n_active3);
 		n_study_model.addFunc(n_node4);
 
-		NAG NAG_Optimizer(0.9, lr);
 
-		n_study_model.setOptimizer(&NAG_Optimizer);
 
 		std::cout << "Test of the nonlinear Model with NAG Optimizer and XOR" << "\n";
 		n_study_model.train(iters, input, xor_label);
 		std::cout << "----------------------------------------------------------" << "\n";
 		std::cout << "\n";
-
 
 
 		std::cout << "============================================================" << "\n";
@@ -95,11 +97,16 @@ int main()
 
 		Model m_study_model_classify;
 
-		Multiplication m_node5{ m_weight5 };
+		Momentum Momentum_Optimizer_classify1(0.9, lr);
+		Momentum Momentum_Optimizer_classify2(0.9, lr);
+		Momentum Momentum_Optimizer_classify3(0.9, lr);
+
+
+		Multiplication m_node5{ m_weight5, &Momentum_Optimizer_classify1 };
 		Activation::Sigmoid m_active4 = Activation::Sigmoid();
-		Multiplication m_node6{ m_weight6 };
+		Multiplication m_node6{ m_weight6, &Momentum_Optimizer_classify2 };
 		Activation::Sigmoid m_active5 = Activation::Sigmoid();
-		Multiplication m_node7{ m_weight7 };
+		Multiplication m_node7{ m_weight7, &Momentum_Optimizer_classify3 };
 		Softmax m_softmax = Softmax();
 
 		m_study_model_classify.addFunc(m_node5);
@@ -109,9 +116,7 @@ int main()
 		m_study_model_classify.addFunc(m_node7);
 		m_study_model_classify.addFunc(m_softmax);
 
-		Momentum Momentum_Optimizer_classify(0.9, lr);
 
-		m_study_model_classify.setOptimizer(&Momentum_Optimizer_classify);
 
 		std::cout << "TEST OF THE LINKING STATE OF THE FUNCITON (Backward / Function / Forward)" << "\n";
 		std::cout << "\n";
@@ -137,11 +142,15 @@ int main()
 
 		Model n_study_model_classify;
 
-		Multiplication n_node5{ n_weight5 };
+		NAG NAG_Optimizer_classify1(0.9, lr);
+		NAG NAG_Optimizer_classify2(0.9, lr);
+		NAG NAG_Optimizer_classify3(0.9, lr);
+
+		Multiplication n_node5{ n_weight5, &NAG_Optimizer_classify1 };
 		Activation::Sigmoid n_active4 = Activation::Sigmoid();
-		Multiplication n_node6{ n_weight6 };
+		Multiplication n_node6{ n_weight6, &NAG_Optimizer_classify2 };
 		Activation::Sigmoid n_active5 = Activation::Sigmoid();
-		Multiplication n_node7{ n_weight7 };
+		Multiplication n_node7{ n_weight7, &NAG_Optimizer_classify3 };
 		Softmax n_softmax = Softmax();
 
 		n_study_model_classify.addFunc(n_node5);
@@ -150,10 +159,6 @@ int main()
 		n_study_model_classify.addFunc(n_active5);
 		n_study_model_classify.addFunc(n_node7);
 		n_study_model_classify.addFunc(n_softmax);
-
-		NAG NAG_Optimizer_classify(0.9, lr);
-
-		n_study_model_classify.setOptimizer(&NAG_Optimizer_classify);
 
 		std::cout << "Test of Classification Model with NAG Optimizer Quadrant" << "\n";
 		n_study_model_classify.train(iters, input_class, quadrant_label);
@@ -171,11 +176,37 @@ int main()
 
 		Model study_model_classify;
 
-		Multiplication node1{ weight1 };
+		//Adagrad Adagrad_Optimizer_classify1(1E-8, lr_3);
+		//Adagrad Adagrad_Optimizer_classify2(1E-8, lr_3);
+		//Adagrad Adagrad_Optimizer_classify3(1E-8, lr_3);
+
+		//RMSprop RMSprop_Optimizer_classify1(1E-8, 0.9, lr_2);
+		//RMSprop RMSprop_Optimizer_classify2(1E-8, 0.9, lr_2);
+		//RMSprop RMSprop_Optimizer_classify3(1E-8, 0.9, lr_2);
+
+		Adam Adam_Optimizer_classify1(1E-8, 0.9, 0.999, lr_2);
+		Adam Adam_Optimizer_classify2(1E-8, 0.9, 0.999, lr_2);
+		Adam Adam_Optimizer_classify3(1E-8, 0.9, 0.999, lr_2);
+
+		//Multiplication node1{ weight1, &Adagrad_Optimizer_classify1 };
+		//Activation::Sigmoid active1 = Activation::Sigmoid();
+		//Multiplication node2{ weight2, &Adagrad_Optimizer_classify2 };
+		//Activation::Sigmoid active2 = Activation::Sigmoid();
+		//Multiplication node3{ weight3, &Adagrad_Optimizer_classify3 };
+		//Softmax softmax = Softmax();
+
+		//Multiplication node1{ weight1, &RMSprop_Optimizer_classify1 };
+		//Activation::Sigmoid active1 = Activation::Sigmoid();
+		//Multiplication node2{ weight2, &RMSprop_Optimizer_classify2 };
+		//Activation::Sigmoid active2 = Activation::Sigmoid();
+		//Multiplication node3{ weight3, &RMSprop_Optimizer_classify3 };
+		//Softmax softmax = Softmax();
+
+		Multiplication node1{ weight1, &Adam_Optimizer_classify1 };
 		Activation::Sigmoid active1 = Activation::Sigmoid();
-		Multiplication node2{ weight2 };
+		Multiplication node2{ weight2, &Adam_Optimizer_classify2 };
 		Activation::Sigmoid active2 = Activation::Sigmoid();
-		Multiplication node3{ weight3 };
+		Multiplication node3{ weight3, &Adam_Optimizer_classify3 };
 		Softmax softmax = Softmax();
 
 		study_model_classify.addFunc(node1);
@@ -185,14 +216,11 @@ int main()
 		study_model_classify.addFunc(node3);
 		study_model_classify.addFunc(softmax);
 
-		//Adagrad Adagrad_Optimizer_classify(1E-8, lr);
-		RMSprop RMSprop_Optimizer_classify(1E-8, 0.9, lr);
-
-		//study_model_classify.setOptimizer(&Adagrad_Optimizer_classify);
-		study_model_classify.setOptimizer(&RMSprop_Optimizer_classify);
 
 		//std::cout << "Test of Classification Model with Adagrad Optimizer Quadrant" << "\n";
-		std::cout << "Test of Classification Model with RMSprop Optimizer Quadrant" << "\n";
+		//std::cout << "Test of Classification Model with RMSprop Optimizer Quadrant" << "\n";
+		std::cout << "Test of Classification Model with Adam Optimizer Quadrant" << "\n";
+
 		study_model_classify.train(iters, input_class, quadrant_label);
 		std::cout << "----------------------------------------------------------" << "\n";
 		std::cout << "\n";

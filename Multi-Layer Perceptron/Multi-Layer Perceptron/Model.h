@@ -7,7 +7,6 @@ class Model
 {
 public:
     std::vector<Function*> funcQueue;
-    Optimizer* optimizer_method;
 
 public:
     void addFunc(Function& f)
@@ -17,14 +16,6 @@ public:
             f.back = funcQueue[funcQueue.size() - 1];
         }
         funcQueue.push_back(&f);
-    }
-
-    void setOptimizer(Optimizer* op)
-    {
-        if (optimizer_method != nullptr) {
-            delete optimizer_method;
-        }
-        optimizer_method = op;
     }
 
     void train(const int& iters, Variable& input, Variable& label) {
@@ -39,7 +30,7 @@ public:
                     break;
                 }
             }
-            funcQueue[funcQueue.size() - 1]->backward(result, lr, optimizer_method);
+            funcQueue[funcQueue.size() - 1]->backward(result, lr);
         }
         std::cout << "train finished" << std::endl;
     }

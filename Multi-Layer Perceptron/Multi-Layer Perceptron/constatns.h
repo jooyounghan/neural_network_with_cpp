@@ -16,6 +16,8 @@ constexpr int CLASS_NUM_LABEL = 4;
 constexpr int seed = 100;
 
 constexpr float lr = 0.001f;
+constexpr float lr_2 = 0.01f;
+constexpr float lr_3 = 0.1f;
 
 constexpr int iters = 1000;
 

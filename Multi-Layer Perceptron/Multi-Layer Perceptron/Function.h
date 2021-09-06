@@ -7,6 +7,7 @@
 
 class Function
 {
+public :
 	/*
 		Function Class with Function* next for forward() (forward Propagation),
 		and Function* back for backward() (Back Propagation)
@@ -16,7 +17,7 @@ public :
 	Function* next = nullptr;
 	Function* back = nullptr;
 	virtual Variable forward(Variable& _v) = 0;
-	virtual void backward(Variable& _v, const float& lr, Optimizer*& op) = 0;
+	virtual void backward(Variable& _v, const float& lr) = 0;
 	virtual std::string function_name() = 0;
 };
 
@@ -24,11 +25,11 @@ class Multiplication : public Function
 {
 public :
 	Variable& w;
-	Variable gradient;
 	Variable* input_data;
+	Optimizer* opp;
 
 public : 
-	Multiplication(Variable& _w) : w(_w), input_data(nullptr) {}
+	Multiplication(Variable& _w, Optimizer* opp_in) : w(_w), input_data(nullptr), opp(opp_in) {}
 
 	virtual Variable forward(Variable& v_input) override {
 		input_data = &v_input;
@@ -53,13 +54,13 @@ public :
 		return Variable(row_size, col_size, result_data);
 	}
 
-	virtual void backward(Variable& _v, const float& lr, Optimizer*& op) override {
+	virtual void backward(Variable& _v, const float& lr) override {
 
 		Variable present_gradient = _v.matmul(input_data->transpose());
-		w = w + op->optimize(gradient, present_gradient);
+		w = w + opp->optimize(present_gradient);
 		if (this->back != nullptr) {
 			Variable param = w.transpose().matmul(_v);
-			return this->back->backward(param, lr, op);
+			return this->back->backward(param, lr);
 		}
 		return;
 	}
@@ -67,6 +68,7 @@ public :
 	virtual std::string function_name() override {
 		return "Multiplication";
 	}
+
 };
 
 class Softmax : public Function
@@ -96,9 +98,9 @@ public:
 		return Variable(row_size, col_size, result_data);
 	}
 
-	virtual void backward(Variable& _v, const float& lr, Optimizer*& op) override {
+	virtual void backward(Variable& _v, const float& lr) override {
 		if (this->back != nullptr) {
-			return this->back->backward(_v, lr, op);
+			return this->back->backward(_v, lr);
 		}
 		return;
 	}
@@ -139,10 +141,10 @@ namespace Activation
 			return Variable(data->row, data->col, relu_data);
 		}
 
-		virtual void backward(Variable& _v, const float& lr, Optimizer*& op) override {
+		virtual void backward(Variable& _v, const float& lr) override {
 			if (this->back != nullptr) {
 				Variable param = grad->element_mul(_v);
-				return this->back->backward(param, lr, op);
+				return this->back->backward(param, lr);
 			}
 			return;
 		}
@@ -196,10 +198,10 @@ namespace Activation
 		}
 
 
-		virtual void backward(Variable& _v, const float& lr, Optimizer*& op) override {
+		virtual void backward(Variable& _v, const float& lr) override {
 			if (this->back != nullptr) {
 				Variable param = grad->element_mul(_v);
-				return this->back->backward(param, lr, op);
+				return this->back->backward(param, lr);
 			}
 			return;
 		}

@@ -282,6 +282,7 @@ public:
 	friend Variable operator - (const Variable& v_in);
 	friend Variable operator * (const float& x, const Variable& v_in);
 	friend Variable operator / (const float& x, const Variable& v_in);
+	friend Variable operator / (const Variable& v_in, const float& x);
 
 	~Variable() {
 		if (data != nullptr) {
@@ -339,6 +340,19 @@ Variable operator / (const float& x, const Variable& v_in) {
 	for (int r = 0; r < row; ++r) {
 		for (int c = 0; c < col; ++c) {
 			result_data[r * col + c] = x / data[r * col + c];
+		}
+	}
+	return Variable(row, col, result_data);
+}
+
+Variable operator / (const Variable& v_in, const float& x) {
+	float* result_data = new float[v_in.size];
+	int row = v_in.row;
+	int col = v_in.col;
+	float* data = v_in.data;
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			result_data[r * col + c] = data[r * col + c] / x;
 		}
 	}
 	return Variable(row, col, result_data);
