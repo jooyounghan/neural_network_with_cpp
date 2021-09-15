@@ -1,27 +1,34 @@
 #pragma once
 #include <assert.h>
 class GridCell {
-private:
+public:
+	// 해당 방향으로 이동할 때의 이득 값을 나타내는 변수
 	int direction[4]{ 0 };
-	// 해당 방향으로 이동할 때의 이득 값
+	// 해당 셀에 도착하였을 때 얻게 되는 가중치를 나타내는 변수
 	int profit;
-	// 해당 셀에 도착하였을 때 얻게 되는 가중치
-
+	// 해당 셀이 목적지인지를 나타내는 변수
+	bool goal;
 
 public:
-	GridCell() {};
-	
+	GridCell() : profit(-0.1), goal(false) {};
 
 	/*
-	TODO
-	
-	update : 어떤 방향으로 이동하였을 때, (그 셀을 통하여 얻을 수 있는 가중치 + 해당 셀에서의 최대 이득)을
+	dir = 0(우), 1(하), 2(좌), 3(상)
+	어떤 방향으로 이동하였을 때, (그 셀을 통하여 얻을 수 있는 가중치 + 해당 셀에서의 최대 이득)을
 	계산하여 이를 이동 전 셀의 이동방향에 업데이트 해준다.
-
-	maxprofit : 네 방향 중 최대 이득을 return
-
 	*/
-	void update() {}
+	void update(const int& dir, GridCell* moved_cell) {
+		direction[dir] = moved_cell->max_profit() + moved_cell->profit;
+	}
 
-
+	// 네 방향 중 최대 이득을 반환한다.
+	int max_profit() {
+		int temp_max = direction[0];
+		for (int i = 0; i < 4; ++i) {
+			if (temp_max > direction[i]) {
+				temp_max = direction[i];
+			}
+		}
+		return temp_max;
+	}
 };
