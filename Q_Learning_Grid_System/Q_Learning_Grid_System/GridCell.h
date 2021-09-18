@@ -31,4 +31,16 @@ public:
 		}
 		return temp_max;
 	}
+
+	int max_profit_dir() {
+		int temp_max = direction[0];
+		int temp_dir = 0;
+		for (int i = 1; i < 4; ++i) {
+			if (temp_max > direction[i]) {
+				temp_max = direction[i];
+				temp_dir = i;
+			}
+		}
+		return temp_dir;
+	}
 };
