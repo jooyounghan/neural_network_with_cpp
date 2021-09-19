@@ -33,19 +33,18 @@ public:
 	//Agent를 랜덤으로 움직이는 함수이다.
 	void random_move() {
 		int random_access = rand() % 4;
-		std::pair<int, int>& dir = directions[random_access];
-		while (agent->row + dir.first < 0 || agent->row + dir.first >= row || agent->col + dir.second < 0 || agent->col + dir.second >= col) {
+		std::pair<int, int>* dir = &(directions[random_access]);
+		while (agent->row + dir->first < 0 || agent->row + dir->first >= row || agent->col + dir->second < 0 || agent->col + dir->second >= col) {
 			random_access = (random_access + 1) % 4;
-			dir = directions[random_access];
+			dir = &directions[random_access];
 		}
-		
 		GridCell& cell_now = get_cell(agent->row, agent->col);
-		agent->row += dir.first;
-		agent->col += dir.second;
+		agent->row += dir->first;
+		agent->col += dir->second;
 		GridCell& cell_after = get_cell(agent->row, agent->col);
 		cell_now.update(random_access, &cell_after);
 
-		if (cell_after.goal == true) {
+		if (cell_after.goal || cell_after.obstacle) {
 			agent->row = 0;
 			agent->col = 0;
 		}
@@ -64,7 +63,7 @@ public:
 		GridCell& cell_after = get_cell(agent->row, agent->col);
 		cell_now.update(access, &cell_after);
 
-		if (cell_after.goal == true) {
+		if (cell_after.goal || cell_after.obstacle) {
 			agent->row = 0;
 			agent->col = 0;
 		}
@@ -73,7 +72,7 @@ public:
 	void train(const int& iterations) {
 		std::cout << "train started" << std::endl;
 		for (int i = 0; i < iterations; ++i) {
-			if (!((i + 1) % 1000)) {
+			if (!((i + 1) % (iterations / 10))) {
 				std::cout << i + 1 << " iterations trained..." << "\n";
 			}
 			random_move();
@@ -85,6 +84,19 @@ public:
 	void set_goal(const int& row_in, const int& col_in) {
 		GridCell& cell_now = get_cell(row_in, col_in);
 		cell_now.goal = true;
+		for (int i = 0; i < 4; ++i) {
+			cell_now.direction[i] = 1.0;
+		}
+	}
+
+	// row, col에 해당하는 Cell이 장애물인지를 설정하는 함수이다.
+	void set_obstacle(const int& row_in, const int& col_in) {
+		GridCell& cell_now = get_cell(row_in, col_in);
+		cell_now.obstacle = true;
+		if (cell_now.goal) cell_now.goal = false;
+		for (int i = 0; i < 4; ++i) {
+			cell_now.direction[i] = -1.0;
+		}
 	}
 
 	// row, col에 해당하는 Cell의 이득값을 설정하는 함수이다.
@@ -95,7 +107,6 @@ public:
 
 	void initialize_profit(const float& profit_in) {
 		for (int i = 0; i < size; ++i) {
-			// profit 반영이 안됨
 			gridmap[i].profit = profit_in;
 		}
 	}
@@ -107,10 +118,15 @@ public:
 		int cnt = 1;
 
 		while (true) {
-			GridCell& cell_now = get_cell(agent->row, agent->col);
+			GridCell& cell_now = get_cell(agent->row, agent->col);			
 			std::pair<int, int>& dir = directions[cell_now.max_profit_dir()];
+			if (agent->row + dir.first < 0 || agent->row + dir.first >= row || agent->col + dir.second < 0 || agent->col + dir.second >= col) {
+				std::cout << "Training Result has problem(it trained to move out of the boundary" << std::endl;
+				return;
+			}
 			agent->row = agent->row + dir.first;
-			agent->row = agent->row + dir.second;
+			agent->col = agent->col + dir.second;
+
 			std::cout << "moved to the (" << agent->row << ", " << agent->col << ")" << "\n";
 			GridCell& cell_after = get_cell(agent->row, agent->col);
 			if (cell_after.goal) {

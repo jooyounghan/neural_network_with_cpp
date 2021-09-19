@@ -3,14 +3,17 @@
 class GridCell {
 public:
 	// 해당 방향으로 이동할 때의 이득 값을 나타내는 변수
-	int direction[4]{ 0 };
+	float direction[4]{ 0 };
 	// 해당 셀에 도착하였을 때 얻게 되는 가중치를 나타내는 변수
-	int profit;
+	float profit;
 	// 해당 셀이 목적지인지를 나타내는 변수
 	bool goal;
+	// 해당 셀이 장애물인지를 나타내는 변수
+	bool obstacle;
+
 
 public:
-	GridCell() : profit(-0.1), goal(false) {};
+	GridCell() : profit(-0.1), goal(false), obstacle(false) {};
 
 	/*
 	dir = 0(우), 1(하), 2(좌), 3(상)
@@ -22,10 +25,10 @@ public:
 	}
 
 	// 네 방향 중 최대 이득을 반환한다.
-	int max_profit() {
-		int temp_max = direction[0];
+	float max_profit() {
+		float temp_max = direction[0];
 		for (int i = 0; i < 4; ++i) {
-			if (temp_max > direction[i]) {
+			if (temp_max < direction[i]) {
 				temp_max = direction[i];
 			}
 		}
@@ -33,10 +36,10 @@ public:
 	}
 
 	int max_profit_dir() {
-		int temp_max = direction[0];
+		float temp_max = direction[0];
 		int temp_dir = 0;
 		for (int i = 1; i < 4; ++i) {
-			if (temp_max > direction[i]) {
+			if (temp_max < direction[i]) {
 				temp_max = direction[i];
 				temp_dir = i;
 			}
