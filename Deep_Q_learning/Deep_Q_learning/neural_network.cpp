@@ -6,4 +6,28 @@ void NeuralNetwork::link(Layer& layer) {
 		layers[layers.size() - 1]->rear = &layer;
 	}
 	layers.push_back(&layer);
+
+
+}
+
+void NeuralNetwork::checkLayer() {
+	for (Layer* layer : layers) {
+		std::cout << layer->front << " / " << layer << " / " << layer->rear << std::endl;
+	}
+}
+
+void NeuralNetwork::forwardPropagate(Node& Node_in) {
+	layers[0]->setInput(Node_in);
+	if (layers[0]->output == nullptr) {
+		for (int idx = 0; idx < layers.size(); ++idx) {
+			layers[idx]->setOutput();
+			if (idx != layers.size() - 1) {
+				layers[idx]->linkInputOutput();
+			}
+		}
+	}
+
+	for (int idx = 0; idx < layers.size(); ++idx) {
+		layers[idx]->forward();
+	}
 }

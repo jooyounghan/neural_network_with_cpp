@@ -29,3 +29,9 @@ bool asyncIsSame(float* node, float* node_in, const int& start, const int& end) 
 	}
 	return true;
 }
+
+void asyncRelu(float* node, float* node_in, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] > 0 ? node_in[idx] : 0;
+	}
+}

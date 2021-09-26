@@ -148,4 +148,37 @@ bool Node::naiveIsSame(Node& node_in) {
 	return true;
 }
 
+void Node::relu(Node& node_in) {
+	if (this->size != node_in.size) {
+		std::cout << "input and output sizes are different" << std::endl;
+		assert(false);
+		return;
+	}
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node), task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node), task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+}
+
+void Node::naiveRelu(Node& node_in) {
+	if (this->size != node_in.size) {
+		std::cout << "input and output sizes are different" << std::endl;
+		assert(false);
+		return;
+	}
+	for (int i = 0; i < this->size; ++i) {
+		this->node[i] = this->node[i] > 0 ? this->node[i] : 0;
+	}
+}
+
 

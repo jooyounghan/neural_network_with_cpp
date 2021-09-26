@@ -25,6 +25,10 @@ public:
 	bool isSame(Node& node_in);
 	bool naiveIsSame(Node& node_in);
 
+	void relu(Node& node_in);
+	void naiveRelu(Node& node_in);
+
+
 
 	void print() {
 		for (int i = 0; i < row; ++i) {

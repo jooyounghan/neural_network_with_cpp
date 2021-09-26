@@ -2,8 +2,6 @@
 #include "layer.h"
 #include <vector>
 
-
-
 class NeuralNetwork {
 
 public:
@@ -13,11 +11,11 @@ public:
 	NeuralNetwork() {};
 	
 	void link(Layer& layer);
+	void checkLayer();
 
-	void checkLayer() {
-		for (Layer* layer : layers) {
-			std::cout << layer->front << " / " << layer << " / " << layer->rear << std::endl;
-		}
+	void forwardPropagate(Node& Node_in);
+
+	void getOutput() {
+		layers[layers.size() - 1]->output->print();
 	}
-
 };
