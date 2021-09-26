@@ -16,9 +16,9 @@ public:
 	{
 		end = std::chrono::system_clock::now();
 	}
-	void elasped()
+	void elasped(const char* text)
 	{
-		std::cout << std::chrono::duration<double>(end - start).count() << "\n";
+		std::cout << text << " : " << std::chrono::duration<double>(end - start).count() << "\n";
 	}
 	void checkTime()
 	{

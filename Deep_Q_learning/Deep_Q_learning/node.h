@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "node_async_function.h"
+#include <cassert>
 
 class Node {
 
@@ -11,43 +11,20 @@ public:
 	float* node = nullptr;
 
 public:
-	Node(const int& row_in, const int& col_in)
-		: row(row_in), col(col_in), size(row_in* col_in) {
-		node = new float[size];
-	}
+	Node(const int& row_in, const int& col_in);
 
-	void heInitialize(Node& before) {
-		std::mt19937 mt(seed);
-		std::normal_distribution<float> dist(0, (float)std::sqrt(2.0 / before.size));
-		
-		std::vector<std::future<void>> tasks;
-		tasks.resize(cores);
+	void heInitialize(Node& before);
+	void naiveHeInitialize(Node& before);
 
-		int task_allocation = size / cores;
+	void xavierInitialize(Node& before, Node& after);
+	void naiveXavierInitialize(Node& before, Node& after);
 
-		for (int i = 0; i < cores; ++i) {
-			if (i == cores - 1) {
-				tasks[i] = std::async(async_initialize, std::ref(node), task_allocation * i, size, std::ref(mt), std::ref(dist));
-			}
-			else {
-				tasks[i] = std::async(async_initialize, std::ref(node), task_allocation * i, task_allocation * (i + 1), std::ref(mt), std::ref(dist));
-			}
-		}
-	}
+	void matMul(Node& node_in, Node& w_in);
+	void naiveMatMul(Node& node_in, Node& w_in);
 
-	void naive_heInitialize(Node& before) {
-		std::mt19937 mt(seed);
-		std::normal_distribution<float> dist(0, (float)std::sqrt(2.0 / before.size));
+	bool isSame(Node& node_in);
+	bool naiveIsSame(Node& node_in);
 
-		for (int i = 0; i < size; ++i) {
-			node[i] = dist(mt);
-		}
-	}
-	//void heInitialize(Node& before, Node& after) {
-	//	std::mt19937 mt(seed);
-	//	std::normal_distribution<float> dist(0, (float)std::sqrt(2.0 / (before.size + after.size)));
-	//	async_initialize();
-	//}
 
 	void print() {
 		for (int i = 0; i < row; ++i) {

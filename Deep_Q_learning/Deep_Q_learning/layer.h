@@ -29,10 +29,16 @@ public:
 		}
 		else {
 			std::cout << "Can't set Input to this Layer" << "\n";
+			return;
 		}
 	}
 
 	virtual void forward() override {
+
+	}
+
+
+	virtual void backward(const float& lr) override {
 
 	}
 };
@@ -40,5 +46,11 @@ public:
 
 class Relu : public Layer {
 public:
-	// 다음층의 CudaHost.
+	virtual void forward() override {
+
+	}
+
+	virtual void backward(const float& lr) override {
+
+	}
 };
