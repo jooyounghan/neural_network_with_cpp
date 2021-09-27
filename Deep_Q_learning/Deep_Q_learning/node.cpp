@@ -5,7 +5,12 @@
 
 Node::Node(const int& row_in, const int& col_in)
 	: row(row_in), col(col_in), size(row_in* col_in) {
-	node = new float[size];
+	this->node = new float[size];
+}
+
+Node::Node(const int& row_in, const int& col_in, float*& data)
+	: row(row_in), col(col_in), size(row_in* col_in), node(data) {
+	data = nullptr;
 }
 
 void Node::heInitialize(Node& before) {
@@ -33,6 +38,12 @@ void Node::naiveHeInitialize(Node& before) {
 
 	for (int i = 0; i < size; ++i) {
 		node[i] = dist(mt);
+	}
+}
+
+void Node::baseInitialize() {
+	for (int i = 0; i < size; ++i) {
+		node[i] = i;
 	}
 }
 
@@ -179,6 +190,37 @@ void Node::naiveRelu(Node& node_in) {
 	for (int i = 0; i < this->size; ++i) {
 		this->node[i] = this->node[i] > 0 ? this->node[i] : 0;
 	}
+}
+
+Node Node::transpose() {
+	float* new_node = new float[this->size];
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node), this->row, this->col, task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node), this->row, this->col, task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	for (int i = 0; i < cores; ++i) {
+		tasks[i].wait();
+	}
+	return Node(this->col, this->row, new_node);
+}
+
+Node Node::naiveTranspose() {
+	float* new_node = new float[this->size];
+	for (int r = 0; r < row; ++r) {
+		for (int c = 0; c < col; ++c) {
+			new_node[c * this->row + r] = this->node[r * this->col + c];
+		}
+	}
+	return Node(this->col, this->row, new_node);
 }
 
 

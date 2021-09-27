@@ -143,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="neural_network.cpp" />
     <ClCompile Include="node.cpp" />
+    <ClCompile Include="node_async_function.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constant.h" />

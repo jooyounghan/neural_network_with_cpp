@@ -39,7 +39,21 @@ int main() {
 		nn.link(l3);
 
 		nn.forwardPropagate(input);
-		nn.getOutput();
+		
+		Node n1(3, 3);
+		Node n2(3, 2);
+		Node n3(3, 2);
+		Node n4(3, 2);
+		n1.baseInitialize();
+		n2.baseInitialize();
+		n3.matMul(n1, n2);
+		n4.naiveMatMul(n1, n2);
+		n1.print();
+		n2.print();
+		n3.print();
+		n4.print();
+		Node n5 = n3.transpose();
+		n5.print();
 
 	}
 

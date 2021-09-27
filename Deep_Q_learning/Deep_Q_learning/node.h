@@ -12,9 +12,11 @@ public:
 
 public:
 	Node(const int& row_in, const int& col_in);
-
+	Node(const int& row_in, const int& col_in, float*& data);
 	void heInitialize(Node& before);
 	void naiveHeInitialize(Node& before);
+
+	void baseInitialize();
 
 	void xavierInitialize(Node& before, Node& after);
 	void naiveXavierInitialize(Node& before, Node& after);
@@ -28,7 +30,8 @@ public:
 	void relu(Node& node_in);
 	void naiveRelu(Node& node_in);
 
-
+	Node transpose();
+	Node naiveTranspose();
 
 	void print() {
 		for (int i = 0; i < row; ++i) {
@@ -38,7 +41,6 @@ public:
 			std::cout << std::endl;
 		}
 	}
-
 
 	~Node() {
 		if (node != nullptr) {

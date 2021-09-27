@@ -6,8 +6,6 @@ void NeuralNetwork::link(Layer& layer) {
 		layers[layers.size() - 1]->rear = &layer;
 	}
 	layers.push_back(&layer);
-
-
 }
 
 void NeuralNetwork::checkLayer() {
