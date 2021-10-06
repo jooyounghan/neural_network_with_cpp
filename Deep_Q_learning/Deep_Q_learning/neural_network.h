@@ -13,9 +13,12 @@ public:
 	void link(Layer& layer);
 	void checkLayer();
 
-	void forwardPropagate(Node& Node_in);
+	void setOptimizer(const int& mode);
 
-	void getOutput() {
-		layers[layers.size() - 1]->output->print();
-	}
+	void forwardPropagate(Node& node_in);
+
+	void backwardPropagate(Node& node_label);
+
+	void getInput();
+	void getOutput();
 };

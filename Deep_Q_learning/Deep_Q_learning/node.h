@@ -33,6 +33,9 @@ public:
 	Node transpose();
 	Node naiveTranspose();
 
+	void elementSubtract(Node& node_from, Node& node_sub);
+	void naiveElementSubtract(Node& node_from, Node& node_sub);
+
 	void print() {
 		for (int i = 0; i < row; ++i) {
 			for (int j = 0; j < col; ++j) {

@@ -4,6 +4,7 @@ void asyncInitialize(float* node, const int& start, const int& end, std::mt19937
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = dist(mt);
 	}
+	return;
 }
 
 void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int& K, const int& M, const int& start, const int& end) {
@@ -15,6 +16,7 @@ void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int&
 			node[idx] += node_in[row * K + k] * w[k * M + col];
 		}
 	}
+	return;
 }
 
 bool asyncIsSame(float* node, float* node_in, const int& start, const int& end) {
@@ -30,6 +32,7 @@ void asyncRelu(float* node, float* node_in, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = node_in[idx] > 0 ? node_in[idx] : 0;
 	}
+	return;
 }
 
 void asyncTranspose(float* node, float* node_in, const int& N, const int& M, const int& start, const int& end) {
@@ -38,4 +41,12 @@ void asyncTranspose(float* node, float* node_in, const int& N, const int& M, con
 		const int& col = idx % M;
 		node[col * N + row] = node_in[row * M + col];
 	}
+	return;
+}
+
+void asyncSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_from[idx] - node_sub[idx];
+	}
+	return;
 }

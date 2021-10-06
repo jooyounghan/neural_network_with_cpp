@@ -1,6 +1,7 @@
 #pragma once
 #include <random>
 #include <assert.h>
+#include <iostream>
 #include "constatns.h"
 
 class Variable

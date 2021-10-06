@@ -2,7 +2,6 @@
 #include "node.h"
 #include "optimizer.h"
 
-
 class Layer {
 public:
 	Layer* front = nullptr;
@@ -13,9 +12,9 @@ public:
 public:
 	virtual void setInput(Node& input) = 0;
 	virtual void setOutput() = 0;
+	virtual void setOptimizer(const int& mode) = 0;
 	virtual void forward() = 0;
 	virtual void backward(const float& lr) = 0;
-
 	void linkInputOutput();
 
 
@@ -39,10 +38,12 @@ public:
 	Optimizer* opt;
 
 public:
-	HiddenLayer(Node& w_in, Optimizer* opt_in);
+	HiddenLayer(Node& w_in);
 
 	virtual void setInput(Node& input) override;
 	virtual void setOutput() override;
+
+	virtual void setOptimizer(const int& mode) override;
 
 	virtual void forward() override;
 	virtual void backward(const float& lr) override {
@@ -53,26 +54,12 @@ public:
 
 class Relu : public Layer {
 public:
-	virtual void setInput(Node& input) override {
-		if (front == nullptr) {
-			this->input = &input;
-		}
-		else {
-			std::cout << "Can't set Input to this Layer" << "\n";
-			return;
-		}
-	}
+	virtual void setInput(Node& input) override;
+	virtual void setOutput() override;
 
-	virtual void setOutput() override {
-		this->output = new Node(input->row, input->col);
-		this->rear->input = output;
-	}
+	virtual void setOptimizer(const int& mode) override;
 
-
-	virtual void forward() override {
-		output->relu(*input);
-	}
-
+	virtual void forward() override;
 	virtual void backward(const float& lr) override {
 
 	}

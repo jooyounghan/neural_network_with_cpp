@@ -10,3 +10,4 @@ void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int&
 bool asyncIsSame(float* node, float* node_in, const int& start, const int& end);
 void asyncRelu(float* node, float* node_in, const int& start, const int& end);
 void asyncTranspose(float* node, float* node_in, const int& N, const int& M, const int& start, const int& end);
+void asyncSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end);

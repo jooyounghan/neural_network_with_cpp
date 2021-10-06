@@ -1,13 +1,13 @@
 #pragma once
 #include "Optimizer.h"
-
-#define PASS (void)0
 #include "Variable.h"
 #include "math.h"
 
+#define PASS (void)0
+
+
 class Function
 {
-public :
 	/*
 		Function Class with Function* next for forward() (forward Propagation),
 		and Function* back for backward() (Back Propagation)

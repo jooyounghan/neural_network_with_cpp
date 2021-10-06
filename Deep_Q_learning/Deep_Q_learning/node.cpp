@@ -223,4 +223,39 @@ Node Node::naiveTranspose() {
 	return Node(this->col, this->row, new_node);
 }
 
+void Node::elementSubtract(Node& node_from, Node& node_sub) {
+	if (node_from.row != node_sub.row || node_from.col != node_sub.col || this->row != node_from.row || this->col != node_from.col) {
+		std::cout << "for matrix subtract, matrix sizes have to be same" << std::endl;
+		assert(false);
+		return;
+	}
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node), std::ref(node_sub.node), task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node), std::ref(node_sub.node), task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+
+}
+
+void Node::naiveElementSubtract(Node& node_from, Node& node_sub) {
+	if (node_from.row != node_sub.row || node_from.col != node_sub.col || this->row != node_from.row || this->col != node_from.col) {
+		std::cout << "for matrix subtract, matrix sizes have to be same" << std::endl;
+		assert(false);
+		return;
+	}
+	for (int i = 0; i < this->size; ++i) {
+		this->node[i] = node_from.node[i] - node_sub.node[i];
+	}
+	return;
+}
+
 
