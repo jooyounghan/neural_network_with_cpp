@@ -14,9 +14,9 @@ void NeuralNetwork::checkLayer() {
 	}
 }
 
-void NeuralNetwork::setOptimizer(const int& mode) {
+void NeuralNetwork::setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) {
 	for (Layer* layer : layers) {
-		layer->setOptimizer(mode);
+		layer->setOptimizer(mode, constant1, constant2);
 	}
 }
 

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "node.h"
 #include "optimizer.h"
 
 class Layer {
@@ -12,7 +11,7 @@ public:
 public:
 	virtual void setInput(Node& input) = 0;
 	virtual void setOutput() = 0;
-	virtual void setOptimizer(const int& mode) = 0;
+	virtual void setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) = 0;
 	virtual void forward() = 0;
 	virtual void backward(const float& lr) = 0;
 	void linkInputOutput();
@@ -43,7 +42,7 @@ public:
 	virtual void setInput(Node& input) override;
 	virtual void setOutput() override;
 
-	virtual void setOptimizer(const int& mode) override;
+	virtual void setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) override;
 
 	virtual void forward() override;
 	virtual void backward(const float& lr) override {
@@ -57,7 +56,7 @@ public:
 	virtual void setInput(Node& input) override;
 	virtual void setOutput() override;
 
-	virtual void setOptimizer(const int& mode) override;
+	virtual void setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) override;
 
 	virtual void forward() override;
 	virtual void backward(const float& lr) override {

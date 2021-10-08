@@ -62,5 +62,8 @@
     <ClCompile Include="node_async_function.cpp">
       <Filter>헤더 파일\NeuralNetwork</Filter>
     </ClCompile>
+    <ClCompile Include="optimizer.cpp">
+      <Filter>헤더 파일\NeuralNetwork</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

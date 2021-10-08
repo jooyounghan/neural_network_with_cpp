@@ -3,6 +3,12 @@
 
 #define SEED	100
 
+Node::Node() {
+	this->row = 0;
+	this->col = 0;
+	this->size = 0;
+}
+
 Node::Node(const int& row_in, const int& col_in)
 	: row(row_in), col(col_in), size(row_in* col_in) {
 	this->node = new float[size];
@@ -24,10 +30,12 @@ void Node::heInitialize(Node& before) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, size, std::ref(mt), std::ref(dist));
+			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, size,
+				std::ref(mt), std::ref(dist));
 		}
 		else {
-			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, task_allocation * (i + 1), std::ref(mt), std::ref(dist));
+			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, task_allocation * (i + 1),
+				std::ref(mt), std::ref(dist));
 		}
 	}
 }
@@ -58,10 +66,12 @@ void Node::xavierInitialize(Node& before, Node& after) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, size, std::ref(mt), std::ref(dist));
+			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, size,
+				std::ref(mt), std::ref(dist));
 		}
 		else {
-			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, task_allocation * (i + 1), std::ref(mt), std::ref(dist));
+			tasks[i] = std::async(asyncInitialize, std::ref(node), task_allocation * i, task_allocation * (i + 1),
+				std::ref(mt), std::ref(dist));
 		}
 	}
 }
@@ -88,10 +98,12 @@ void Node::matMul(Node& node_in, Node& w_in) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node), node_in.row, node_in.col, w_in.col, task_allocation * i, size);
+			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node),
+				node_in.row, node_in.col, w_in.col, task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node), node_in.row, node_in.col, w_in.col, task_allocation * i, task_allocation * (i + 1));
+			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node),
+				node_in.row, node_in.col, w_in.col, task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 }
@@ -128,10 +140,12 @@ bool Node::isSame(Node& node_in) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncIsSame, std::ref(this->node), std::ref(node_in.node), task_allocation * i, size);
+			tasks[i] = std::async(asyncIsSame, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncIsSame, std::ref(this->node), std::ref(node_in.node), task_allocation * i, task_allocation * (i + 1));
+			tasks[i] = std::async(asyncIsSame, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 
@@ -151,7 +165,8 @@ bool Node::naiveIsSame(Node& node_in) {
 
 	for (int i = 0; i < this->row; ++i) {
 		for (int j = 0; j < this->col; ++j) {
-			if (this->node[i * this->col + j] < node_in.node[i * this->col + j] + ERR && this->node[i * this->col + j] > node_in.node[i * this->col + j] - ERR) {
+			if (this->node[i * this->col + j] < node_in.node[i * this->col + j] + ERR &&
+				this->node[i * this->col + j] > node_in.node[i * this->col + j] - ERR) {
 				return false;
 			}
 		}
@@ -173,10 +188,12 @@ void Node::relu(Node& node_in) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node), task_allocation * i, size);
+			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node), task_allocation * i, task_allocation * (i + 1));
+			tasks[i] = std::async(asyncRelu, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 }
@@ -192,6 +209,67 @@ void Node::naiveRelu(Node& node_in) {
 	}
 }
 
+void Node::copySemantic(Node& node_in) {
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
+	this->row = node_in.row;
+	this->col = node_in.col;
+	this->size = node_in.size;
+	this->node = new float[size];
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncCopy, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncCopy, std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+}
+
+void Node::naiveCopySemantic(Node& node_in) {
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
+	this->row = node_in.row;
+	this->col = node_in.col;
+	this->size = node_in.size;
+	this->node = new float[size];
+	for (int i = 0; i < size; ++i) {
+		this->node[i] = node_in.node[i];
+	}
+}
+
+void Node::moveSemantic(Node& node_in) {
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
+	this->node = node_in.node;
+	node_in.node = nullptr;
+	return;
+}
+
+void Node::moveSemantic(Node&& node_in) {
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
+	this->node = node_in.node;
+	node_in.node = nullptr;
+	return;
+}
+
 Node Node::transpose() {
 	float* new_node = new float[this->size];
 	std::vector<std::future<void>> tasks;
@@ -201,10 +279,12 @@ Node Node::transpose() {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node), this->row, this->col, task_allocation * i, size);
+			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node),
+				this->row, this->col, task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node), this->row, this->col, task_allocation * i, task_allocation * (i + 1));
+			tasks[i] = std::async(asyncTranspose, std::ref(new_node), std::ref(this->node),
+				this->row, this->col, task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 	for (int i = 0; i < cores; ++i) {
@@ -224,7 +304,8 @@ Node Node::naiveTranspose() {
 }
 
 void Node::elementSubtract(Node& node_from, Node& node_sub) {
-	if (node_from.row != node_sub.row || node_from.col != node_sub.col || this->row != node_from.row || this->col != node_from.col) {
+	if (node_from.row != node_sub.row || node_from.col != node_sub.col
+		|| this->row != node_from.row || this->col != node_from.col) {
 		std::cout << "for matrix subtract, matrix sizes have to be same" << std::endl;
 		assert(false);
 		return;
@@ -237,17 +318,20 @@ void Node::elementSubtract(Node& node_from, Node& node_sub) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node), std::ref(node_sub.node), task_allocation * i, size);
+			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node),
+				std::ref(node_sub.node), task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node), std::ref(node_sub.node), task_allocation * i, task_allocation * (i + 1));
+			tasks[i] = std::async(asyncSubtract, std::ref(this->node), std::ref(node_from.node),
+				std::ref(node_sub.node), task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 
 }
 
 void Node::naiveElementSubtract(Node& node_from, Node& node_sub) {
-	if (node_from.row != node_sub.row || node_from.col != node_sub.col || this->row != node_from.row || this->col != node_from.col) {
+	if (node_from.row != node_sub.row || node_from.col != node_sub.col ||
+		this->row != node_from.row || this->col != node_from.col) {
 		std::cout << "for matrix subtract, matrix sizes have to be same" << std::endl;
 		assert(false);
 		return;
@@ -258,4 +342,92 @@ void Node::naiveElementSubtract(Node& node_from, Node& node_sub) {
 	return;
 }
 
+Node& Node::operator =(Node& node_in) {
 
+	this->copySemantic(node_in);
+	return *this;
+}
+
+Node& Node::operator =(Node&& node_in) {
+	this->row = node_in.row;
+	this->col = node_in.col;
+	this->size = node_in.size;
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
+	this->node = node_in.node;
+	node_in.node = nullptr;
+	return *this;
+}
+
+
+void Node::print() {
+	for (int i = 0; i < row; ++i) {
+		for (int j = 0; j < col; ++j) {
+			std::cout << node[i * col + j] << " ";
+		}
+		std::cout << std::endl;
+	}
+}
+
+Node::~Node() {
+	if (node != nullptr) {
+		delete node;
+		node = nullptr;
+	}
+}
+
+
+
+Node& operator *(const float& num, Node& node_in) {
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = node_in.size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncElementWiseMat, std::ref(node_in.node),
+				num, task_allocation * i, node_in.size);
+		}
+		else {
+			tasks[i] = std::async(asyncElementWiseMat, std::ref(node_in.node),
+				num, task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	for (int i = 0; i < cores; ++i) {
+		tasks[i].wait();
+	}
+	return node_in;
+}
+
+Node operator +(Node& node_in_1, Node& node_in_2) {
+	if (node_in_1.row != node_in_2.row || node_in_1.col != node_in_2.col) {
+		std::cout << "for matrix addition, matrix sizes have to be same" << std::endl;
+		assert(false);
+		return;
+	}
+
+	float* result = new float[node_in_1.size];
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = node_in_1.size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncElementWiseAdd, std::ref(result), std::ref(node_in_1.node),
+				std::ref(node_in_2.node), task_allocation * i, node_in_1.size);
+		}
+		else {
+			tasks[i] = std::async(asyncElementWiseAdd, std::ref(result), std::ref(node_in_1.node),
+				std::ref(node_in_2.node), task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	for (int i = 0; i < cores; ++i) {
+		tasks[i].wait();
+	}
+	return Node(node_in_1.row, node_in_1.col, result);
+}

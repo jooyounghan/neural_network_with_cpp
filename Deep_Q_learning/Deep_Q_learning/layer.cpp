@@ -20,18 +20,17 @@ void HiddenLayer::setOutput() {
 	this->output = new Node(input->row, w.col);
 }
 
-void HiddenLayer::setOptimizer(const int& mode) {
+void HiddenLayer::setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) {
 	if (this->opt != nullptr) {
 		delete this->opt;
 		opt = nullptr;
 	}
-
 	switch (mode)
 	{
 		case GRADIENT_DESCENT:
 			this->opt = new GradientDescent;
 		case MOMENTUM:
-			this->opt = new Momentum;
+			this->opt = new Momentum(constant1);
 		case NAG:
 			this->opt = new Nag;
 		case ADAGRAD:
@@ -69,7 +68,7 @@ void Relu::setOutput() {
 	this->rear->input = output;
 }
 
-void Relu::setOptimizer(const int& mode) {
+void Relu::setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) {
 	return;
 }
 

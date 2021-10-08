@@ -50,3 +50,24 @@ void asyncSubtract(float* node, float* node_from, float* node_sub, const int& st
 	}
 	return;
 }
+
+void asyncCopy(float* node, float* node_in, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_in[i];
+	}
+	return;
+}
+
+void asyncElementWiseMat(float* node_in, const float& num, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node_in[i] = node_in[i] * num;
+	}
+	return;
+}
+
+void asyncElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_in_1[i] + node_in_2[i];
+	}
+	return;
+}

@@ -11,6 +11,7 @@ public:
 	float* node = nullptr;
 
 public:
+	Node();
 	Node(const int& row_in, const int& col_in);
 	Node(const int& row_in, const int& col_in, float*& data);
 	void heInitialize(Node& before);
@@ -30,25 +31,26 @@ public:
 	void relu(Node& node_in);
 	void naiveRelu(Node& node_in);
 
+	void copySemantic(Node& node_in);
+	void naiveCopySemantic(Node& node_in);
+
+	void moveSemantic(Node& node_in);
+	void moveSemantic(Node&& node_in);
+
 	Node transpose();
 	Node naiveTranspose();
 
 	void elementSubtract(Node& node_from, Node& node_sub);
 	void naiveElementSubtract(Node& node_from, Node& node_sub);
 
-	void print() {
-		for (int i = 0; i < row; ++i) {
-			for (int j = 0; j < col; ++j) {
-				std::cout << node[i * col + j] << " ";
-			}
-			std::cout << std::endl;
-		}
-	}
+	Node& operator =(Node& node_in);
+	Node& operator = (Node&& node_in);
 
-	~Node() {
-		if (node != nullptr) {
-			delete node;
-			node = nullptr;
-		}
-	}
+	friend Node& operator *(const float& num, Node& node_in);
+	friend Node operator +(Node& node_in_1, Node& node_in_2);
+
+	void print();
+
+	~Node();
 };
+
