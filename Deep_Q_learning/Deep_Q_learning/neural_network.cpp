@@ -37,7 +37,7 @@ void NeuralNetwork::forwardPropagate(Node& node_in) {
 }
 
 void NeuralNetwork::backwardPropagate(Node& node_label) {
-	layers[layers.size() - 1]->output->elementSubtract(*layers[layers.size() - 1]->output, node_label);
+	layers[layers.size() - 1]->output->nodeElementWiseSubtract(*layers[layers.size() - 1]->output, node_label);
 	for (int idx = layers.size() - 1; idx >= 0; --idx) {
 		layers[idx]->backward();
 	}

@@ -10,9 +10,11 @@ void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int&
 bool asyncIsSame(float* node, float* node_in, const int& start, const int& end);
 void asyncRelu(float* node, float* node_in, const int& start, const int& end);
 void asyncTranspose(float* node, float* node_in, const int& N, const int& M, const int& start, const int& end);
-void asyncSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end);
+
+void asyncNodeSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end);
 
 void asyncCopy(float* node, float* node_in, const int& start, const int& end);
 
-void asyncElementWiseMat(float* node_in, const float& num, const int& start, const int& end);
-void asyncElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end);
+void asyncConstantMul(float* node, const float& num, const int& start, const int& end);
+void asyncConstantMat(float* node, float* node_in, const float& num, const int& start, const int& end);
+void asyncNodeElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end);

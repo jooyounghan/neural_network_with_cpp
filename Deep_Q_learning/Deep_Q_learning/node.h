@@ -22,8 +22,8 @@ public:
 	void xavierInitialize(Node& before, Node& after);
 	void naiveXavierInitialize(Node& before, Node& after);
 
-	void matMul(Node& node_in, Node& w_in);
-	void naiveMatMul(Node& node_in, Node& w_in);
+	void nodeMatMul(Node& node_in, Node& w_in);
+	void naiveNodeMatMul(Node& node_in, Node& w_in);
 
 	bool isSame(Node& node_in);
 	bool naiveIsSame(Node& node_in);
@@ -40,14 +40,19 @@ public:
 	Node transpose();
 	Node naiveTranspose();
 
-	void elementSubtract(Node& node_from, Node& node_sub);
-	void naiveElementSubtract(Node& node_from, Node& node_sub);
+	void nodeElementWiseSubtract(Node& node_from, Node& node_sub);
+	void naiveNodeElementWiseSubtract(Node& node_from, Node& node_sub);
+
+	void constantMul(const float& num);
+	void naiveConstantMul(const float& num);
+
+	Node operator +(Node& node_in_2);
+	Node operator +(const Node& node_in_2);
 
 	Node& operator =(Node& node_in);
 	Node& operator = (Node&& node_in);
 
-	friend Node& operator *(const float& num, Node& node_in);
-	friend Node operator +(Node& node_in_1, Node& node_in_2);
+	friend Node operator *(const float& num, Node& node_in);
 
 	void print();
 

@@ -44,7 +44,7 @@ void asyncTranspose(float* node, float* node_in, const int& N, const int& M, con
 	return;
 }
 
-void asyncSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
+void asyncNodeSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = node_from[idx] - node_sub[idx];
 	}
@@ -58,14 +58,20 @@ void asyncCopy(float* node, float* node_in, const int& start, const int& end) {
 	return;
 }
 
-void asyncElementWiseMat(float* node_in, const float& num, const int& start, const int& end) {
+void asyncConstantMul(float* node, const float& num, const int& start, const int& end) {
 	for (int i = start; i < end; ++i) {
-		node_in[i] = node_in[i] * num;
+		node[i] = node[i] * num;
+	}
+}
+
+void asyncConstantMat(float* node, float* node_in, const float& num, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_in[i] * num;
 	}
 	return;
 }
 
-void asyncElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end) {
+void asyncNodeElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end) {
 	for (int i = start; i < end; ++i) {
 		node[i] = node_in_1[i] + node_in_2[i];
 	}

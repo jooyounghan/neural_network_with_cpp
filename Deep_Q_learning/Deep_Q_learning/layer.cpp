@@ -20,7 +20,7 @@ void HiddenLayer::setOutput() {
 	this->output = new Node(input->row, w.col);
 }
 
-void HiddenLayer::setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) {
+void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0) {
 	if (this->opt != nullptr) {
 		delete this->opt;
 		opt = nullptr;
@@ -28,11 +28,11 @@ void HiddenLayer::setOptimizer(const int& mode, const float& constant1 = 0, cons
 	switch (mode)
 	{
 		case GRADIENT_DESCENT:
-			this->opt = new GradientDescent;
+			this->opt = new GradientDescent(lr);
 		case MOMENTUM:
-			this->opt = new Momentum(constant1);
+			this->opt = new Momentum(lr, constant1);
 		case NAG:
-			this->opt = new Nag;
+			this->opt = new Nag(lr, constant1);
 		case ADAGRAD:
 			this->opt = new Adagrad;
 		case RMSPROP:
@@ -47,7 +47,7 @@ void HiddenLayer::setOptimizer(const int& mode, const float& constant1 = 0, cons
 }
 
 void HiddenLayer::forward() {
-	output->matMul(*input, w);
+	output->nodeMatMul(*input, w);
 }
 
 
@@ -68,7 +68,7 @@ void Relu::setOutput() {
 	this->rear->input = output;
 }
 
-void Relu::setOptimizer(const int& mode, const float& constant1 = 0, const float& constant2 = 0) {
+void Relu::setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0) {
 	return;
 }
 
