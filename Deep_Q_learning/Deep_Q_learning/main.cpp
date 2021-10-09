@@ -37,7 +37,7 @@ int main() {
 		nn.link(act2);
 		nn.link(l3);
 
-		nn.setOptimizer(GRADIENT_DESCENT);
+		nn.setOptimizer(GRADIENT_DESCENT, 0.9);
 
 		nn.forwardPropagate(input);
 		std::cout << "Input data" << std::endl;

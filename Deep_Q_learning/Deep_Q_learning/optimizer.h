@@ -32,11 +32,13 @@ public:
 	float momentum_alpha;
 public:
 	Momentum(const float& lr_in, const float& alpha) : Optimizer(lr_in), momentum_alpha(alpha) {}
+
 	virtual void optimize(Node& present_gradient) override;
 	virtual Node& getGradient() override;
 };
 
 class Nag : public Optimizer {
+public:
 	float momentum_alpha;
 	Node gradient;
 public:
@@ -46,13 +48,37 @@ public:
 };
 
 class Adagrad : public Optimizer {
-
+public:
+	float delta;
+	Node g_node;
+public:
+	Adagrad(const float& lr_in, const float& delta_in) : Optimizer(lr_in), g_node(Node()), delta(delta_in) {}
+	virtual void optimize(Node& present_gradient) override;
+	virtual Node& getGradient() override;
 };
 
 class Rmsprop : public Optimizer {
-
+public:
+	float delta;
+	float gamma;
+	Node h_node;
+public:
+	Rmsprop(const float& lr_in, const float& delta_in, const float& gamma_in) : Optimizer(lr_in), h_node(Node()), delta(delta_in), gamma(gamma_in) {}
+	virtual void optimize(Node& present_gradient) override;
+	virtual Node& getGradient() override;
 };
 
 class Adam : public Optimizer {
-
+public:
+	unsigned int t;
+	float delta;
+	float rho1;
+	float rho2;
+	Node s_node;
+	Node r_node;
+public:
+	Adam(const float& lr_in, const float& delta_in, const float& rho1_in, const float& rho2_in)
+		: Optimizer(lr_in), s_node(Node()), r_node(Node()), delta(delta_in), rho1(rho1_in), rho2(rho2_in), t(1) {}
+	virtual void optimize(Node& present_gradient) override;
+	virtual Node& getGradient() override;
 };

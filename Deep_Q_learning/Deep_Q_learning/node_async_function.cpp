@@ -35,6 +35,55 @@ void asyncRelu(float* node, float* node_in, const int& start, const int& end) {
 	return;
 }
 
+void asyncSquare(float* node, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node[idx] * node[idx];
+	}
+	return;
+}
+
+void asyncGetSquare(float* node, float* node_in, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] * node_in[idx];
+	}
+	return;
+}
+
+void asyncGetSqrt(float* node, float* node_in, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = std::sqrtf(node_in[idx]);
+	}
+	return;
+}
+
+void asyncGetFraction(float* node, float* node_in, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = 1 / node_in[idx];
+	}
+	return;
+}
+
+void asyncGetNodeSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_from[i] - node_sub[i];
+	}
+	return;
+}
+
+void asyncGetNodeMul(float* node, float* node_from, float* node_mul, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_from[i] * node_mul[i];
+	}
+	return;
+}
+
+void asycnGetConstantMul(float* node, float* node_in, const float& num, const int& start, const int& end) {
+	for (int i = start; i < end; ++i) {
+		node[i] = node_in[i] * num;
+	}
+	return;
+}
+
 void asyncTranspose(float* node, float* node_in, const int& N, const int& M, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		const int& row = idx / M;
@@ -52,28 +101,34 @@ void asyncNodeSubtract(float* node, float* node_from, float* node_sub, const int
 }
 
 void asyncCopy(float* node, float* node_in, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_in[i];
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx];
 	}
 	return;
 }
 
 void asyncConstantMul(float* node, const float& num, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node[i] * num;
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node[idx] * num;
 	}
 }
 
 void asyncConstantMat(float* node, float* node_in, const float& num, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_in[i] * num;
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] * num;
 	}
 	return;
 }
 
+void asyncConstantAdd(float* node, float* node_in, const float& num, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] + num;
+	}
+}
+
 void asyncNodeElementWiseAdd(float* node, float* node_in_1, float* node_in_2, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_in_1[i] + node_in_2[i];
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in_1[idx] + node_in_2[idx];
 	}
 	return;
 }

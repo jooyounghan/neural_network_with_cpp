@@ -20,7 +20,7 @@ void HiddenLayer::setOutput() {
 	this->output = new Node(input->row, w.col);
 }
 
-void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0) {
+void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& constant1, const float& constant2, const float& constant3) {
 	if (this->opt != nullptr) {
 		delete this->opt;
 		opt = nullptr;
@@ -29,16 +29,20 @@ void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& co
 	{
 		case GRADIENT_DESCENT:
 			this->opt = new GradientDescent(lr);
+			return;
 		case MOMENTUM:
 			this->opt = new Momentum(lr, constant1);
+			return;
 		case NAG:
 			this->opt = new Nag(lr, constant1);
+			return;
 		case ADAGRAD:
-			this->opt = new Adagrad;
+			this->opt = new Adagrad(lr, constant1);
+			return;
 		case RMSPROP:
-			this->opt = new Rmsprop;
+			this->opt = new Rmsprop(lr, constant1, constant2);
 		case ADAM:
-			this->opt = new Adam;
+			this->opt = new Adam(lr, constant1, constant2, constant3);
 		default:
 			std::cout << "Inappropriate Mode" << std::endl;
 			assert(false);
@@ -49,9 +53,6 @@ void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& co
 void HiddenLayer::forward() {
 	output->nodeMatMul(*input, w);
 }
-
-
-
 
 void Relu::setInput(Node& input) {
 	if (front == nullptr) {
@@ -68,7 +69,7 @@ void Relu::setOutput() {
 	this->rear->input = output;
 }
 
-void Relu::setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0) {
+void Relu::setOptimizer(const int& mode, const float& lr, const float& constant1, const float& constant2, const float& constant3) {
 	return;
 }
 
