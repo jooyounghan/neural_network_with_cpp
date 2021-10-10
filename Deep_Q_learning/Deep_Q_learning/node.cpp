@@ -23,6 +23,27 @@ Node::Node(const int& row_in, const int& col_in, float*& data)
 	data = nullptr;
 }
 
+Node::Node(const std::initializer_list<std::initializer_list<float>>& initial)
+	: row(initial.size()), col(0), size(0), node(nullptr) {
+	for (const std::initializer_list<float>& init : initial) {
+		if (init.size() > this->col) {
+			this->col = init.size();
+		}
+	}
+	this->size = this->row * this->col;
+	this->node = new float[this->size];
+	int temp_row_idx = 0;
+	int temp_col_idx;
+	for (auto& init : initial) {
+		temp_col_idx = 0;
+		for (auto& ist : init) {
+			this->node[temp_row_idx * this->col + temp_col_idx] = ist;
+			temp_col_idx++;
+		}
+		temp_row_idx++;
+	}
+}
+
 void Node::heInitialize(Node& before) {
 	std::mt19937 mt(SEED);
 	std::normal_distribution<float> dist(0, (float)std::sqrt(2.0 / before.size));
@@ -88,8 +109,9 @@ void Node::naiveXavierInitialize(Node& before, Node& after) {
 	}
 }
 
-void Node::nodeMatMul(Node& node_in, Node& w_in) {
-	if (node_in.row != this->row || w_in.col != this->col || node_in.col != w_in.row) {
+void Node::nodeMatMul(Node& w_in, Node& node_in) {
+	std::cout << w_in.row << " " << w_in.col << " " << node_in.row << " " << node_in.col << " " << this->row << " " << this->col << std::endl;
+	if (w_in.row != this->row || node_in.col != this->col || w_in.col != node_in.row) {
 		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met" << std::endl;
 		assert(false);
 		return;
@@ -102,18 +124,18 @@ void Node::nodeMatMul(Node& node_in, Node& w_in) {
 
 	for (int i = 0; i < cores; ++i) {
 		if (i == cores - 1) {
-			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node),
+			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(w_in.node), std::ref(node_in.node),
 				node_in.row, node_in.col, w_in.col, task_allocation * i, size);
 		}
 		else {
-			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(node_in.node), std::ref(w_in.node),
+			tasks[i] = std::async(asyncMatMul, std::ref(this->node), std::ref(w_in.node), std::ref(node_in.node),
 				node_in.row, node_in.col, w_in.col, task_allocation * i, task_allocation * (i + 1));
 		}
 	}
 }
 
-void Node::naiveNodeMatMul(Node& node_in, Node& w_in) {
-	if (node_in.row != this->row || w_in.col != this->col || node_in.col != w_in.row) {
+void Node::naiveNodeMatMul(Node& w_in, Node& node_in) {
+	if (w_in.row != this->row || node_in.col != this->col || w_in.col != node_in.row) {
 		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met" << std::endl;
 		assert(false);
 		return;
@@ -123,11 +145,102 @@ void Node::naiveNodeMatMul(Node& node_in, Node& w_in) {
 		for (int j = 0; j < this->col; ++j) {
 			float& temp_node = this->node[i * this->col + j];
 			temp_node = 0;
-			for (int k = 0; k < node_in.col; ++k) {
-				temp_node += node_in.node[i * node_in.col + k] * w_in.node[k * w_in.col + j];
+			for (int k = 0; k < w_in.col; ++k) {
+				temp_node += w_in.node[i * w_in.col + k] * node_in.node[k * node_in.col + j];
 			}
 		}
 	}
+	return;
+}
+
+Node Node::getNodeMatMul(Node& node_in) {
+	if (this->col != node_in.row) {
+		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met (K is different)" << std::endl;
+		assert(false);
+	}
+	float* result = new float[this->row * node_in.col];
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncMatMul, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				this->row, this->col, node_in.col, task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncMatMul, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				this->row, this->col, node_in.col, task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	return Node(this->row, node_in.col, result);
+}
+
+Node Node::getNodeMatMul(Node&& node_in) {
+	if (this->col != node_in.row) {
+		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met (K is different)" << std::endl;
+		assert(false);
+	}
+	float* result = new float[this->row * node_in.col];
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncMatMul, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				this->row, this->col, node_in.col, task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncMatMul, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				this->row, this->col, node_in.col, task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	return Node(this->row, node_in.col, result);
+}
+
+Node Node::naiveGetNodeMatMul(Node& node_in) {
+	if (this->col != node_in.row) {
+		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met (K is different)" << std::endl;
+		assert(false);
+	}
+	float* result = new float[this->row * node_in.col];
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	for (int i = 0; i < this->row; ++i) {
+		for (int j = 0; j < node_in.col; ++j) {
+			float& temp_node = result[i * this->col + j];
+			temp_node = 0;
+			for (int k = 0; k < this->col; ++k) {
+				temp_node += this->node[i * this->col + k] * node_in.node[k * node_in.col + j];
+			}
+		}
+	}
+	return Node(this->row, node_in.col, result);
+}
+
+Node Node::naiveGetNodeMatMul(Node&& node_in) {
+	if (this->col != node_in.row) {
+		std::cout << "for matrix multification, (N x K) * (K x M) = (N x M) has to be met (K is different)" << std::endl;
+		assert(false);
+	}
+	float* result = new float[this->row * node_in.col];
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	for (int i = 0; i < this->row; ++i) {
+		for (int j = 0; j < node_in.col; ++j) {
+			float& temp_node = result[i * this->col + j];
+			temp_node = 0;
+			for (int k = 0; k < this->col; ++k) {
+				temp_node += this->node[i * this->col + k] * node_in.node[k * node_in.col + j];
+			}
+		}
+	}
+	return Node(this->row, node_in.col, result);
 }
 
 bool Node::isSame(Node& node_in) {
@@ -211,6 +324,35 @@ void Node::naiveRelu(Node& node_in) {
 	for (int i = 0; i < this->size; ++i) {
 		this->node[i] = this->node[i] > 0 ? this->node[i] : 0;
 	}
+}
+
+Node Node::getReluGradient() {
+	float* result = new float[this->size];
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncGetReluGradient, std::ref(result), std::ref(this->node),
+				task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncGetReluGradient, std::ref(result), std::ref(this->node),
+				task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	return Node(this->row, this->col, result);
+}
+
+Node Node::naiveGetReluGradient() {
+	float* result = new float[this->size];
+	for (int i = 0; i < this->size; ++i) {
+		result[i] = this->node[i] > 0 ? 1 : 0;
+	}
+	return Node(this->row, this->col, result);
 }
 
 void Node::square() {
@@ -491,7 +633,6 @@ void Node::nodeElementWiseSubtract(Node& node_from, Node& node_sub) {
 				std::ref(node_sub.node), task_allocation * i, task_allocation * (i + 1));
 		}
 	}
-
 }
 
 void Node::naiveNodeElementWiseSubtract(Node& node_from, Node& node_sub) {
@@ -503,6 +644,44 @@ void Node::naiveNodeElementWiseSubtract(Node& node_from, Node& node_sub) {
 	}
 	for (int i = 0; i < this->size; ++i) {
 		this->node[i] = node_from.node[i] - node_sub.node[i];
+	}
+	return;
+}
+
+void Node::nodeElementWiseAdd(Node& node_from, Node& node_add) {
+	if (node_from.row != node_add.row || node_from.col != node_add.col
+		|| this->row != node_from.row || this->col != node_from.col) {
+		std::cout << "for matrix addition, matrix sizes have to be same" << std::endl;
+		assert(false);
+		return;
+	}
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncNodeAdd, std::ref(this->node), std::ref(node_from.node),
+				std::ref(node_add.node), task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncNodeAdd, std::ref(this->node), std::ref(node_from.node),
+				std::ref(node_add.node), task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+}
+
+void Node::naiveNodeElementWiseAdd(Node& node_from, Node& node_add) {
+	if (node_from.row != node_add.row || node_from.col != node_add.col ||
+		this->row != node_from.row || this->col != node_from.col) {
+		std::cout << "for matrix addition, matrix sizes have to be same" << std::endl;
+		assert(false);
+		return;
+	}
+	for (int i = 0; i < this->size; ++i) {
+		this->node[i] = node_from.node[i] + node_add.node[i];
 	}
 	return;
 }
@@ -546,6 +725,50 @@ Node Node::naiveGetNodeElementWiseSubtract(Node& node_in) {
 	float* result = new float[this->size];
 	for (int i = 0; i < this->size; ++i) {
 		result[i] = this->node[i] - node_in.node[i];
+	}
+	return Node(this->row, this->col, result);
+}
+
+Node Node::getNodeElementWiseAdd(Node& node_in) {
+	if (this->size != node_in.size || this->row != node_in.row || this->col != node_in.col) {
+		std::cout << "input and output sizes are different" << std::endl;
+		assert(false);
+	}
+
+	float* result = new float[this->size];
+
+	std::vector<std::future<void>> tasks;
+	tasks.resize(cores);
+
+	const int& task_allocation = size / cores;
+
+	for (int i = 0; i < cores; ++i) {
+		if (i == cores - 1) {
+			tasks[i] = std::async(asyncGetNodeAdd, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, size);
+		}
+		else {
+			tasks[i] = std::async(asyncGetNodeAdd, std::ref(result), std::ref(this->node), std::ref(node_in.node),
+				task_allocation * i, task_allocation * (i + 1));
+		}
+	}
+	for (int i = 0; i < cores; ++i) {
+		tasks[i].wait();
+	}
+
+	return Node(node_in.row, node_in.col, result);
+}
+
+Node Node::naiveGetNodeElementWiseAdd(Node& node_in) {
+	if (this->row != node_in.row || this->col != node_in.col) {
+		std::cout << "for matrix addition, matrix sizes have to be same" << std::endl;
+		assert(false);
+	}
+
+	float* result = new float(this->size);
+
+	for (int i = 0; i < this->size; ++i) {
+		result[i] = this->node[i] + node_in.node[i];
 	}
 	return Node(this->row, this->col, result);
 }

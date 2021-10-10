@@ -16,7 +16,6 @@ public:
 	void setOptimizer(const int& mode, const float& lr_in, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0);
 
 	void forwardPropagate(Node& node_in);
-
 	void backwardPropagate(Node& node_label);
 
 	void getInput();

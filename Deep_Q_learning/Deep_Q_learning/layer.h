@@ -45,15 +45,8 @@ public:
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) override;
 
 	virtual void forward() override;
-	virtual void backward() override {
-
-	}
-	~HiddenLayer() {
-		if (opt != nullptr) {
-			delete opt;
-			opt = nullptr;
-		}
-	}
+	virtual void backward() override;
+	~HiddenLayer();
 };
 
 
@@ -66,6 +59,6 @@ public:
 
 	virtual void forward() override;
 	virtual void backward() override {
-
+		this->input->moveSemantic(this->input->getReluGradient().getElementWiseMul(*this->output));
 	}
 };

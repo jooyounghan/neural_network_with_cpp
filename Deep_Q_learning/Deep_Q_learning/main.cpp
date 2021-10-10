@@ -9,16 +9,12 @@
 */
 
 int main() {
-
 	while (true) {
-		Node input(1, 6);
-		for (int i = 0; i < 6; ++i) {
-			input.node[i] = i;
-		}
-
-		Node weight1(6, 128);
-		Node weight2(128, 64);
-		Node weight3(64, 1);
+		Node input{ {0, 0, 1, 1}, {0, 1, 0, 1} };
+		Node label{ {0, 1, 1, 0} };
+		Node weight1(128, 2);
+		Node weight2(64, 128);
+		Node weight3(1, 64);
 		
 		weight1.heInitialize(input);
 		weight2.heInitialize(weight1);
@@ -44,8 +40,7 @@ int main() {
 		nn.getInput();
 		std::cout << "Output data" << std::endl;
 		nn.getOutput();
-
-
+		nn.backwardPropagate(label);
 	}
 
 

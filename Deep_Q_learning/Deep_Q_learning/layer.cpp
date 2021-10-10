@@ -17,7 +17,7 @@ void HiddenLayer::setInput(Node& input) {
 }
 
 void HiddenLayer::setOutput() {
-	this->output = new Node(input->row, w.col);
+	this->output = new Node(w.row, input->col);
 }
 
 void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& constant1, const float& constant2, const float& constant3) {
@@ -51,7 +51,21 @@ void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& co
 }
 
 void HiddenLayer::forward() {
-	output->nodeMatMul(*input, w);
+	output->nodeMatMul(w, *input);
+}
+
+void HiddenLayer::backward() {
+	Node present_gradient = this->output->getNodeMatMul(this->input->getTranspose());
+	opt->optimize(present_gradient);
+	w.nodeElementWiseAdd(w, opt->getGradient());
+	this->input->moveSemantic(w.getTranspose().getNodeMatMul(*this->output));
+}
+
+HiddenLayer::~HiddenLayer() {
+	if (opt != nullptr) {
+		delete opt;
+		opt = nullptr;
+	}
 }
 
 void Relu::setInput(Node& input) {

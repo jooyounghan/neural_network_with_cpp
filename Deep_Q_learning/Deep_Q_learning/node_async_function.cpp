@@ -7,13 +7,13 @@ void asyncInitialize(float* node, const int& start, const int& end, std::mt19937
 	return;
 }
 
-void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int& K, const int& M, const int& start, const int& end) {
+void asyncMatMul(float* node, float* w, float* node_in, const int& N, const int& K, const int& M, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		const int& row = idx / M;
 		const int& col = idx % M;
 		node[idx] = 0;
 		for (int k = 0; k < K; ++k) {
-			node[idx] += node_in[row * K + k] * w[k * M + col];
+			node[idx] += w[row * K + k] * node_in[k * M + col];
 		}
 	}
 	return;
@@ -31,6 +31,13 @@ bool asyncIsSame(float* node, float* node_in, const int& start, const int& end) 
 void asyncRelu(float* node, float* node_in, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = node_in[idx] > 0 ? node_in[idx] : 0;
+	}
+	return;
+}
+
+void asyncGetReluGradient(float* node, float* node_in, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] > 0 ? 1 : 0;
 	}
 	return;
 }
@@ -64,22 +71,29 @@ void asyncGetFraction(float* node, float* node_in, const int& start, const int& 
 }
 
 void asyncGetNodeSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_from[i] - node_sub[i];
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_from[idx] - node_sub[idx];
+	}
+	return;
+}
+
+void asyncGetNodeAdd(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_from[idx] + node_sub[idx];
 	}
 	return;
 }
 
 void asyncGetNodeMul(float* node, float* node_from, float* node_mul, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_from[i] * node_mul[i];
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_from[idx] * node_mul[idx];
 	}
 	return;
 }
 
 void asycnGetConstantMul(float* node, float* node_in, const float& num, const int& start, const int& end) {
-	for (int i = start; i < end; ++i) {
-		node[i] = node_in[i] * num;
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_in[idx] * num;
 	}
 	return;
 }
@@ -96,6 +110,13 @@ void asyncTranspose(float* node, float* node_in, const int& N, const int& M, con
 void asyncNodeSubtract(float* node, float* node_from, float* node_sub, const int& start, const int& end) {
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = node_from[idx] - node_sub[idx];
+	}
+	return;
+}
+
+void asyncNodeAdd(float* node, float* node_from, float* node_add, const int& start, const int& end) {
+	for (int idx = start; idx < end; ++idx) {
+		node[idx] = node_from[idx] + node_add[idx];
 	}
 	return;
 }
