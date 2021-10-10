@@ -41,8 +41,10 @@ void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& co
 			return;
 		case RMSPROP:
 			this->opt = new Rmsprop(lr, constant1, constant2);
+			return;
 		case ADAM:
 			this->opt = new Adam(lr, constant1, constant2, constant3);
+			return;
 		default:
 			std::cout << "Inappropriate Mode" << std::endl;
 			assert(false);
@@ -72,21 +74,13 @@ void HiddenLayer::naiveBackward() {
 	this->input->moveSemantic(w.naiveGetTranspose().naiveGetNodeMatMul(*this->output));
 }
 
-void HiddenLayer::weightInitialize(const int& mode, Node& node_in) {
+void HiddenLayer::weightInitialize(const int& mode) {
 	switch (mode)
 	{
 	case HE_INITIALIZE:
-		if (this->input == nullptr) {
-			w.heInitialize(node_in);
-			return;
-		}
 		w.heInitialize(*input);
 		return;
 	case XAVIER_INITIALIZE:
-		if (this->input == nullptr) {
-			w.xavierInitialize(node_in, *output);
-			return;
-		}
 		w.xavierInitialize(*input, *output);
 		return;
 	default:
@@ -138,6 +132,6 @@ void Relu::naiveBackward() {
 	this->input->moveSemantic(this->input->naiveGetReluGradient().naiveGetElementWiseMul(*this->output));
 }
 
-void Relu::weightInitialize(const int& mode, Node& node_in) {
+void Relu::weightInitialize(const int& mode) {
 	return;
 }

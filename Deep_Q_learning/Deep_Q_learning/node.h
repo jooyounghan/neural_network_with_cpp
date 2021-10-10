@@ -83,8 +83,8 @@ public:
 	Node getConstantMul(const float& num);
 	Node naiveGetConstantMul(const float& num);
 
-	Node operator +(Node& node_in_2);
-	Node operator +(const Node& node_in_2);
+	Node operator +(Node& node_in);
+	Node operator +(const Node& node_in);
 	Node operator +(const float& num);
 
 	Node& operator =(Node& node_in);
@@ -94,7 +94,6 @@ public:
 	friend Node operator *(const float& num, Node&& node_in);
 
 	void print();
-
 	~Node();
 };
 

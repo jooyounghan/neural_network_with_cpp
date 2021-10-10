@@ -15,6 +15,10 @@ Node::Node(const Node& node_in) {
 
 Node::Node(const int& row_in, const int& col_in)
 	: row(row_in), col(col_in), size(row_in* col_in) {
+	if (this->node != nullptr) {
+		delete[] this->node;
+		this->node = nullptr;
+	}
 	this->node = new float[size];
 }
 

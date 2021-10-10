@@ -45,8 +45,9 @@ int main() {
 		nn.link(act5);
 		nn.link(l6);
 
-		nn.setOptimizer(NAG, 0.01);
-		nn.weightInitialize(HE_INITIALIZE, input);
+		nn.setInput(input);
+		nn.setOptimizer(GRADIENT_DESCENT, 0.001, 0.9);
+		nn.weightInitialize(XAVIER_INITIALIZE);
 
 		int iterations = 1;
 		timer time;
@@ -59,8 +60,9 @@ int main() {
 				std::cout << iterations << std::endl;
 				time.checkStart();
 			}
-			nn.naiveForwardPropagate(input);
-			nn.naiveBackwardPropagate(label);
+			nn.setInput(input);
+			nn.forwardPropagate();
+			nn.backwardPropagate(label);
 			iterations++;
 		}
 		std::cout << "Output data" << std::endl;

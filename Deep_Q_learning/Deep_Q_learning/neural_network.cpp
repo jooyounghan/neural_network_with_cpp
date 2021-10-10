@@ -14,19 +14,7 @@ void NeuralNetwork::checkLayer() {
 	}
 }
 
-void NeuralNetwork::setOptimizer(const int& mode, const float& lr_in, const float& constant1, const float& constant2, const float& constant3) {
-	for (Layer* layer : layers) {
-		layer->setOptimizer(mode, lr_in, constant1, constant2, constant3);
-	}
-}
-
-void NeuralNetwork::weightInitialize(const int& mode, Node& node_in) {
-	for (Layer* layer : layers) {
-		layer->weightInitialize(mode, node_in);
-	}
-}
-
-void NeuralNetwork::forwardPropagate(Node& node_in) {
+void NeuralNetwork::setInput(Node& node_in) {
 	layers[0]->setInput(node_in);
 	if (layers[0]->output == nullptr) {
 		for (int idx = 0; idx < layers.size(); ++idx) {
@@ -36,7 +24,21 @@ void NeuralNetwork::forwardPropagate(Node& node_in) {
 			}
 		}
 	}
+}
 
+void NeuralNetwork::setOptimizer(const int& mode, const float& lr_in, const float& constant1, const float& constant2, const float& constant3) {
+	for (Layer* layer : layers) {
+		layer->setOptimizer(mode, lr_in, constant1, constant2, constant3);
+	}
+}
+
+void NeuralNetwork::weightInitialize(const int& mode) {
+	for (Layer* layer : layers) {
+		layer->weightInitialize(mode);
+	}
+}
+
+void NeuralNetwork::forwardPropagate() {
 	for (int idx = 0; idx < layers.size(); ++idx) {
 		layers[idx]->forward();
 	}
@@ -50,17 +52,7 @@ void NeuralNetwork::backwardPropagate(Node& node_label) {
 	}
 }
 
-void NeuralNetwork::naiveForwardPropagate(Node& node_in) {
-	layers[0]->setInput(node_in);
-	if (layers[0]->output == nullptr) {
-		for (int idx = 0; idx < layers.size(); ++idx) {
-			layers[idx]->setOutput();
-			if (idx != layers.size() - 1) {
-				layers[idx]->linkInputOutput();
-			}
-		}
-	}
-
+void NeuralNetwork::naiveForwardPropagate() {
 	for (int idx = 0; idx < layers.size(); ++idx) {
 		layers[idx]->naiveForward();
 	}

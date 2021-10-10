@@ -19,7 +19,7 @@ public:
 	virtual void backward() = 0;
 	virtual void naiveForward() = 0;
 	virtual void naiveBackward() = 0;
-	virtual void weightInitialize(const int& mode, Node& node_in) = 0;
+	virtual void weightInitialize(const int& mode) = 0;
 	void linkInputOutput();
 
 
@@ -54,7 +54,7 @@ public:
 	virtual void backward() override;
 	virtual void naiveForward() override;
 	virtual void naiveBackward() override;
-	virtual void weightInitialize(const int& mode, Node& node_in);
+	virtual void weightInitialize(const int& mode);
 	~HiddenLayer();
 };
 
@@ -70,5 +70,5 @@ public:
 	virtual void backward() override;
 	virtual void naiveForward() override;
 	virtual void naiveBackward() override;
-	virtual void weightInitialize(const int& mode, Node& node_in);
+	virtual void weightInitialize(const int& mode);
 };
