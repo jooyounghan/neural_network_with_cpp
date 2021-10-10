@@ -19,6 +19,6 @@ constexpr float lr = 0.001f;
 constexpr float lr_2 = 0.01f;
 constexpr float lr_3 = 0.1f;
 
-constexpr int iters = 1000;
+constexpr int iters = 10000;
 
 constexpr float ERROR_MAX = 10E-6;

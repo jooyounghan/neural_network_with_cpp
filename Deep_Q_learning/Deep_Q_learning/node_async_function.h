@@ -6,7 +6,7 @@
 #define ERR		1E-6
 
 void asyncInitialize(float* node, const int& start, const int& end, std::mt19937& mt, std::normal_distribution<float>& dist);
-void asyncMatMul(float* node, float* node_in, float* w, const int& N, const int& K, const int& M, const int& start, const int& end);
+void asyncMatMul(float* node, float* w, float* node_in, const int& N, const int& K, const int& M, const int& start, const int& end);
 bool asyncIsSame(float* node, float* node_in, const int& start, const int& end);
 void asyncRelu(float* node, float* node_in, const int& start, const int& end);
 void asyncGetReluGradient(float* node, float* node_in, const int& start, const int& end);

@@ -20,6 +20,12 @@ void NeuralNetwork::setOptimizer(const int& mode, const float& lr_in, const floa
 	}
 }
 
+void NeuralNetwork::weightInitialize(const int& mode, Node& node_in) {
+	for (Layer* layer : layers) {
+		layer->weightInitialize(mode, node_in);
+	}
+}
+
 void NeuralNetwork::forwardPropagate(Node& node_in) {
 	layers[0]->setInput(node_in);
 	if (layers[0]->output == nullptr) {
@@ -37,10 +43,34 @@ void NeuralNetwork::forwardPropagate(Node& node_in) {
 }
 
 void NeuralNetwork::backwardPropagate(Node& node_label) {
-	layers[layers.size() - 1]->output->nodeElementWiseSubtract(*layers[layers.size() - 1]->output, node_label);
+	layers[layers.size() - 1]->output->nodeElementWiseSubtract(node_label, *layers[layers.size() - 1]->output);
 	// receive parameter from output Node and send it to input Node at backpropagtion.
 	for (int idx = layers.size() - 1; idx >= 0; --idx) {
 		layers[idx]->backward();
+	}
+}
+
+void NeuralNetwork::naiveForwardPropagate(Node& node_in) {
+	layers[0]->setInput(node_in);
+	if (layers[0]->output == nullptr) {
+		for (int idx = 0; idx < layers.size(); ++idx) {
+			layers[idx]->setOutput();
+			if (idx != layers.size() - 1) {
+				layers[idx]->linkInputOutput();
+			}
+		}
+	}
+
+	for (int idx = 0; idx < layers.size(); ++idx) {
+		layers[idx]->naiveForward();
+	}
+}
+
+void NeuralNetwork::naiveBackwardPropagate(Node& node_label) {
+	layers[layers.size() - 1]->output->naiveNodeElementWiseSubtract(node_label, *layers[layers.size() - 1]->output);
+	// receive parameter from output Node and send it to input Node at backpropagtion.
+	for (int idx = layers.size() - 1; idx >= 0; --idx) {
+		layers[idx]->naiveBackward();
 	}
 }
 

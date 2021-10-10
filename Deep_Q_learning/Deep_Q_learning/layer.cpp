@@ -51,7 +51,7 @@ void HiddenLayer::setOptimizer(const int& mode, const float& lr, const float& co
 }
 
 void HiddenLayer::forward() {
-	output->nodeMatMul(w, *input);
+	this->output->nodeMatMul(w, *input);
 }
 
 void HiddenLayer::backward() {
@@ -59,6 +59,41 @@ void HiddenLayer::backward() {
 	opt->optimize(present_gradient);
 	w.nodeElementWiseAdd(w, opt->getGradient());
 	this->input->moveSemantic(w.getTranspose().getNodeMatMul(*this->output));
+}
+
+void HiddenLayer::naiveForward() {
+	this->output->naiveNodeMatMul(w, *input);
+}
+
+void HiddenLayer::naiveBackward() {
+	Node present_gradient = this->output->naiveGetNodeMatMul(this->input->naiveGetTranspose());
+	opt->naiveOptimize(present_gradient);
+	w.naiveNodeElementWiseAdd(w, opt->getGradient());
+	this->input->moveSemantic(w.naiveGetTranspose().naiveGetNodeMatMul(*this->output));
+}
+
+void HiddenLayer::weightInitialize(const int& mode, Node& node_in) {
+	switch (mode)
+	{
+	case HE_INITIALIZE:
+		if (this->input == nullptr) {
+			w.heInitialize(node_in);
+			return;
+		}
+		w.heInitialize(*input);
+		return;
+	case XAVIER_INITIALIZE:
+		if (this->input == nullptr) {
+			w.xavierInitialize(node_in, *output);
+			return;
+		}
+		w.xavierInitialize(*input, *output);
+		return;
+	default:
+		std::cout << "Inappropriate Mode" << std::endl;
+		assert(false);
+	}
+	return;
 }
 
 HiddenLayer::~HiddenLayer() {
@@ -89,4 +124,20 @@ void Relu::setOptimizer(const int& mode, const float& lr, const float& constant1
 
 void Relu::forward() {
 	output->relu(*input);
+}
+
+void Relu::backward() {
+	this->input->moveSemantic(this->input->getReluGradient().getElementWiseMul(*this->output));
+}
+
+void Relu::naiveForward() {
+	output->naiveRelu(*input);
+}
+
+void Relu::naiveBackward() {
+	this->input->moveSemantic(this->input->naiveGetReluGradient().naiveGetElementWiseMul(*this->output));
+}
+
+void Relu::weightInitialize(const int& mode, Node& node_in) {
+	return;
 }

@@ -22,7 +22,7 @@ public:
         for (int iter = 1; iter <= iters; ++iter) {
             Variable result = funcQueue[0]->forward(input);
             result = result - label;
-            if (!(iter % 100)) {
+            if (!(iter % 1000)) {
                 float error = result.error_sum();
                 std::cout << "Iteration " << iter << " : " << error << std::endl;
 

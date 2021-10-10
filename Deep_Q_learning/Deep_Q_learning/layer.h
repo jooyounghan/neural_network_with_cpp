@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "optimizer.h"
 
+#define HE_INITIALIZE		1
+#define XAVIER_INITIALIZE	2
+
 class Layer {
 public:
 	Layer* front = nullptr;
@@ -14,6 +17,9 @@ public:
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) = 0;
 	virtual void forward() = 0;
 	virtual void backward() = 0;
+	virtual void naiveForward() = 0;
+	virtual void naiveBackward() = 0;
+	virtual void weightInitialize(const int& mode, Node& node_in) = 0;
 	void linkInputOutput();
 
 
@@ -46,6 +52,9 @@ public:
 
 	virtual void forward() override;
 	virtual void backward() override;
+	virtual void naiveForward() override;
+	virtual void naiveBackward() override;
+	virtual void weightInitialize(const int& mode, Node& node_in);
 	~HiddenLayer();
 };
 
@@ -58,7 +67,8 @@ public:
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) override;
 
 	virtual void forward() override;
-	virtual void backward() override {
-		this->input->moveSemantic(this->input->getReluGradient().getElementWiseMul(*this->output));
-	}
+	virtual void backward() override;
+	virtual void naiveForward() override;
+	virtual void naiveBackward() override;
+	virtual void weightInitialize(const int& mode, Node& node_in);
 };

@@ -1,5 +1,5 @@
 #include "node_async_function.h"
-
+#include <iostream>
 void asyncInitialize(float* node, const int& start, const int& end, std::mt19937& mt, std::normal_distribution<float>& dist) {
 	for (int idx = start; idx < end; ++idx) {
 		node[idx] = dist(mt);
