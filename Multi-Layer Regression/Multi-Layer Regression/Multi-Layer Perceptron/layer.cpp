@@ -6,7 +6,7 @@ void Layer::linkInputOutput() {
 
 HiddenLayer::HiddenLayer(Node& w_in) : w(w_in), opt(nullptr) {}
 
-void HiddenLayer::setInput(Node& input) {
+void HiddenLayer::setInputSize(Node& input) {
 	if (front == nullptr) {
 		this->input = &input;
 	}
@@ -97,7 +97,7 @@ HiddenLayer::~HiddenLayer() {
 	}
 }
 
-void Relu::setInput(Node& input) {
+void Relu::setInputSize(Node& input) {
 	if (front == nullptr) {
 		this->input = &input;
 	}

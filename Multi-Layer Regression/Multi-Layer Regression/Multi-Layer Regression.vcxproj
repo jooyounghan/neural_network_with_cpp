@@ -145,6 +145,8 @@
     <ClInclude Include="Multi-Layer Perceptron\node.h" />
     <ClInclude Include="Multi-Layer Perceptron\node_async_function.h" />
     <ClInclude Include="Multi-Layer Perceptron\optimizer.h" />
+    <ClInclude Include="Regression Test\graph_generator.h" />
+    <ClInclude Include="Regression Test\function_generator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

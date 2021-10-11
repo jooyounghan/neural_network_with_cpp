@@ -1,4 +1,5 @@
 #pragma once
+#include "node_async_function.h"
 #include <iostream>
 #include <cassert>
 
@@ -17,6 +18,7 @@ public:
 	Node(const int& row_in, const int& col_in);
 	Node(const int& row_in, const int& col_in, float*& data);
 	Node(const std::initializer_list<std::initializer_list<float>>& initial);
+	Node(std::vector<float>& vector_in);
 
 	void heInitialize(Node& before);
 	void naiveHeInitialize(Node& before);

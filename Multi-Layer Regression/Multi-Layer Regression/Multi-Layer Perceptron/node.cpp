@@ -1,4 +1,3 @@
-#include "node_async_function.h"
 #include "node.h"
 
 #define SEED	100
@@ -45,6 +44,14 @@ Node::Node(const std::initializer_list<std::initializer_list<float>>& initial)
 			temp_col_idx++;
 		}
 		temp_row_idx++;
+	}
+}
+
+Node::Node(std::vector<float>& vector_in)
+	: row(1), col(vector_in.size()), size(vector_in.size()), node(nullptr) {
+	this->node = new float[this->size];
+	for (int i = 0; i < this->size; ++i) {
+		node[i] = vector_in[i];
 	}
 }
 

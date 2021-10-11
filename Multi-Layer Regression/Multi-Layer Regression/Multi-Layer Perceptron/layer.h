@@ -12,7 +12,7 @@ public:
 	Node* output = nullptr;
 
 public:
-	virtual void setInput(Node& input) = 0;
+	virtual void setInputSize(Node& input) = 0;
 	virtual void setOutput() = 0;
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) = 0;
 	virtual void forward() = 0;
@@ -45,7 +45,7 @@ public:
 public:
 	HiddenLayer(Node& w_in);
 
-	virtual void setInput(Node& input) override;
+	virtual void setInputSize(Node& input) override;
 	virtual void setOutput() override;
 
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) override;
@@ -61,7 +61,7 @@ public:
 
 class Relu : public Layer {
 public:
-	virtual void setInput(Node& input) override;
+	virtual void setInputSize(Node& input) override;
 	virtual void setOutput() override;
 
 	virtual void setOptimizer(const int& mode, const float& lr, const float& constant1 = 0, const float& constant2 = 0, const float& constant3 = 0) override;
