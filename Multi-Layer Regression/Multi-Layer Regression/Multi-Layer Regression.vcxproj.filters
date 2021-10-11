@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\Multi-Layer Perceptron">
+      <UniqueIdentifier>{a2da5dc6-3d9f-4a83-b9e8-97b93fe87015}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Multi-Layer Perceptron\constant.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multi-Layer Perceptron\layer.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multi-Layer Perceptron\neural_network.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multi-Layer Perceptron\node.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multi-Layer Perceptron\node_async_function.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multi-Layer Perceptron\optimizer.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Multi-Layer Perceptron\layer.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multi-Layer Perceptron\neural_network.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multi-Layer Perceptron\node.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multi-Layer Perceptron\node_async_function.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multi-Layer Perceptron\optimizer.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
