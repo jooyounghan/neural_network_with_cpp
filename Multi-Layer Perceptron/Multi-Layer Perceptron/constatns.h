@@ -1,6 +1,6 @@
 #pragma once
-constexpr int NUM_DATA = 4;
-constexpr int NUM_INPUT_DATA = 2;
+constexpr int NUM_DATA = 7;
+constexpr int NUM_INPUT_DATA = 1;
 constexpr int NUM_NODE1 = 64;
 constexpr int NUM_NODE2 = 32;
 constexpr int NUM_NODE3 = 16;

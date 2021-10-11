@@ -34,4 +34,9 @@ public:
         }
         std::cout << "train finished" << std::endl;
     }
+
+    Variable getResult(Variable& input) {
+        Variable result = funcQueue[0]->forward(input);
+        return result;
+    }
 };
