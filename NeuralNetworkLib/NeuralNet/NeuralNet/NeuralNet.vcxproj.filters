@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{6918bdfe-7ed0-4eac-b98e-dab86585a88c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{c2f8bf3c-0445-4659-96d3-f8224d61e8ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Layer">
+      <UniqueIdentifier>{71c241fb-fdd6-41f0-8c2c-8ad71560776d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNet.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeCast.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="IncludePart.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuralNet.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Node.cpp">
+      <Filter>Layer</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
