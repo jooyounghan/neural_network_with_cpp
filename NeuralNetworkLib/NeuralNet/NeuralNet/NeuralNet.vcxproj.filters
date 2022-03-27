@@ -10,6 +10,9 @@
     <Filter Include="Layer">
       <UniqueIdentifier>{71c241fb-fdd6-41f0-8c2c-8ad71560776d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{e83f101f-0537-49c1-b182-c8158676cd08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -18,34 +21,37 @@
     <ClInclude Include="pch.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="NeuralNet.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeCast.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="Layer.h">
-      <Filter>Layer</Filter>
-    </ClInclude>
-    <ClInclude Include="Node.h">
       <Filter>Layer</Filter>
     </ClInclude>
     <ClInclude Include="IncludePart.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Neuron.h">
+      <Filter>Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuronWrapper.h">
+      <Filter>Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="NeuralNet.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="NeuralNet.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="Layer.cpp">
       <Filter>Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Node.cpp">
+    <ClCompile Include="Neuron.cpp">
       <Filter>Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuronWrapper.cpp">
+      <Filter>Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="NeuralNet.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,9 @@
 #pragma once
-#include "Node.h"
+#include "Neuron.h"
 
-class Layer
+class Layer : public std::vector<Neuron>, public NeuronWrapper<Layer>
 {
+public:
+	void SetNodeNum(const int& num);
 };
 
