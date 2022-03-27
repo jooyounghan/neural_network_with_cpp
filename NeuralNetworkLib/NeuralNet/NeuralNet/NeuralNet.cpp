@@ -8,24 +8,22 @@ NeuralNet::NeuralNet()
 void NeuralNet::SetLayer(int32 layerCount, ...)
 {
 	this->clear();
-	va_list nodeNumLists;
-	va_start(nodeNumLists, layerCount);
+	va_list layerLists;
+	va_start(layerLists, layerCount);
 
-	this->resize(layerCount);
 	for (int32 layerIdx = 0; layerIdx < layerCount; ++layerIdx)
 	{
-		this->at(layerIdx).SetNodeNum(va_arg(nodeNumLists, int32));
+		this->emplace_back(va_arg(layerLists, Dim2D));
 	}
 
-	va_end(nodeNumLists);
+	va_end(layerLists);
 
 	for (int32 layerIdx = 0; layerIdx < layerCount - 1; ++layerIdx)
 	{
-		(this->at(layerIdx)).ConnectTo(this->at(layerIdx + 1));
+		Layer2D& from = this->at(layerIdx);
+		Layer2D& to = this->at(layerIdx + 1);
+		from.ConnectTo(to);
+		ASSERT_CRASH(from.dimension.row == to.dimension.row);
+		weights.push_back(Dim2D(from.dimension.col, to.dimension.col));
 	}
-}
-
-Layer NeuralNet::GetLayer(int32 index)
-{
-	return this->at(index);
 }

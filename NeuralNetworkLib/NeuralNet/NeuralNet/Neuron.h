@@ -1,14 +1,13 @@
 #pragma once
-#include "NeuronWrapper.h"
+#include "IncludePart.h"
 
-class Neuron : public NeuronWrapper<Neuron>
+class Neuron
 {
 public:
 	Neuron();
 
 public:
-	std::vector<Neuron*>	in;
-	std::vector<Neuron*>	out;
 	int32					id;
+	double					value;
 };
 

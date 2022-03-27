@@ -13,6 +13,9 @@
     <Filter Include="Network">
       <UniqueIdentifier>{e83f101f-0537-49c1-b182-c8158676cd08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Propagation">
+      <UniqueIdentifier>{a6d52110-34e6-47cd-814b-1778d0211a34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -30,11 +33,14 @@
     <ClInclude Include="Neuron.h">
       <Filter>Layer</Filter>
     </ClInclude>
-    <ClInclude Include="NeuronWrapper.h">
-      <Filter>Layer</Filter>
-    </ClInclude>
     <ClInclude Include="NeuralNet.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Weight.h">
+      <Filter>Propagation</Filter>
+    </ClInclude>
+    <ClInclude Include="MacroPart.h">
+      <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,11 +53,11 @@
     <ClCompile Include="Neuron.cpp">
       <Filter>Layer</Filter>
     </ClCompile>
-    <ClCompile Include="NeuronWrapper.cpp">
-      <Filter>Layer</Filter>
-    </ClCompile>
     <ClCompile Include="NeuralNet.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Weight.cpp">
+      <Filter>Propagation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

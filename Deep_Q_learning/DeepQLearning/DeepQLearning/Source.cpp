@@ -5,9 +5,6 @@
 int main()
 {	
 	NeuralNet network;
-	network.SetLayer(3, 3, 6, 3);
-	Layer test;
-	Layer test2;
-	test.ConnectTo(test2)
+	network.SetLayer(3, Dim2D(1, 3), Dim2D(1, 6), Dim2D(1, 5));
 	bool check = true;
 }

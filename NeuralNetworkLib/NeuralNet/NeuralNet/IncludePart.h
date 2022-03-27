@@ -1,6 +1,6 @@
 #pragma once
+#include <stdarg.h>
 #include <memory>
-
 #include <string>
 
 #include <stack>
@@ -8,6 +8,8 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+
+#include "MacroPart.h"
 
 using BYTE = unsigned char;
 using int8 = __int8;

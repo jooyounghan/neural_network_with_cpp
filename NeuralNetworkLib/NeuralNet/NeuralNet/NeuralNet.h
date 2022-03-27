@@ -1,13 +1,16 @@
 #pragma once
 #include "Layer.h"
-#include <stdarg.h>
+#include "Weight.h"
 
-class NeuralNet : public std::vector<Layer>
+class NeuralNet : public std::vector<Layer2D>
 {
 public:
 	NeuralNet();
 
 public:
 	void SetLayer(int32 layerCount, ...);
-	Layer GetLayer(int32 index);
+
+public:
+	std::vector<Weight> weights;
+
 };
