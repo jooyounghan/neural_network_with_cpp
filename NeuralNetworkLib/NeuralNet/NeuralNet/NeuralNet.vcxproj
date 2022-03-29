@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActFunc.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IncludePart.h" />
     <ClInclude Include="Layer.h" />
@@ -158,9 +159,11 @@
     <ClInclude Include="NeuralNet.h" />
     <ClInclude Include="Neuron.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Weight.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActFunc.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="NeuralNet.cpp" />
     <ClCompile Include="Neuron.cpp" />
@@ -170,6 +173,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp" />
     <ClCompile Include="Weight.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

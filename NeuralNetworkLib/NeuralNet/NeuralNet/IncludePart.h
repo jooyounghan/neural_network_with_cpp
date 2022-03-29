@@ -1,8 +1,9 @@
 #pragma once
 #include <stdarg.h>
 #include <memory>
-#include <string>
+#include <algorithm>
 
+#include <string>
 #include <stack>
 #include <queue>
 #include <map>

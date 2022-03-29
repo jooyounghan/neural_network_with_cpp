@@ -10,9 +10,10 @@ Dim2D::Dim2D(const Dim2D& dim)
 {}
 
 Layer2D::Layer2D(const Dim2D& dim)
-	: dimension(dim), in(nullptr), out(nullptr)
+	: dimension(dim), in(nullptr), out(nullptr), actFunc(nullptr)
 {
 	values.resize(dimension.totalCount);
+	afterActValues.resize(dimension.totalCount);
 }
 
 void Layer2D::ConnectTo(Layer2D& layer)

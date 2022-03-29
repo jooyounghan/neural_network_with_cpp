@@ -42,6 +42,12 @@
     <ClInclude Include="MacroPart.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="ActFunc.h">
+      <Filter>Propagation</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomGenerator.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -58,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="Weight.cpp">
       <Filter>Propagation</Filter>
+    </ClCompile>
+    <ClCompile Include="ActFunc.cpp">
+      <Filter>Propagation</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomGenerator.cpp">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

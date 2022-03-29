@@ -1,5 +1,5 @@
 #pragma once
-#include "Neuron.h"
+#include "ActFunc.h"
 
 struct Dim2D
 {
@@ -15,6 +15,7 @@ class Layer2D
 public:
 	Dim2D dimension;
 	std::vector<Neuron> values;
+	std::vector<Neuron> afterActValues;
 	Layer2D* in;
 	Layer2D* out;
 	

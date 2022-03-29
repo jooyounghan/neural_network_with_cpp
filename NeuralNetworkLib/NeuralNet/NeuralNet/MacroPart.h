@@ -1,5 +1,7 @@
 #pragma once
 
+#define ASYNC
+#define WORKFORTHREAD						1
 #define CRASH(cause)						\
 {											\
 	uint32*	crash = nullptr;				\
