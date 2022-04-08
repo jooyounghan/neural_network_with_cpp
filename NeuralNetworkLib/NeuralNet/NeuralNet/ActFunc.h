@@ -1,48 +1,33 @@
 #pragma once
 #include "Neuron.h"
 
+template<typename T>
 class ActFunc
 {
-public:
-	virtual void Do(std::vector<Neuron>& in, std::vector<Neuron>& out) = 0;
+	virtual T* GetResult(const int& numOfElement, T* input) = 0;
+	virtual T* GetDeriviate(const int& numOfElement, T* input) = 0;
 };
 
+template<typename T>
 class Sigmoid : public ActFunc
 {
-public:
-	void Do(std::vector<Neuron>& in, std::vector<Neuron>& out) override
+	T* GetResult(T* input)
 	{
-		const int32 inCnt = in.size();
-		ASSERT_CRASH(inCnt == out.size())
-		for (int idx = 0; idx < inCnt; ++idx)
-		{
-			double& outVal = out[idx].value;
-			double& inVal = in[idx].value;
-
-			outVal = 1.0 / (1.0 + std::exp(inVal));
-		}
-		return;
+		
 	}
 };
 
 class Relu : public ActFunc
 {
-public:
-	void Do(std::vector<Neuron>& in, std::vector<Neuron>& out) override
-	{
-		const int32 inCnt = in.size();
-		ASSERT_CRASH(inCnt == out.size())
-			for (int idx = 0; idx < inCnt; ++idx)
-			{
-				double& outVal = out[idx].value;
-				double& inVal = in[idx].value;
+=
+};
 
-				if (inVal > 0)
-					outVal = inVal;
-				else
-					outVal = 0;
-			}
-		return;
-	}
+class Identity : public ActFunc
+{
+
+};
+
+class Softmax : public ActFunc
+{
 
 };

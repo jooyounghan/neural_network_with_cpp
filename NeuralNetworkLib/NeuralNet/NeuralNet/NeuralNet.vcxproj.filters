@@ -30,14 +30,8 @@
     <ClInclude Include="IncludePart.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Neuron.h">
-      <Filter>Layer</Filter>
-    </ClInclude>
     <ClInclude Include="NeuralNet.h">
       <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Weight.h">
-      <Filter>Propagation</Filter>
     </ClInclude>
     <ClInclude Include="MacroPart.h">
       <Filter>Util</Filter>
@@ -56,14 +50,8 @@
     <ClCompile Include="Layer.cpp">
       <Filter>Layer</Filter>
     </ClCompile>
-    <ClCompile Include="Neuron.cpp">
-      <Filter>Layer</Filter>
-    </ClCompile>
     <ClCompile Include="NeuralNet.cpp">
       <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Weight.cpp">
-      <Filter>Propagation</Filter>
     </ClCompile>
     <ClCompile Include="ActFunc.cpp">
       <Filter>Propagation</Filter>
