@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <memory>
 #include <algorithm>
+#include <math.h>
 
 #include <string>
 #include <stack>

@@ -1,5 +1,4 @@
 #pragma once
-#include "Neuron.h"
 
 template<typename T>
 class ActFunc
@@ -9,7 +8,7 @@ class ActFunc
 };
 
 template<typename T>
-class Sigmoid : public ActFunc
+class Sigmoid : public ActFunc<T>
 {
 	T* GetResult(T* input)
 	{
@@ -17,17 +16,29 @@ class Sigmoid : public ActFunc
 	}
 };
 
-class Relu : public ActFunc
+template<typename T>
+class Relu : public ActFunc<T>
 {
-=
+	T* GetResult(T* input)
+	{
+
+	}
 };
 
-class Identity : public ActFunc
+template<typename T>
+class Identity : public ActFunc<T>
 {
+	T* GetResult(T* input)
+	{
 
+	}
 };
 
-class Softmax : public ActFunc
+template<typename T>
+class Softmax : public ActFunc<T>
 {
+	T* GetResult(T* input)
+	{
 
+	}
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include <random>
-class RandomGenerator
+class CRandomGenerator
 {
 private:
 	std::random_device rd;
@@ -8,8 +8,9 @@ private:
 
 
 public:
-	RandomGenerator() : rd(random_device{}), gen(std::mt19937{ rd() }) {}
+	CRandomGenerator() : rd{}, gen(std::mt19937{ rd() }) {}
 
-	std::vector<double> getNormalDistVector(const int& size, const double& mean, const double sigma = 1.0);
+public:
+	double* getNormalDistVector(const int& size, const double& mean, const double& sigma = 1.0);
 };
 

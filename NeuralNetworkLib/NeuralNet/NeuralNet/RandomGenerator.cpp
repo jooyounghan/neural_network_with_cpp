@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "RandomGenerator.h"
 
-std::vector<double> RandomGenerator::getNormalDistVector(double, , const double& mean)
+double* CRandomGenerator::getNormalDistVector(const int& size, const double& mean, const double sigma)
 {
 	std::normal_distribution<double> normalDist{ mean, sigma };
-	std::vector<double> result;
-	result.resize(size);
+	double* result = new double[size];
 	for (int i = 0; i < size; ++i)
 	{
 		result[i] = normalDist(gen);

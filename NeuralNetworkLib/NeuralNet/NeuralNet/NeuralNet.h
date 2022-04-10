@@ -1,6 +1,8 @@
 #pragma once
+#include "IncludePart.h"
+#include "Layer.h"
 
-class NeuralNet : public std::vector<Layer2D>
+class NeuralNet
 {
 
 };
