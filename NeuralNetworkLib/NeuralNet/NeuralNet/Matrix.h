@@ -1,12 +1,13 @@
 #pragma once
 #include "RandomGenerator.h"
+#include "IncludePart.h"
 
 class CMatrix
 {
 private:
-	int32 row;
-	int32 col;
-	int32 dataNum;
+	uint32 row;
+	uint32 col;
+	uint32 dataNum;
 	double* matrixData;
 
 public:
@@ -16,15 +17,22 @@ public:
 
 // Getter
 public:
-	int32 GetRow();
-	int32 GetCol();
-	int32 GetDataNum();
+	uint32 GetRow();
+	uint32 GetCol();
+	uint32 GetDataNum();
 	double* GetMatrixData();
 
 public:
-	void ChangeMatrixData(double* matrix_data);
 	void Transpose();
 	double* GetTransposeMatrixData();
+
+private:
+	void ChangeMatrixData(double* matrix_data);
+	double* TransposeParallel();
+	double* TransposeSerial();
+
+public:
+	void PrintData();
 
 public:
 	void NormalInitialize(const double& mean, const double& sigma);

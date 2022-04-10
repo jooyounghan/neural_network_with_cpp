@@ -1,14 +1,14 @@
 #pragma once
 
 template<typename T>
-class ActFunc
+class CActFunc
 {
 	virtual T* GetResult(const int& numOfElement, T* input) = 0;
 	virtual T* GetDeriviate(const int& numOfElement, T* input) = 0;
 };
 
 template<typename T>
-class Sigmoid : public ActFunc<T>
+class Sigmoid : public CActFunc<T>
 {
 	T* GetResult(T* input)
 	{
@@ -17,7 +17,7 @@ class Sigmoid : public ActFunc<T>
 };
 
 template<typename T>
-class Relu : public ActFunc<T>
+class Relu : public CActFunc<T>
 {
 	T* GetResult(T* input)
 	{
@@ -26,7 +26,7 @@ class Relu : public ActFunc<T>
 };
 
 template<typename T>
-class Identity : public ActFunc<T>
+class Identity : public CActFunc<T>
 {
 	T* GetResult(T* input)
 	{
@@ -35,7 +35,7 @@ class Identity : public ActFunc<T>
 };
 
 template<typename T>
-class Softmax : public ActFunc<T>
+class Softmax : public CActFunc<T>
 {
 	T* GetResult(T* input)
 	{

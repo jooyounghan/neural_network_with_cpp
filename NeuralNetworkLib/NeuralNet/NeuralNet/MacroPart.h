@@ -1,7 +1,14 @@
 #pragma once
 
+/* ------------------------------------------------------ */
+#pragma region Async
 #define ASYNC
-#define WORKFORTHREAD						1
+#define THREADNUM		(std::thread::hardware_concurrency() / 2)
+/* ------------------------------------------------------ */
+
+
+/* ------------------------------------------------------ */
+#pragma region Crash
 #define CRASH(cause)						\
 {											\
 	uint32*	crash = nullptr;				\
@@ -15,4 +22,27 @@
 		CRASH("ASSERT_CRASH");				\
 		__analysis_assume(expr);			\
 	}										\
-}	
+}
+#pragma endregion
+/* ------------------------------------------------------ */
+
+
+/* ------------------------------------------------------ */
+#pragma region Delete
+#define DELETEPTR(ptr)						\
+{											\
+	if (ptr != nullptr)						\
+	{										\
+		delete ptr;							\
+		ptr = nullptr;						\
+	}										\
+}											\
+
+#define DELETEARRPTR(ptr)					\
+{											\
+	if (ptr != nullptr)						\
+	{										\
+		delete[] ptr;						\
+		ptr = nullptr;						\
+	}										\
+}											\

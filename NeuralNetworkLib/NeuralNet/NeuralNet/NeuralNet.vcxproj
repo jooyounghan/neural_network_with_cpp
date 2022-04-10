@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ActFunc.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IncludePart.h" />
     <ClInclude Include="Layer.h" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActFunc.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NeuralNet.cpp" />

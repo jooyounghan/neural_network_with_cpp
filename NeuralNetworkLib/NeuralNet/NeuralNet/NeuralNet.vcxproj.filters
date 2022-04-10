@@ -45,6 +45,9 @@
     <ClInclude Include="Matrix.h">
       <Filter>Layer</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,14 +2,26 @@
 #include <iostream>
 #include <pch.h>
 
+
 int main()
 {	
-	NeuralNet network;
-	network.SetLayer(3, Dim2D(1, 3), Dim2D(1, 6), Dim2D(1, 5));
-	bool check = true;
+	CMatrix a = CMatrix(3, 4);
+	a.XavierNormalInitialize(3, 4);
 
+	a.PrintData();
+	std::cout << "\n";
 
+	a.Transpose();
+	a.PrintData();
+	std::cout << "\n";
 
-	Layer2D layer(Dim2D(1, 3));
-	layer.actFunc = new Relu;
+	//double* b = a.GetTransposeMatrixData();
+	//for (int c = 0; c < a.GetCol(); ++c)
+	//{
+	//	for (int r = 0; r < a.GetRow(); ++r)
+	//	{
+	//		std::cout << b[c * a.GetRow() + r] << " ";
+	//	}
+	//	std::cout << "\n";
+	//}
 }

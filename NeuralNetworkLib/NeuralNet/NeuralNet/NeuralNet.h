@@ -1,6 +1,6 @@
 #pragma once
-#include "IncludePart.h"
 #include "Layer.h"
+#include "Timer.h"
 
 class NeuralNet
 {

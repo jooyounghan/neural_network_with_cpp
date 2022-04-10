@@ -1,8 +1,12 @@
 #pragma once
 #include <stdarg.h>
-#include <memory>
+#include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <memory>
+#include <thread>
+#include <future>
+#include <chrono>
 
 #include <string>
 #include <stack>
@@ -22,3 +26,5 @@ using uint8 = unsigned __int8;
 using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
+
+using timepoint = std::chrono::system_clock::time_point;

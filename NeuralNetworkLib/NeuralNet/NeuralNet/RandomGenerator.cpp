@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RandomGenerator.h"
 
-double* CRandomGenerator::getNormalDistVector(const int& size, const double& mean, const double sigma)
+double* CRandomGenerator::getNormalDistVector(const int& size, const double& mean, const double& sigma)
 {
 	std::normal_distribution<double> normalDist{ mean, sigma };
 	double* result = new double[size];
