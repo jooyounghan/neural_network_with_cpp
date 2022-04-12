@@ -1,6 +1,5 @@
 #pragma once
 
-template<typename T>
 class CTimer
 {
 private:
@@ -15,11 +14,7 @@ private:
 public:
 	void StartCheck();
 	void EndCheck();
-
-	T GetElapsedTime();
-
-public:
-
-
+	double GetElapsedTime();
+	void PrintElapsedTime(std::string text);
 };
 

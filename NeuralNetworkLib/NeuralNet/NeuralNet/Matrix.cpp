@@ -74,6 +74,29 @@ double* CMatrix::GetTransposeMatrixData()
 	return newMatrixData;
 }
 
+CMatrix* CMatrix::GetMatMul(CMatrix& matrix)
+{
+	ASSERT_CRASH(this->col == matrix.row);
+#ifdef ASYNC
+	double* newMatrixData = MatmulParallel(this, &matrix);
+#else
+	double* newMatrixData = MatmulSerial(this, &matrix);
+#endif
+	CMatrix* newMatrix = new CMatrix(this->row, matrix.col, newMatrixData);
+	return newMatrix;
+}
+
+double* CMatrix::GetMatMulData(CMatrix& matrix)
+{
+	ASSERT_CRASH(this->col == matrix.row);
+#ifdef ASYNC
+	double* newMatrixData = MatmulParallel(this, &matrix);
+#else
+	double* newMatrixData = MatmulSerial(this, &matrix);
+#endif
+	return newMatrixData;
+}
+
 void CMatrix::ChangeMatrixData(double* matrix_data)
 {
 	DELETEARRPTR(matrixData);
@@ -122,6 +145,72 @@ double* CMatrix::TransposeSerial()
 		for (uint32 c = 0; c < col; ++c)
 		{
 			newMatrixData[c * row + r] = matrixData[r * col + c];
+		}
+	}
+	return newMatrixData;
+}
+
+// assume that we can multiply matrix_1 and matrix_2
+double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const int& newRow = matrix_1->row;
+	const int& newCol = matrix_2->col;
+	const int& kValue = matrix_1->col;
+
+	double* matrix1Data = matrix_1->GetMatrixData();
+	double* matrix2Data = matrix_2->GetMatrixData();
+
+	double* newMatrixData = new double[newRow * newCol]{ 0 };
+
+	std::vector<std::future<void>> workThreadVector;
+
+	//uint32 workSize = ;
+	//if (workSize == 0)	workSize = 1;
+
+	//for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	//{
+	//	int32 startIdx = threadNum * workSize;
+	//	workThreadVector.push_back(std::async([&, startIdx]()
+	//		{
+	//			for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+	//			{
+	//				if (idx >= dataNum)	break;
+	//				else
+	//				{
+	//					const int32 rowNow = idx / col;
+	//					const int32 colNow = idx % col;
+	//					newMatrixData[colNow * row + rowNow] = matrixData[rowNow * col + colNow];
+	//				}
+	//			}
+	//		}));
+	//}
+	//for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	//{
+	//	workThreadVector[threadNum].wait();
+	//}
+	return newMatrixData;
+}
+
+double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const int& newRow = matrix_1->row;
+	const int& newCol = matrix_2->col;
+	const int& kValue = matrix_1->col;
+
+	double* matrix1Data = matrix_1->GetMatrixData();
+	double* matrix2Data = matrix_2->GetMatrixData();
+
+	double* newMatrixData = new double[newRow * newCol]{ 0 };
+
+	for (int rowIdx = 0; rowIdx < newRow; ++rowIdx)
+	{
+		for (int colIdx = 0; colIdx < newCol; ++colIdx)
+		{
+			const int arrIdx = rowIdx * newCol + colIdx;
+			for (int kIdx = 0; kIdx < kValue; ++kIdx)
+			{
+				newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+			}
 		}
 	}
 	return newMatrixData;

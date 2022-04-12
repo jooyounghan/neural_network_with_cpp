@@ -25,11 +25,17 @@ public:
 public:
 	void Transpose();
 	double* GetTransposeMatrixData();
+	CMatrix* GetMatMul(CMatrix& matrix);
+	double* GetMatMulData(CMatrix& matrix);
 
 private:
 	void ChangeMatrixData(double* matrix_data);
 	double* TransposeParallel();
 	double* TransposeSerial();
+
+private:
+	double* MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2);
+	double* MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2);
 
 public:
 	void PrintData();

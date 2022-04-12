@@ -1,19 +1,20 @@
-#include <Matrix.h>
-
+#include <pch.h>
+#include "pch.h"
 int main()
 {
-	CMatrix a = CMatrix(1024, 1024);
-	a.XavierNormalInitialize(3, 4);
-
+	CMatrix a = CMatrix(4, 7);
+	a.XavierNormalInitialize(1, 1);
+	a.PrintData();
+	std::cout << "\n";
 	CTimer timer;
-	
 	timer.StartCheck();
-	double* b = a.TransposeSerial();
+	a.Transpose();
 	timer.EndCheck();
-	timer.PrintTime("Serial");
+	timer.PrintElapsedTime("async");
+	a.PrintData();
+	std::cout << "\n";
+#ifdef ASYNC
+	std::cout << " async " << std::endl;
+#endif
 
-	timer.StartCheck();
-	double* c = a.TransposeParallel();
-	timer.EndCheck();
-	timer.PrintTime("Parallel");
 }

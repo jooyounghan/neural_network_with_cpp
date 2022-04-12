@@ -1,21 +1,23 @@
 #include "pch.h"
 #include "Timer.h"
 
-template<typename T>
-void CTimer<T>::StartCheck()
+void CTimer::StartCheck()
 {
 	startPoint = std::chrono::system_clock::now();
 }
 
-template<typename T>
-void CTimer<T>::EndCheck()
+void CTimer::EndCheck()
 {
 	endPoint = std::chrono::system_clock::now();
 }
 
-template<typename T>
-T CTimer<T>::GetElapsedTime()
+double CTimer::GetElapsedTime()
 {
-	std::chrono::duration<T> sec = endPoint - startPoint;
+	std::chrono::duration<double> sec = endPoint - startPoint;
 	return sec.count();
+}
+
+void CTimer::PrintElapsedTime(std::string text)
+{
+	std::cout << text << " : " << GetElapsedTime() << "\n";
 }
