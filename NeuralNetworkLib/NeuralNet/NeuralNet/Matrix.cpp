@@ -3,12 +3,12 @@
 
 /* --------------------------------------------------- */
 #pragma region Constructor
-CMatrix::CMatrix(const int32& row_in, const int32& col_in) : row(row_in), col(col_in), dataNum(row * col), matrixData(nullptr)
+CMatrix::CMatrix(const uint32& row_in, const uint32& col_in) : row(row_in), col(col_in), dataNum(row * col), matrixData(nullptr)
 {
 	matrixData = new double[static_cast<size_t>(dataNum)];
 }
 
-CMatrix::CMatrix(const int32& row_in, const int32& col_in, double* matrix_data_in) : row(row_in), col(col_in), dataNum(row * col), matrixData(matrix_data_in)
+CMatrix::CMatrix(const uint32& row_in, const uint32& col_in, double* matrix_data_in) : row(row_in), col(col_in), dataNum(row * col), matrixData(matrix_data_in)
 {
 
 }
@@ -53,20 +53,39 @@ double* CMatrix::GetMatrixData()
 
 /* --------------------------------------------------- */
 #pragma region Data Setter
+
+void CMatrix::SetMatrixData(double* matrix_data)
+{
+	DELETEARRPTR(matrixData);
+	matrixData = matrix_data;
+	return;
+}
+
+CMatrix* CMatrix::CopyMatrix()
+{
+#ifdef PARALLEL
+	double* newMatrixData = CopyParallel();
+#else
+	double* newMatrixData = CopySerial();
+#endif
+	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
+	return newMatrix;
+}
+
 void CMatrix::Transpose()
 {
-#ifdef ASYNC
+#ifdef PARALLEL
 	double* newMatrixData = TransposeParallel();
 #else
 	double* newMatrixData = TransposeSerial();
 #endif
-	ChangeMatrixData(newMatrixData);
+	SetMatrixData(newMatrixData);
 	std::swap(row, col);
 }
 
 double* CMatrix::GetTransposeMatrixData()
 {
-#ifdef ASYNC
+#ifdef PARALLEL
 	double* newMatrixData = TransposeParallel();
 #else
 	double* newMatrixData = TransposeSerial();
@@ -77,7 +96,7 @@ double* CMatrix::GetTransposeMatrixData()
 CMatrix* CMatrix::GetMatMul(CMatrix& matrix)
 {
 	ASSERT_CRASH(this->col == matrix.row);
-#ifdef ASYNC
+#ifdef PARALLEL
 	double* newMatrixData = MatmulParallel(this, &matrix);
 #else
 	double* newMatrixData = MatmulSerial(this, &matrix);
@@ -89,19 +108,12 @@ CMatrix* CMatrix::GetMatMul(CMatrix& matrix)
 double* CMatrix::GetMatMulData(CMatrix& matrix)
 {
 	ASSERT_CRASH(this->col == matrix.row);
-#ifdef ASYNC
+#ifdef PARALLEL
 	double* newMatrixData = MatmulParallel(this, &matrix);
 #else
 	double* newMatrixData = MatmulSerial(this, &matrix);
 #endif
 	return newMatrixData;
-}
-
-void CMatrix::ChangeMatrixData(double* matrix_data)
-{
-	DELETEARRPTR(matrixData);
-	matrixData = matrix_data;
-	return;
 }
 
 double* CMatrix::TransposeParallel()
@@ -110,8 +122,7 @@ double* CMatrix::TransposeParallel()
 
 	std::vector<std::future<void>> workThreadVector;
 	
-	uint32 workSize = dataNum / 2;
-	if (workSize == 0)	workSize = 1;
+	uint32 workSize = std::ceil(static_cast<double>(dataNum) / THREADNUM);
 
 	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{
@@ -164,30 +175,54 @@ double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 
 	std::vector<std::future<void>> workThreadVector;
 
-	//uint32 workSize = ;
-	//if (workSize == 0)	workSize = 1;
+	bool RowFlag = false;
+	if (newRow > newCol)	RowFlag = true;
 
-	//for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	//{
-	//	int32 startIdx = threadNum * workSize;
-	//	workThreadVector.push_back(std::async([&, startIdx]()
-	//		{
-	//			for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
-	//			{
-	//				if (idx >= dataNum)	break;
-	//				else
-	//				{
-	//					const int32 rowNow = idx / col;
-	//					const int32 colNow = idx % col;
-	//					newMatrixData[colNow * row + rowNow] = matrixData[rowNow * col + colNow];
-	//				}
-	//			}
-	//		}));
-	//}
-	//for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	//{
-	//	workThreadVector[threadNum].wait();
-	//}
+	uint32 workSize;
+	if (RowFlag)			workSize = std::ceil(static_cast<double>(newRow) / THREADNUM);
+	else					workSize = std::ceil(static_cast<double>(newCol) / THREADNUM);
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				if (RowFlag)
+				{
+					for (uint32 rowIdx = startIdx; rowIdx < startIdx + workSize; ++rowIdx)
+					{
+						if (rowIdx >= newRow)	break;
+						for (uint32 colIdx = 0; colIdx < newCol; ++colIdx)
+						{
+							const int arrIdx = rowIdx * newCol + colIdx;
+							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
+							{
+								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+							}
+						}
+					}
+				}
+				else
+				{
+					for (uint32 rowIdx = 0; rowIdx < newRow; ++rowIdx)
+					{
+						for (uint32 colIdx = startIdx; colIdx < startIdx + workSize; ++colIdx)
+						{
+							if (colIdx >= newCol)	break;
+							const int arrIdx = rowIdx * newCol + colIdx;
+							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
+							{
+								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+							}
+						}
+					}
+				}
+			}));
+	}
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		workThreadVector[threadNum].wait();
+	}
 	return newMatrixData;
 }
 
@@ -215,6 +250,45 @@ double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
 	}
 	return newMatrixData;
 }
+double* CMatrix::CopyParallel()
+{
+	std::vector<std::future<void>> workThreadVector;
+
+	double* newMatrixData = new double[dataNum];
+	uint32 workSize = std::ceil(static_cast<double>(dataNum) / THREADNUM);
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		int32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= dataNum)	break;
+					else
+					{
+						newMatrixData[idx] = matrixData[idx];
+					}
+				}
+			}));
+	}
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		workThreadVector[threadNum].wait();
+	}
+
+	return newMatrixData;
+}
+double* CMatrix::CopySerial()
+{
+	double* newMatrixData = new double[dataNum];
+	for (uint32 idx = 0; idx < dataNum; ++idx)
+	{
+		newMatrixData[idx] = matrixData[idx];
+	}
+	return newMatrixData ;
+}
 #pragma endregion
 /* --------------------------------------------------- */
 
@@ -241,21 +315,29 @@ void CMatrix::NormalInitialize(const double& mean, const double& sigma)
 {
 	CRandomGenerator randomGenerator;
 	double* result = randomGenerator.getNormalDistVector(dataNum, mean, sigma);
-	return ChangeMatrixData(result);
+	return SetMatrixData(result);
 }
 
-void CMatrix::XavierNormalInitialize(const int& node_in, const int& node_out)
+void CMatrix::XavierNormalInitialize(const uint32& node_in, const uint32& node_out)
 {
 	CRandomGenerator randomGenerator;
 	double* result = randomGenerator.getNormalDistVector(dataNum, 0, std::sqrt(2.0 / ((double)node_in + (double)node_out)));
-	return ChangeMatrixData(result);
+	return SetMatrixData(result);
 }
 
-void CMatrix::HeNormalInitialize(const int& node_in)
+void CMatrix::HeNormalInitialize(const uint32& node_in)
 {
 	CRandomGenerator randomGenerator;
 	double* result = randomGenerator.getNormalDistVector(dataNum, 0, std::sqrt(2.0 / (node_in)));
-	return ChangeMatrixData(result);
+	return SetMatrixData(result);
 }
 #pragma endregion
 /* --------------------------------------------------- */
+
+
+#pragma region Interface
+double& CMatrix::operator[](const uint32& num)
+{
+	return matrixData[num];
+}
+#pragma endregion

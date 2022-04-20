@@ -11,17 +11,17 @@ private:
 	double* matrixData;
 
 public:
-	CMatrix(const int32& row_in, const int32& col_in);
-	CMatrix(const int32& row_in, const int32& col_in, double* matrix_data_in);
+	CMatrix(const uint32& row_in, const uint32& col_in);
+	CMatrix(const uint32& row_in, const uint32& col_in, double* matrix_data_in);
 	~CMatrix();
 
-// Getter
 public:
 	uint32 GetRow();
 	uint32 GetCol();
 	uint32 GetDataNum();
 	double* GetMatrixData();
-
+	void SetMatrixData(double* matrix_data);
+	CMatrix* CopyMatrix();
 public:
 	void Transpose();
 	double* GetTransposeMatrixData();
@@ -29,20 +29,22 @@ public:
 	double* GetMatMulData(CMatrix& matrix);
 
 private:
-	void ChangeMatrixData(double* matrix_data);
 	double* TransposeParallel();
 	double* TransposeSerial();
-
-private:
 	double* MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2);
 	double* MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2);
+	double* CopyParallel();
+	double* CopySerial();
 
 public:
 	void PrintData();
 
 public:
 	void NormalInitialize(const double& mean, const double& sigma);
-	void XavierNormalInitialize(const int& node_in, const int& node_out);
-	void HeNormalInitialize(const int& node_in);
+	void XavierNormalInitialize(const uint32& node_in, const uint32& node_out);
+	void HeNormalInitialize(const uint32& node_in);
+
+public:
+	double& operator[](const uint32& num);
 };
 

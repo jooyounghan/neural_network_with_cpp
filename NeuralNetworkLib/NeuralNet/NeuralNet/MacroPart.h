@@ -1,8 +1,8 @@
 #pragma once
 
 /* ------------------------------------------------------ */
-#pragma region Async
-#define ASYNC
+#pragma region Parallel
+#define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 /* ------------------------------------------------------ */
 
@@ -46,3 +46,5 @@
 		ptr = nullptr;						\
 	}										\
 }											\
+
+/* ------------------------------------------------------ */

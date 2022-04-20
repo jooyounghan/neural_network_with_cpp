@@ -1,44 +1,42 @@
 #pragma once
+#include "Matrix.h"
 
-template<typename T>
 class CActFunc
 {
-	virtual T* GetResult(const int& numOfElement, T* input) = 0;
-	virtual T* GetDeriviate(const int& numOfElement, T* input) = 0;
+public:
+	virtual CMatrix* GetResult(CMatrix* input) = 0;
+	/*virtual CMatrix* GetDeriviate(CMatrix* input) = 0;*/
+
+protected:
+	CMatrix* ResultParallel(CMatrix* input, std::function<double(double&)> func);
+	CMatrix* ResultSerial(CMatrix* input, std::function<double(double&)> func);
 };
 
-template<typename T>
-class Sigmoid : public CActFunc<T>
+
+class Sigmoid : public CActFunc
 {
-	T* GetResult(T* input)
-	{
-		
-	}
+public:
+	CMatrix* GetResult(CMatrix* input);
+	CMatrix* GetDeriviate(CMatrix* input);
 };
 
-template<typename T>
-class Relu : public CActFunc<T>
+class Relu : public CActFunc
 {
-	T* GetResult(T* input)
-	{
-
-	}
+public:
+	CMatrix* GetResult(CMatrix* input);
+	CMatrix* GetDeriviate(CMatrix* input);
 };
 
-template<typename T>
-class Identity : public CActFunc<T>
+class Identity : public CActFunc
 {
-	T* GetResult(T* input)
-	{
-
-	}
+public:
+	CMatrix* GetResult(CMatrix* input);
+	CMatrix* GetDeriviate(CMatrix* input);
 };
 
-template<typename T>
-class Softmax : public CActFunc<T>
-{
-	T* GetResult(T* input)
-	{
-
-	}
-};
+//class Softmax : public CActFunc
+//{
+//public:
+//	CMatrix* GetResult(CMatrix* input);
+//	CMatrix* GetDeriviate(CMatrix* input);
+//};

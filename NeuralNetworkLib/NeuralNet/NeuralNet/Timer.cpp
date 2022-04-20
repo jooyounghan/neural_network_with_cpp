@@ -1,6 +1,15 @@
 #include "pch.h"
 #include "Timer.h"
 
+CTimer::CTimer()
+{
+#ifdef PARALLEL
+	std::cout << "Parallel Mode Detected\n";
+#else
+	std::cout << "Serial Mode Detected\n";
+#endif
+}
+
 void CTimer::StartCheck()
 {
 	startPoint = std::chrono::system_clock::now();

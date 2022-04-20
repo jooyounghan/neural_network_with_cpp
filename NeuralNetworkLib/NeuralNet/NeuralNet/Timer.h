@@ -2,6 +2,9 @@
 
 class CTimer
 {
+public:
+	CTimer();
+
 private:
 	timepoint startPoint;
 	timepoint endPoint;

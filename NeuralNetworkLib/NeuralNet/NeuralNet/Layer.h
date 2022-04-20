@@ -1,6 +1,5 @@
 #pragma once
 #include "ActFunc.h"
-#include "Matrix.h"
 
 class CLayer2D
 {
@@ -10,7 +9,7 @@ private:
 	CMatrix* gradient;
 
 private:
-	CActFunc<CMatrix>* activationFunc;
+	CActFunc* activationFunc;
 
 public:
 	CLayer2D();
