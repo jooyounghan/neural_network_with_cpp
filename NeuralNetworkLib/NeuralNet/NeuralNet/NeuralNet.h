@@ -4,5 +4,9 @@
 
 class NeuralNet
 {
+private:
+	std::vector<CLayer2D*> layers;
+
+public:
 
 };

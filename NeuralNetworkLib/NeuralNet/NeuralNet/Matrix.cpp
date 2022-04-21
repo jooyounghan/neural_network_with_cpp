@@ -72,15 +72,14 @@ CMatrix* CMatrix::CopyMatrix()
 	return newMatrix;
 }
 
-void CMatrix::Transpose()
+CMatrix* CMatrix::GetTranspose()
 {
 #ifdef PARALLEL
 	double* newMatrixData = TransposeParallel();
 #else
 	double* newMatrixData = TransposeSerial();
 #endif
-	SetMatrixData(newMatrixData);
-	std::swap(row, col);
+	return new CMatrix(col, row, newMatrixData);
 }
 
 double* CMatrix::GetTransposeMatrixData()
@@ -93,25 +92,36 @@ double* CMatrix::GetTransposeMatrixData()
 	return newMatrixData;
 }
 
-CMatrix* CMatrix::GetMatMul(CMatrix& matrix)
+CMatrix* CMatrix::GetMatMul(CMatrix* matrix)
 {
-	ASSERT_CRASH(this->col == matrix.row);
+	ASSERT_CRASH(this->col == matrix->row);
 #ifdef PARALLEL
-	double* newMatrixData = MatmulParallel(this, &matrix);
+	double* newMatrixData = MatmulParallel(this, matrix);
 #else
-	double* newMatrixData = MatmulSerial(this, &matrix);
+	double* newMatrixData = MatmulSerial(this, matrix);
 #endif
-	CMatrix* newMatrix = new CMatrix(this->row, matrix.col, newMatrixData);
+	CMatrix* newMatrix = new CMatrix(this->row, matrix->col, newMatrixData);
 	return newMatrix;
 }
 
-double* CMatrix::GetMatMulData(CMatrix& matrix)
+void CMatrix::GetMatMul(CMatrix* matrixA, CMatrix* matrixB)
 {
-	ASSERT_CRASH(this->col == matrix.row);
+	ASSERT_CRASH(this->row == matrixA->row && this->col == matrixB->col);
+	ASSERT_CRASH(matrixA->col == matrixB->row);
 #ifdef PARALLEL
-	double* newMatrixData = MatmulParallel(this, &matrix);
+	CMatrix::MatmulParallel(matrixData, matrixA, matrixB);
 #else
-	double* newMatrixData = MatmulSerial(this, &matrix);
+	CMatrix::MatmulSerial(matrixData, matrixA, matrixB);
+#endif
+}
+
+double* CMatrix::GetMatMulData(CMatrix* matrix)
+{
+	ASSERT_CRASH(this->col == matrix->row);
+#ifdef PARALLEL
+	double* newMatrixData = MatmulParallel(this, matrix);
+#else
+	double* newMatrixData = MatmulSerial(this, matrix);
 #endif
 	return newMatrixData;
 }
@@ -122,8 +132,7 @@ double* CMatrix::TransposeParallel()
 
 	std::vector<std::future<void>> workThreadVector;
 	
-	uint32 workSize = std::ceil(static_cast<double>(dataNum) / THREADNUM);
-
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(dataNum) / THREADNUM));
 	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{
 		int32 startIdx = threadNum * workSize;
@@ -164,9 +173,9 @@ double* CMatrix::TransposeSerial()
 // assume that we can multiply matrix_1 and matrix_2
 double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 {
-	const int& newRow = matrix_1->row;
-	const int& newCol = matrix_2->col;
-	const int& kValue = matrix_1->col;
+	const uint32& newRow = matrix_1->row;
+	const uint32& newCol = matrix_2->col;
+	const uint32& kValue = matrix_1->col;
 
 	double* matrix1Data = matrix_1->GetMatrixData();
 	double* matrix2Data = matrix_2->GetMatrixData();
@@ -179,8 +188,8 @@ double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 	if (newRow > newCol)	RowFlag = true;
 
 	uint32 workSize;
-	if (RowFlag)			workSize = std::ceil(static_cast<double>(newRow) / THREADNUM);
-	else					workSize = std::ceil(static_cast<double>(newCol) / THREADNUM);
+	if (RowFlag)			workSize = static_cast<uint32>(std::ceil(static_cast<double>(newRow) / THREADNUM));
+	else					workSize = static_cast<uint32>(std::ceil(static_cast<double>(newCol) / THREADNUM));
 
 	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{
@@ -250,12 +259,102 @@ double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
 	}
 	return newMatrixData;
 }
+
+void CMatrix::MatmulParallel(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const uint32& newRow = matrix_1->row;
+	const uint32& newCol = matrix_2->col;
+	const uint32& kValue = matrix_1->col;
+
+	double* matrix1Data = matrix_1->GetMatrixData();
+	double* matrix2Data = matrix_2->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	bool RowFlag = false;
+	if (newRow > newCol)	RowFlag = true;
+
+	uint32 workSize;
+	if (RowFlag)			workSize = static_cast<uint32>(std::ceil(static_cast<double>(newRow) / THREADNUM));
+	else					workSize = static_cast<uint32>(std::ceil(static_cast<double>(newCol) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				if (RowFlag)
+				{
+					for (uint32 rowIdx = startIdx; rowIdx < startIdx + workSize; ++rowIdx)
+					{
+						if (rowIdx >= newRow)	break;
+						for (uint32 colIdx = 0; colIdx < newCol; ++colIdx)
+						{
+							const int arrIdx = rowIdx * newCol + colIdx;
+							newMatrixData[arrIdx] = 0;
+							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
+							{
+								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+							}
+						}
+					}
+				}
+				else
+				{
+					for (uint32 rowIdx = 0; rowIdx < newRow; ++rowIdx)
+					{
+						for (uint32 colIdx = startIdx; colIdx < startIdx + workSize; ++colIdx)
+						{
+							if (colIdx >= newCol)	break;
+							const int arrIdx = rowIdx * newCol + colIdx;
+							newMatrixData[arrIdx] = 0;
+							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
+							{
+								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+							}
+						}
+					}
+				}
+			}));
+	}
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		workThreadVector[threadNum].wait();
+	}
+	return;
+}
+
+void CMatrix::MatmulSerial(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const int& newRow = matrix_1->row;
+	const int& newCol = matrix_2->col;
+	const int& kValue = matrix_1->col;
+
+	double* matrix1Data = matrix_1->GetMatrixData();
+	double* matrix2Data = matrix_2->GetMatrixData();
+
+	for (int rowIdx = 0; rowIdx < newRow; ++rowIdx)
+	{
+		for (int colIdx = 0; colIdx < newCol; ++colIdx)
+		{
+			const int arrIdx = rowIdx * newCol + colIdx;
+			newMatrixData[arrIdx] = 0;
+			for (int kIdx = 0; kIdx < kValue; ++kIdx)
+			{
+				newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+			}
+		}
+	}
+	return;
+}
+
+
 double* CMatrix::CopyParallel()
 {
 	std::vector<std::future<void>> workThreadVector;
 
 	double* newMatrixData = new double[dataNum];
-	uint32 workSize = std::ceil(static_cast<double>(dataNum) / THREADNUM);
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(dataNum) / THREADNUM));
 
 	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{

@@ -6,6 +6,16 @@
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 /* ------------------------------------------------------ */
 
+/* ------------------------------------------------------ */
+#pragma region ActivationFunctionID
+#define SIGMOID		1
+#define RELU		2
+#define IDENTITY	3
+#define	SUMATION	4
+#define SOFTMAX		5  
+#pragma endregion
+
+/* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
 #pragma region Crash

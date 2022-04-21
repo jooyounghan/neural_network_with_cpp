@@ -9,9 +9,28 @@ private:
 	CMatrix* gradient;
 
 private:
+	CLayer2D* former;
+	CLayer2D* latter;
+
+private:
 	CActFunc* activationFunc;
 
 public:
 	CLayer2D();
 	~CLayer2D();
+
+public:
+	CMatrix* GetInput();
+	CMatrix* GetWeight();
+	CMatrix* GetGradient();
+
+public:
+	void SetInput(CMatrix* newInput);
+	void SetWeight(CMatrix* newWeight);
+	void SetGradient(CMatrix* newGradient);
+	void SetActivateFunc(uint16 ACTID);
+
+public:
+	void forwardProp();
+	void BackwardProp();
 };
