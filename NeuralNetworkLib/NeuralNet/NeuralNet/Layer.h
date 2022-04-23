@@ -8,7 +8,7 @@ private:
 	CMatrix* weight;
 	CMatrix* gradient;
 
-private:
+public:
 	CLayer2D* former;
 	CLayer2D* latter;
 
@@ -29,8 +29,4 @@ public:
 	void SetWeight(CMatrix* newWeight);
 	void SetGradient(CMatrix* newGradient);
 	void SetActivateFunc(uint16 ACTID);
-
-public:
-	void forwardProp();
-	void BackwardProp();
 };

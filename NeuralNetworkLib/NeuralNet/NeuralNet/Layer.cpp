@@ -72,16 +72,6 @@ void CLayer2D::SetActivateFunc(uint16 ACTID)
 	default:
 		break;
 	}
-}
-#pragma endregion
-
-#pragma region MyRegion
-void CLayer2D::forwardProp()
-{
-
-}
-void CLayer2D::BackwardProp()
-{
-
+	ASSERT_CRASH(activationFunc != nullptr);
 }
 #pragma endregion

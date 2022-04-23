@@ -28,12 +28,3 @@ using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
 using timepoint = std::chrono::system_clock::time_point;
-
-struct LayerInfo
-{
-	LayerInfo(const uint32& rowIn, const uint32& colIn, const uint32& actIDIn) : row(rowIn), col(colIn), actID(actIDIn) {};
-
-	uint32 row;
-	uint32 col;
-	uint16 actID;
-};

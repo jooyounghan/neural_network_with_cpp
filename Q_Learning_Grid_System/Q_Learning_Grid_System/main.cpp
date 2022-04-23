@@ -12,7 +12,7 @@ int main() {
 	@ : µµÂøÁöÁ¡
 		*  /  O  O  O  O
 		O  /  O  /  O  O
-		O  /  O  /  O  O
+		O  /  O  O  O  O
 		O  O  O  /  O  @
 	*/
 
@@ -23,7 +23,7 @@ int main() {
 	GridSystem.set_obstacle(1, 1);
 	GridSystem.set_obstacle(2, 1);
 	GridSystem.set_obstacle(1, 3);
-	GridSystem.set_obstacle(2, 3);
+	//GridSystem.set_obstacle(2, 3);
 	GridSystem.set_obstacle(3, 3);
 
 	GridSystem.initialize_profit(-1.0 / float(GridSystem.size));
