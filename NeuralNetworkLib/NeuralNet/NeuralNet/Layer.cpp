@@ -3,8 +3,8 @@
 
 #pragma region Constructor
 CLayer2D::CLayer2D() :
-	inputMatrix(nullptr), weight(nullptr), gradient(nullptr), activationFunc(nullptr),
-	former(nullptr), latter(nullptr)
+	inputMatrix(nullptr), activatedMatrix(nullptr), weight(nullptr), gradient(nullptr),
+	activationFunc(nullptr), former(nullptr), latter(nullptr)
 {
 
 }
@@ -15,6 +15,7 @@ CLayer2D::CLayer2D() :
 CLayer2D::~CLayer2D()
 {
 	DELETEPTR(inputMatrix);
+	DELETEPTR(activatedMatrix);
 	DELETEPTR(weight);
 	DELETEPTR(gradient);
 	DELETEPTR(activationFunc);
@@ -22,18 +23,29 @@ CLayer2D::~CLayer2D()
 #pragma endregion
 
 #pragma region Getter
-CMatrix* CLayer2D::GetInput()
+CMatrix*& CLayer2D::GetInput()
 {
 	return inputMatrix;
 }
-CMatrix* CLayer2D::GetWeight()
+CMatrix*& CLayer2D::GetActivatedInput()
+{
+	return activatedMatrix;
+}
+CMatrix*& CLayer2D::GetWeight()
 {
 	return weight;
 }
-CMatrix* CLayer2D::GetGradient()
+CMatrix*& CLayer2D::GetGradient()
 {
 	return gradient;
 }
+
+CActFunc*& CLayer2D::GetActivationFunc()
+{
+	return activationFunc;
+}
+
+
 #pragma endregion
 
 

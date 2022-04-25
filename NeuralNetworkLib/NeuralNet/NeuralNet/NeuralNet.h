@@ -2,26 +2,30 @@
 #include "Layer.h"
 #include "Timer.h"
 
-class NeuralNet
+class CNeuralNetwork
 {
 private:
 	std::vector<CLayer2D*> layers;
 
+private:
+	CMatrix* outputMatrix;
+	CMatrix* lossGradient;
+
 public:
-	NeuralNet();
-	~NeuralNet();
+	CNeuralNetwork();
+	~CNeuralNetwork();
 
 public:
 	void SetLayers(const uint32& dimension, const uint32 numLayers, ...);
 	void SetInputNum(const uint32& number);
+	void SetInput(CMatrix* inputMatrix);
+	void SetLossGradient(CMatrix* inputGradient);
 
 public:
 	void SetActivationFunc(...);
 	void InitializeWeight(...);
 
 public:
-	void PushInput(CMatrix* inputMatrix);
-	
 	void ForwardPropagation();
 	void BackwardPropagation();
 };

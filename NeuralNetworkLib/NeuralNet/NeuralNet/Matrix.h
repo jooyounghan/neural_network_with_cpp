@@ -16,12 +16,11 @@ public:
 	~CMatrix();
 
 public:
-	uint32 GetRow();
-	uint32 GetCol();
-	uint32 GetDataNum();
-	double* GetMatrixData();
+	const uint32& GetRow();
+	const uint32& GetCol();
+	const uint32& GetDataNum();
+	double*& GetMatrixData();
 	void SetMatrixData(double* matrix_data);
-	CMatrix* CopyMatrix();
 
 public:
 	CMatrix* GetTranspose();
@@ -38,11 +37,20 @@ private:
 	double* MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2);
 	double* MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2);
 
-	static void MatmulParallel(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2);
-	static void MatmulSerial(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
 
+
+public:
+	CMatrix* CopyMatrix();
+	static void CopyMatrix(CMatrix* refMat, CMatrix* input);
+
+private:
 	double* CopyParallel();
 	double* CopySerial();
+	
+	static void CopyParallel(CMatrix* refMat, CMatrix* inputMat);
+	static void CopySerial(CMatrix* refMat, CMatrix* inputMat);
 
 public:
 	void PrintData();

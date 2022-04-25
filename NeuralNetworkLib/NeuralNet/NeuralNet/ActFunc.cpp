@@ -1,15 +1,16 @@
 #include "pch.h"
 #include "ActFunc.h"
 
+#pragma region ActivationFunc
 CMatrix* CActFunc::ResultParallel(CMatrix* input, std::function<double(double&)> func)
 {
 	const uint32& inputDataNum = input->GetDataNum();
-	double* matrixData = input->GetMatrixData();
+	double*& matrixData = input->GetMatrixData();
 	std::vector<std::future<void>> workThreadVector;
 
 	double* newMatrixData = new double[inputDataNum];
 	uint32 workSize = std::ceil(static_cast<double>(inputDataNum) / THREADNUM);
-	
+
 	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{
 		int32 startIdx = threadNum * workSize;
@@ -26,10 +27,7 @@ CMatrix* CActFunc::ResultParallel(CMatrix* input, std::function<double(double&)>
 			}));
 	}
 
-	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	{
-		workThreadVector[threadNum].wait();
-	}
+	WAITTHREADVECTOR(workThreadVector);
 
 	CMatrix* newMatrix = new CMatrix(input->GetRow(), input->GetCol(), newMatrixData);
 	return newMatrix;
@@ -38,7 +36,7 @@ CMatrix* CActFunc::ResultParallel(CMatrix* input, std::function<double(double&)>
 CMatrix* CActFunc::ResultSerial(CMatrix* input, std::function<double(double&)> func)
 {
 	const uint32& inputDataNum = input->GetDataNum();
-	double* matrixData = input->GetMatrixData();
+	double*& matrixData = input->GetMatrixData();
 
 	double* newMatrixData = new double[inputDataNum];
 	for (uint32 idx = 0; idx < inputDataNum; ++idx)
@@ -49,6 +47,47 @@ CMatrix* CActFunc::ResultSerial(CMatrix* input, std::function<double(double&)> f
 	return newMatrix;
 }
 
+void CActFunc::ResultParallel(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func)
+{
+	const uint32& inputDataNum = input->GetDataNum();
+	double*& matrixData = input->GetMatrixData();
+	std::vector<std::future<void>> workThreadVector;
+
+	double*& newMatrixData = refMat->GetMatrixData();
+	uint32 workSize = std::ceil(static_cast<double>(inputDataNum) / THREADNUM);
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		int32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= inputDataNum)	break;
+					else
+					{
+						newMatrixData[idx] = func(matrixData[idx]);
+					}
+				}
+			}));
+	}
+
+	WAITTHREADVECTOR(workThreadVector);
+}
+
+void CActFunc::ResultSerial(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func)
+{
+	const uint32& inputDataNum = input->GetDataNum();
+	double*& matrixData = input->GetMatrixData();
+
+	double*& newMatrixData = refMat->GetMatrixData();
+	for (uint32 idx = 0; idx < inputDataNum; ++idx)
+	{
+		newMatrixData[idx] = func(matrixData[idx]);
+	}
+}
+#pragma endregion
+
 
 #pragma region Sigmoid
 CMatrix* Sigmoid::GetResult(CMatrix* input)
@@ -57,6 +96,15 @@ CMatrix* Sigmoid::GetResult(CMatrix* input)
 	return ResultParallel(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
 #else
 	return ResultSerial(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
+#endif
+}
+
+void Sigmoid::CalcResult(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return ResultParallel(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
+#else
+	return ResultSerial(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
 #endif
 }
 
@@ -103,6 +151,38 @@ CMatrix* Relu::GetResult(CMatrix* input)
 #endif
 }
 
+void Relu::CalcResult(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return ResultParallel(refMat, input, [](double& variable)
+		{
+			if (variable > 0)
+			{
+				return variable;
+			}
+			else
+			{
+				return 0.0;
+			}
+		});
+
+#else
+	return ResultSerial(refMat, input, [](double& variable)
+		{
+			if (variable > 0)
+			{
+				return 1.0;
+			}
+			else
+			{
+				return 0.0;
+			}
+		});
+
+#endif
+}
+
+
 CMatrix* Relu::GetDeriviate(CMatrix* input)
 {
 #ifdef PARALLEL
@@ -142,6 +222,11 @@ CMatrix* Identity::GetResult(CMatrix* input)
 	return input->CopyMatrix();
 }
 
+void Identity::CalcResult(CMatrix* refMat, CMatrix* input)
+{
+	return CMatrix::CopyMatrix(refMat, input);
+}
+
 CMatrix* Identity::GetDeriviate(CMatrix* input)
 {
 #ifdef PARALLEL
@@ -164,5 +249,4 @@ CMatrix* Identity::GetDeriviate(CMatrix* input)
 //
 //}
 #pragma endregion
-
 

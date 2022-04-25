@@ -28,22 +28,22 @@ CMatrix::~CMatrix()
 
 /* --------------------------------------------------- */
 #pragma region Getter
-uint32 CMatrix::GetRow()
+const uint32& CMatrix::GetRow()
 {
 	return row;
 }
 
-uint32 CMatrix::GetCol()
+const uint32& CMatrix::GetCol()
 {
 	return col;
 }
 
-uint32 CMatrix::GetDataNum()
+const uint32& CMatrix::GetDataNum()
 {
 	return dataNum;
 }
 
-double* CMatrix::GetMatrixData()
+double*& CMatrix::GetMatrixData()
 {
 	return matrixData;
 }
@@ -53,23 +53,11 @@ double* CMatrix::GetMatrixData()
 
 /* --------------------------------------------------- */
 #pragma region Data Setter
-
 void CMatrix::SetMatrixData(double* matrix_data)
 {
 	DELETEARRPTR(matrixData);
 	matrixData = matrix_data;
 	return;
-}
-
-CMatrix* CMatrix::CopyMatrix()
-{
-#ifdef PARALLEL
-	double* newMatrixData = CopyParallel();
-#else
-	double* newMatrixData = CopySerial();
-#endif
-	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
-	return newMatrix;
 }
 
 CMatrix* CMatrix::GetTranspose()
@@ -109,9 +97,9 @@ void CMatrix::GetMatMul(CMatrix* matrixA, CMatrix* matrixB)
 	ASSERT_CRASH(this->row == matrixA->row && this->col == matrixB->col);
 	ASSERT_CRASH(matrixA->col == matrixB->row);
 #ifdef PARALLEL
-	CMatrix::MatmulParallel(matrixData, matrixA, matrixB);
+	CMatrix::MatmulParallel(this, matrixA, matrixB);
 #else
-	CMatrix::MatmulSerial(matrixData, matrixA, matrixB);
+	CMatrix::MatmulSerial(this, matrixA, matrixB);
 #endif
 }
 
@@ -150,10 +138,7 @@ double* CMatrix::TransposeParallel()
 				}
 			}));
 	}
-	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	{
-		workThreadVector[threadNum].wait();
-	}
+	WAITTHREADVECTOR(workThreadVector);
 	return newMatrixData;
 }
 
@@ -228,10 +213,7 @@ double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 				}
 			}));
 	}
-	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	{
-		workThreadVector[threadNum].wait();
-	}
+	WAITTHREADVECTOR(workThreadVector);
 	return newMatrixData;
 }
 
@@ -260,14 +242,15 @@ double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
 	return newMatrixData;
 }
 
-void CMatrix::MatmulParallel(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2)
+void CMatrix::MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
 {
 	const uint32& newRow = matrix_1->row;
 	const uint32& newCol = matrix_2->col;
 	const uint32& kValue = matrix_1->col;
 
-	double* matrix1Data = matrix_1->GetMatrixData();
-	double* matrix2Data = matrix_2->GetMatrixData();
+	double*& newMatrixData = newMatrix->GetMatrixData();
+	double*& matrix1Data = matrix_1->GetMatrixData();
+	double*& matrix2Data = matrix_2->GetMatrixData();
 
 	std::vector<std::future<void>> workThreadVector;
 
@@ -317,19 +300,17 @@ void CMatrix::MatmulParallel(double* newMatrixData, CMatrix* matrix_1, CMatrix* 
 				}
 			}));
 	}
-	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	{
-		workThreadVector[threadNum].wait();
-	}
+	WAITTHREADVECTOR(workThreadVector);
 	return;
 }
 
-void CMatrix::MatmulSerial(double* newMatrixData, CMatrix* matrix_1, CMatrix* matrix_2)
+void CMatrix::MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
 {
 	const int& newRow = matrix_1->row;
 	const int& newCol = matrix_2->col;
 	const int& kValue = matrix_1->col;
 
+	double* newMatrixData = newMatrix->GetMatrixData();
 	double* matrix1Data = matrix_1->GetMatrixData();
 	double* matrix2Data = matrix_2->GetMatrixData();
 
@@ -347,7 +328,30 @@ void CMatrix::MatmulSerial(double* newMatrixData, CMatrix* matrix_1, CMatrix* ma
 	}
 	return;
 }
+#pragma endregion
+/* --------------------------------------------------- */
 
+/* --------------------------------------------------- */
+#pragma region Copy
+CMatrix* CMatrix::CopyMatrix()
+{
+#ifdef PARALLEL
+	double* newMatrixData = CopyParallel();
+#else
+	double* newMatrixData = CopySerial();
+#endif
+	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
+	return newMatrix;
+}
+
+void CMatrix::CopyMatrix(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return CMatrix::CopyParallel(refMat, input);
+#else
+	return CMatrix::CopySerial(refMat, input);
+#endif
+}
 
 double* CMatrix::CopyParallel()
 {
@@ -372,10 +376,7 @@ double* CMatrix::CopyParallel()
 			}));
 	}
 
-	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
-	{
-		workThreadVector[threadNum].wait();
-	}
+	WAITTHREADVECTOR(workThreadVector);
 
 	return newMatrixData;
 }
@@ -386,11 +387,53 @@ double* CMatrix::CopySerial()
 	{
 		newMatrixData[idx] = matrixData[idx];
 	}
-	return newMatrixData ;
+	return newMatrixData;
+}
+void CMatrix::CopyParallel(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refDataNum = refMat->GetDataNum();
+	const uint32& inputDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refDataNum == inputDataNum);
+	double*& refMatrixData = refMat->GetMatrixData();
+	double*& inputMatrixData = inputMat->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(inputDataNum) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		int32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= inputDataNum) break;
+					else
+					{
+						refMatrixData[idx] = inputMatrixData[idx];
+					}
+				}
+			}));
+	}
+
+	WAITTHREADVECTOR(workThreadVector);
+}
+void CMatrix::CopySerial(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refDataNum = refMat->GetDataNum();
+	const uint32& inputDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refDataNum == inputDataNum);
+	double*& refMatrixData = refMat->GetMatrixData();
+	double*& inputMatrixData = inputMat->GetMatrixData();
+
+	for (uint32 idx = 0; idx < inputDataNum; ++idx)
+	{
+		refMatrixData[idx] = inputMatrixData[idx];
+	}
 }
 #pragma endregion
 /* --------------------------------------------------- */
-
 
 /* --------------------------------------------------- */
 #pragma region Utility

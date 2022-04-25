@@ -3,12 +3,12 @@
 
 
 #pragma region Constructor
-NeuralNet::NeuralNet() {}
+CNeuralNetwork::CNeuralNetwork() : outputMatrix(nullptr), lossGradient(nullptr) {}
 #pragma endregion
 
 
 #pragma region Destructor
-NeuralNet::~NeuralNet()
+CNeuralNetwork::~CNeuralNetwork()
 {
 	for (CLayer2D*& layer : layers)
 	{
@@ -19,7 +19,7 @@ NeuralNet::~NeuralNet()
 
 
 #pragma region Setter
-void NeuralNet::SetLayers(const uint32& dimension, const uint32 numLayers, ...)
+void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, ...)
 {
 	va_list layerInfoArgs;
 	va_start(layerInfoArgs, numLayers);
@@ -34,7 +34,15 @@ void NeuralNet::SetLayers(const uint32& dimension, const uint32 numLayers, ...)
 		cmpInfo = layerInfo;
 	}
 
-	for (uint32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
+	CLayer2D*& lastLayer = layers[layers.size() - 1];
+	CLayer2D* newLastLayer = new CLayer2D();
+
+	newLastLayer->SetInput(new CMatrix(lastLayer->GetInput()->GetRow(), lastLayer->GetWeight()->GetCol()));
+	newLastLayer->SetWeight(new CMatrix(lastLayer->GetWeight()->GetCol(), 1));
+	layers.push_back(newLastLayer);
+
+	const uint32& lastNumLayers = layers.size();
+	for (uint32 layerIdx = 0; layerIdx < lastNumLayers; ++layerIdx)
 	{
 		CLayer2D*& layer = layers[layerIdx];
 		if (layerIdx == 0)
@@ -55,14 +63,14 @@ void NeuralNet::SetLayers(const uint32& dimension, const uint32 numLayers, ...)
 	va_end(layerInfoArgs);
 }
 
-void NeuralNet::SetInputNum(const uint32& number)
+void CNeuralNetwork::SetInputNum(const uint32& number)
 {
 	ASSERT_CRASH(layers.size());
 	CLayer2D*& inputLayer = layers[0];
 	inputLayer->SetInput(new CMatrix(number, inputLayer->GetWeight()->GetRow()));
 }
 
-void NeuralNet::SetActivationFunc(...)
+void CNeuralNetwork::SetActivationFunc(...)
 {
 	uint32 layerSize = layers.size();
 	ASSERT_CRASH(layerSize);
@@ -75,14 +83,27 @@ void NeuralNet::SetActivationFunc(...)
 		layers[layerIdx]->SetActivateFunc(ActiveID);
 	}
 }
+
+void CNeuralNetwork::SetInput(CMatrix* inputMatrix)
+{
+	ASSERT_CRASH(layers.size());
+	layers[0]->SetInput(inputMatrix);
+}
+
+void CNeuralNetwork::SetLossGradient(CMatrix* inputGradient)
+{
+	ASSERT_CRASH(layers.size());
+	lossGradient = inputGradient;
+}
+
 #pragma endregion
 
 
 #pragma region Initializer
-void NeuralNet::InitializeWeight(...)
+void CNeuralNetwork::InitializeWeight(...)
 {
 	uint32 layerSize = layers.size();
-	ASSERT_CRASH(layerSize);
+	ASSERT_CRASH(layerSize > 0);
 	va_list ActiveIDs;
 	va_start(ActiveIDs, layerSize);
 
@@ -128,27 +149,26 @@ void NeuralNet::InitializeWeight(...)
 #pragma endregion
 
 #pragma region Propagation
-void NeuralNet::PushInput(CMatrix* inputMatrix)
-{
-	ASSERT_CRASH(layers.size());
-	layers[0]->SetInput(inputMatrix);
-}
-
-void NeuralNet::ForwardPropagation()
+void CNeuralNetwork::ForwardPropagation()
 {
 	ASSERT_CRASH(layers.size());
 	CLayer2D*& calcLayer = layers[0];
 
 	while (calcLayer != nullptr)
 	{
-		calcLayer->latter->GetInput()->GetMatMul(calcLayer->GetInput(), calcLayer->latter->GetWeight());
+
+		calcLayer->GetInput()->GetMatMul(calcLayer->former->GetInput(), calcLayer->former->GetWeight());
 		calcLayer = calcLayer->latter;
 	}
+
+	CLayer2D*& lastLayer = layers[layers.size() - 1];
+	outputMatrix->GetMatMul(lastLayer->GetInput(), lastLayer->GetWeight());
 }
 
-void NeuralNet::BackwardPropagation()
+void CNeuralNetwork::BackwardPropagation()
 {
-	ASSERT_CRASH(layers.size());
 
 }
+
+
 #pragma endregion

@@ -5,24 +5,27 @@ class CLayer2D
 {
 private:
 	CMatrix* inputMatrix;
+	CMatrix* activatedMatrix;
 	CMatrix* weight;
 	CMatrix* gradient;
+
+private:
+	CActFunc* activationFunc;
 
 public:
 	CLayer2D* former;
 	CLayer2D* latter;
-
-private:
-	CActFunc* activationFunc;
 
 public:
 	CLayer2D();
 	~CLayer2D();
 
 public:
-	CMatrix* GetInput();
-	CMatrix* GetWeight();
-	CMatrix* GetGradient();
+	CMatrix*& GetInput();
+	CMatrix*& GetActivatedInput();
+	CMatrix*& GetWeight();
+	CMatrix*& GetGradient();
+	CActFunc*& GetActivationFunc();
 
 public:
 	void SetInput(CMatrix* newInput);

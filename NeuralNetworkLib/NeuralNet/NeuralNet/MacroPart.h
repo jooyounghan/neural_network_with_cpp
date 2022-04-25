@@ -4,6 +4,13 @@
 #pragma region Parallel
 #define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
+
+#define WAITTHREADVECTOR(workThreadVector)						\
+																\
+for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\
+{																\
+	workThreadVector[threadNum].wait();							\
+}																\
 /* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
