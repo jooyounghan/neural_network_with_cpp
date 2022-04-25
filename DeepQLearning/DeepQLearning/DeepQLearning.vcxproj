@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.\..\..\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
+    <LibraryPath>.\..\..\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.\..\..\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
+    <LibraryPath>.\..\..\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.\..\..\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
+    <LibraryPath>.\..\..\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>.\..\..\NeuralNetworkLib\NeuralNet\NeuralNet;$(IncludePath)</IncludePath>
+    <LibraryPath>.\..\..\NeuralNetworkLib\NeuralNet\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -100,7 +100,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\..\..\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>NeuralNet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -118,7 +118,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\..\..\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>NeuralNet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -132,7 +132,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\..\..\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>NeuralNet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,7 +150,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Younghan\Desktop\Study\DeepLearning\neural_network_with_cpp\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\..\..\NeuralNetworkLib\NeuralNet\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>NeuralNet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
