@@ -53,9 +53,19 @@ private:
 
 public:
 	CMatrix* GetElementWiseMul(CMatrix* input);
+	void ElementWiseMul(CMatrix* matrixA, CMatrix* matrixB);
 private:
 	double* ElementWiseMulParallel(CMatrix* inputMatrix);
 	double* ElementWiseMulSerial(CMatrix* inputMatrix);
+	static void ElementWiseMulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void ElementWiseMulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+
+public:
+	void Subtract(CMatrix* input);
+private:
+	static void SubtractParallel(CMatrix* refMat, CMatrix* inputMat);
+	static void SubtractSerial(CMatrix* refMat, CMatrix* inputMat);
+
 public:
 	void PrintData();
 

@@ -179,13 +179,32 @@ void CNeuralNetwork::BackwardPropagation()
 	ASSERT_CRASH(lossGradient != nullptr);
 	CLayer2D*& calcLayer = layers[layers.size() - 1];
 
-	// TODO : 구조 생각하기 (GetTranspose 등을 통해 얻은 Heap 데이터를 어떻게 관리할 것인지 등!
-	//CMatrix* derivativeActFunc = calcLayer->GetActivationFunc()->GetResult(calcLayer->GetInput());
-	//calcLayer->GetGradient()->MatMul(lossGradient, calcLayer->GetWeight()->GetTranspose());
-	//DELETEPTR(derivativeActFunc);
 	while (calcLayer == nullptr)
 	{
+		CMatrix* derivativeActFunc = calcLayer->GetActivationFunc()->GetResult(calcLayer->GetInput());
+		CMatrix* weightTransposed = calcLayer->GetWeight()->GetTranspose();
+		CMatrix* activatedInputTransposed = calcLayer->GetActivatedInput()->GetTranspose();
+		CMatrix* weightGradient;
+		if (calcLayer->latter == nullptr)
+		{
+			derivativeActFunc->ElementWiseMul(derivativeActFunc, lossGradient);
+			weightGradient = activatedInputTransposed->GetMatMul(lossGradient);
+		}
+		else
+		{
+			derivativeActFunc->ElementWiseMul(derivativeActFunc, calcLayer->latter->GetGradient());
+			weightGradient = activatedInputTransposed->GetMatMul(calcLayer->latter->GetGradient());
+		}
 
+		calcLayer->GetGradient()->MatMul(derivativeActFunc, weightTransposed);
+		calcLayer->GetWeight()->Subtract(weightGradient);
+		
+		DELETEPTR(derivativeActFunc);
+		DELETEPTR(weightTransposed);
+		DELETEPTR(activatedInputTransposed);
+		DELETEPTR(weightGradient);
+
+		calcLayer = calcLayer->former;
 	}
 }
 

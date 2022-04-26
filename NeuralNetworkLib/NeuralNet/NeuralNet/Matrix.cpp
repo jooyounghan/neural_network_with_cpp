@@ -143,9 +143,9 @@ void CMatrix::MatMul(CMatrix* matrixA, CMatrix* matrixB)
 	ASSERT_CRASH(this->row == matrixA->row && this->col == matrixB->col);
 	ASSERT_CRASH(matrixA->col == matrixB->row);
 #ifdef PARALLEL
-	CMatrix::MatmulParallel(this, matrixA, matrixB);
+	return CMatrix::MatmulParallel(this, matrixA, matrixB);
 #else
-	CMatrix::MatmulSerial(this, matrixA, matrixB);
+	return CMatrix::MatmulSerial(this, matrixA, matrixB);
 #endif
 }
 
@@ -441,7 +441,7 @@ void CMatrix::CopySerial(CMatrix* refMat, CMatrix* inputMat)
 /* --------------------------------------------------- */
 
 /* --------------------------------------------------- */
-#pragma region ElementWise
+#pragma region ElementWiseMul
 CMatrix* CMatrix::GetElementWiseMul(CMatrix* input)
 {
 #ifdef PARALLEL
@@ -451,6 +451,15 @@ CMatrix* CMatrix::GetElementWiseMul(CMatrix* input)
 #endif
 	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
 	return newMatrix;
+}
+
+void CMatrix::ElementWiseMul(CMatrix* matrixA, CMatrix* matrixB)
+{
+#ifdef PARALLEL
+	return CMatrix::ElementWiseMulParallel(this, matrixA, matrixB);
+#else
+	return CMatrix::ElementWiseMulSerial(this, matrixA, matrixB);
+#endif
 }
 
 double* CMatrix::ElementWiseMulParallel(CMatrix* inputMatrix)
@@ -465,8 +474,6 @@ double* CMatrix::ElementWiseMulParallel(CMatrix* inputMatrix)
 	double* newMatrixData = new double[inputDataNum]{ 0 };
 
 	std::vector<std::future<void>> workThreadVector;
-
-	bool RowFlag = false;
 
 	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(inputDataNum) / THREADNUM));
 	
@@ -505,6 +512,114 @@ double* CMatrix::ElementWiseMulSerial(CMatrix* inputMatrix)
 		newMatrixData[idx] = refMatrixData[idx] * inputMatrixData[idx];
 	}
 	return newMatrixData;
+}
+
+void CMatrix::ElementWiseMulParallel(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const uint32& refMatrixDataNum = refMatrix->GetDataNum();
+	const uint32& matrix1DataNum = matrix_1->GetDataNum();
+	const uint32& matrix2DataNum = matrix_2->GetDataNum();
+	ASSERT_CRASH(refMatrixDataNum == matrix1DataNum && refMatrixDataNum == matrix2DataNum);
+
+	double*& refMatrixData = refMatrix->GetMatrixData();
+	double*& matrix1Data = matrix_1->GetMatrixData();
+	double*& matrix2Data = matrix_2->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(refMatrixDataNum) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= refMatrixDataNum)	break;
+					else
+					{
+						refMatrixData[idx] = matrix1Data[idx] * matrix2Data[idx];
+					}
+				}
+			}));
+	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+
+void CMatrix::ElementWiseMulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
+{
+	const uint32& refMatrixDataNum = refMatrix->GetDataNum();
+	const uint32& matrix1DataNum = matrix_1->GetDataNum();
+	const uint32& matrix2DataNum = matrix_2->GetDataNum();
+	ASSERT_CRASH(refMatrixDataNum == matrix1DataNum && refMatrixDataNum == matrix2DataNum);
+
+	double*& refMatrixData = refMatrix->GetMatrixData();
+	double*& matrix1Data = matrix_1->GetMatrixData();
+	double*& matrix2Data = matrix_2->GetMatrixData();
+
+	for (uint32 idx = 0; idx < refMatrixDataNum; ++idx)
+	{
+		refMatrixData[idx] = matrix1Data[idx] * matrix2Data[idx];
+	}
+}
+#pragma endregion
+/* --------------------------------------------------- */
+
+/* --------------------------------------------------- */
+#pragma region Subtract
+void CMatrix::Subtract(CMatrix* input)
+{
+#ifdef PARALLEL
+	return CMatrix::SubtractParallel(this, input);
+#else
+	return CMatrix::SubtractSerial(this, input);
+#endif
+}
+
+void CMatrix::SubtractParallel(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(refMatDataNum) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= refMatDataNum)	break;
+					else
+					{
+						refMatData[idx] = refMatData[idx] - inputMatData[idx];
+					}
+				}
+			}));
+	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+void CMatrix::SubtractSerial(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+
+	for (uint32 idx = 0; idx < refMatDataNum; ++idx)
+	{
+		refMatData[idx] = refMatData[idx] - inputMatData[idx];
+	}
 }
 #pragma endregion
 /* --------------------------------------------------- */
