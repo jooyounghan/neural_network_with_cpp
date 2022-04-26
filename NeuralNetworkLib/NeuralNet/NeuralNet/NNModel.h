@@ -5,39 +5,17 @@ class NNModel
 {
 private:
 	CNeuralNetwork* NeuralNet;
-	CMatrix* outputMatrix;
-	CMatrix* loss;
+	std::vector<double> lossVector;
 
 public:
+
+	// Pseudo Code of Training
+	//void Train()
+	//{
+	//	NeuralNet->SetInput(~);
+	//	NeuralNet->ForwardPropagation();
+	//	lossVector.push_back(~);
+	//	NeuralNet->SetLossGradient(~);
+	//	NeuralNet->BackwardPropagation();
+	//}
 };
-
-//#pragma region Propagation
-//void CNeuralNetwork::PushInput(CMatrix* inputMatrix)
-//{
-//	ASSERT_CRASH(layers.size());
-//	layers[0]->SetInput(inputMatrix);
-//}
-//
-//void CNeuralNetwork::ForwardPropagation()
-//{
-//	ASSERT_CRASH(layers.size());
-//	CLayer2D*& calcLayer = layers[0].latter;
-//
-//	while (calcLayer != nullptr)
-//	{
-//		calcLayer->GetInput()->GetMatMul(calcLayer->former->GetInput(), calcLayer->former->GetWeight());
-//		calcLayer = calcLayer->latter;
-//	}
-//
-//	CLayer2D*& lastLayer = layers[layers.size() - 1];
-//	outputMatrix->GetMatMul(lastLayer->GetInput(), lastLayer->GetWeight());
-//}
-//
-//void CNeuralNetwork::BackwardPropagation()
-//{
-//	ASSERT_CRASH(layers.size());
-//
-//}
-//#pragma endregion
-
-

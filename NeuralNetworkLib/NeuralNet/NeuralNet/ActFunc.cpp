@@ -219,12 +219,12 @@ CMatrix* Relu::GetDeriviate(CMatrix* input)
 #pragma region Identity
 CMatrix* Identity::GetResult(CMatrix* input)
 {
-	return input->CopyMatrix();
+	return input->GetCopyMatrix();
 }
 
 void Identity::CalcResult(CMatrix* refMat, CMatrix* input)
 {
-	return CMatrix::CopyMatrix(refMat, input);
+	return refMat->CopyMatrix(input);
 }
 
 CMatrix* Identity::GetDeriviate(CMatrix* input)

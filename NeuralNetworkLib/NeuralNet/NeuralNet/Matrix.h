@@ -20,38 +20,42 @@ public:
 	const uint32& GetCol();
 	const uint32& GetDataNum();
 	double*& GetMatrixData();
+
+public:
 	void SetMatrixData(double* matrix_data);
 
 public:
 	CMatrix* GetTranspose();
-	double* GetTransposeMatrixData();
-
-public:
-	CMatrix* GetMatMul(CMatrix* matrix);
-	void GetMatMul(CMatrix* matrixA, CMatrix* matrixB);
-	double* GetMatMulData(CMatrix* matrix);
-
+	double* TransposeMatrixData();
 private:
 	double* TransposeParallel();
 	double* TransposeSerial();
+
+public:
+	CMatrix* GetMatMul(CMatrix* matrix);
+	void MatMul(CMatrix* matrixA, CMatrix* matrixB);
+	double* GetMatMulData(CMatrix* matrix);
+private:
 	double* MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2);
 	double* MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2);
-
 	static void MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
 	static void MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
 
 
 public:
-	CMatrix* CopyMatrix();
-	static void CopyMatrix(CMatrix* refMat, CMatrix* input);
-
+	CMatrix* GetCopyMatrix();
+	void CopyMatrix(CMatrix* input);
 private:
 	double* CopyParallel();
 	double* CopySerial();
-	
 	static void CopyParallel(CMatrix* refMat, CMatrix* inputMat);
 	static void CopySerial(CMatrix* refMat, CMatrix* inputMat);
 
+public:
+	CMatrix* GetElementWiseMul(CMatrix* input);
+private:
+	double* ElementWiseMulParallel(CMatrix* inputMatrix);
+	double* ElementWiseMulSerial(CMatrix* inputMatrix);
 public:
 	void PrintData();
 

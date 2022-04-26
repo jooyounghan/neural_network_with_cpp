@@ -8,7 +8,7 @@ protected:
 	virtual void CalcResult(CMatrix* refMat, CMatrix* input) = 0;
 	/*virtual CMatrix* GetDeriviate(CMatrix* input) = 0;*/
 
-protected:
+private:
 	CMatrix* ResultParallel(CMatrix* input, std::function<double(double&)> func);
 	CMatrix* ResultSerial(CMatrix* input, std::function<double(double&)> func);
 	void ResultParallel(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func);

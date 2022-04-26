@@ -154,20 +154,39 @@ void CNeuralNetwork::ForwardPropagation()
 	ASSERT_CRASH(layers.size());
 	CLayer2D*& calcLayer = layers[0];
 
-	while (calcLayer != nullptr)
+	while (calcLayer->latter != nullptr)
 	{
+		CActFunc*& activatedFunc = calcLayer->GetActivationFunc();
+		CMatrix*& activatedInputMatrix = calcLayer->GetActivatedInput();
+		CMatrix*& inputMatrix = calcLayer->GetInput();
+		CMatrix*& inputWeightMatrix = calcLayer->GetWeight();
 
-		calcLayer->GetInput()->GetMatMul(calcLayer->former->GetInput(), calcLayer->former->GetWeight());
+		// Activation Function
+		activatedFunc->CalcResult(activatedInputMatrix, inputMatrix);
+
+		// Matrix Multiplication
+		calcLayer->latter->GetInput()->MatMul(inputMatrix, inputWeightMatrix);
 		calcLayer = calcLayer->latter;
 	}
 
 	CLayer2D*& lastLayer = layers[layers.size() - 1];
-	outputMatrix->GetMatMul(lastLayer->GetInput(), lastLayer->GetWeight());
+	outputMatrix->MatMul(lastLayer->GetInput(), lastLayer->GetWeight());
 }
 
 void CNeuralNetwork::BackwardPropagation()
 {
+	ASSERT_CRASH(layers.size());
+	ASSERT_CRASH(lossGradient != nullptr);
+	CLayer2D*& calcLayer = layers[layers.size() - 1];
 
+	// TODO : 구조 생각하기 (GetTranspose 등을 통해 얻은 Heap 데이터를 어떻게 관리할 것인지 등!
+	//CMatrix* derivativeActFunc = calcLayer->GetActivationFunc()->GetResult(calcLayer->GetInput());
+	//calcLayer->GetGradient()->MatMul(lossGradient, calcLayer->GetWeight()->GetTranspose());
+	//DELETEPTR(derivativeActFunc);
+	while (calcLayer == nullptr)
+	{
+
+	}
 }
 
 

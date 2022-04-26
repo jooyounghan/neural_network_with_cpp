@@ -13,11 +13,11 @@
     <Filter Include="Network">
       <UniqueIdentifier>{e83f101f-0537-49c1-b182-c8158676cd08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Propagation">
-      <UniqueIdentifier>{a6d52110-34e6-47cd-814b-1778d0211a34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Model">
       <UniqueIdentifier>{6fd99bcf-b77c-43a6-b65b-30499ca6a2d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ActivateFunction">
+      <UniqueIdentifier>{a6d52110-34e6-47cd-814b-1778d0211a34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,7 +40,7 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="ActFunc.h">
-      <Filter>Propagation</Filter>
+      <Filter>ActivateFunction</Filter>
     </ClInclude>
     <ClInclude Include="RandomGenerator.h">
       <Filter>Util</Filter>
@@ -66,7 +66,7 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="ActFunc.cpp">
-      <Filter>Propagation</Filter>
+      <Filter>ActivateFunction</Filter>
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Util</Filter>
