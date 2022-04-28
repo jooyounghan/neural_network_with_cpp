@@ -27,9 +27,13 @@ public:
 public:
 	CMatrix* GetTranspose();
 	double* TransposeMatrixData();
+	void Transpose(CMatrix* inputMat);
+
 private:
 	double* TransposeParallel();
 	double* TransposeSerial();
+	static void TransposeParallel(CMatrix* refMatrix, CMatrix* inputMat);
+	static void TransposeSerial(CMatrix* refMatrix, CMatrix* inputMat);
 
 public:
 	CMatrix* GetMatMul(CMatrix* matrix);
@@ -38,8 +42,8 @@ public:
 private:
 	double* MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2);
 	double* MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2);
-	static void MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
-	static void MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void MatmulParallel(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void MatmulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
 
 
 public:
@@ -52,13 +56,13 @@ private:
 	static void CopySerial(CMatrix* refMat, CMatrix* inputMat);
 
 public:
-	CMatrix* GetElementWiseMul(CMatrix* input);
+	CMatrix* GetElementWiseMul(CMatrix* inputMat);
 	void ElementWiseMul(CMatrix* matrixA, CMatrix* matrixB);
 private:
-	double* ElementWiseMulParallel(CMatrix* inputMatrix);
-	double* ElementWiseMulSerial(CMatrix* inputMatrix);
-	static void ElementWiseMulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
-	static void ElementWiseMulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	double* ElementWiseMulParallel(CMatrix* inputMat);
+	double* ElementWiseMulSerial(CMatrix* inputMat);
+	static void ElementWiseMulParallel(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
+	static void ElementWiseMulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2);
 
 public:
 	void Subtract(CMatrix* input);

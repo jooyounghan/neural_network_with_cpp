@@ -28,8 +28,10 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 	{
 		uint32 layerInfo = va_arg(layerInfoArgs, uint32);
 		CLayer2D* newLayer = new CLayer2D();
+
 		newLayer->SetWeight(new CMatrix(cmpInfo, layerInfo));
-		newLayer->SetGradient(new CMatrix(cmpInfo, layerInfo));
+		newLayer->SetWeigthGradient(new CMatrix(cmpInfo, layerInfo));
+		newLayer->SetTransposedWeight(new CMatrix(layerInfo, cmpInfo));
 		layers.push_back(newLayer);
 		cmpInfo = layerInfo;
 	}
@@ -37,8 +39,10 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 	CLayer2D*& lastLayer = layers[layers.size() - 1];
 	CLayer2D* newLastLayer = new CLayer2D();
 
-	newLastLayer->SetInput(new CMatrix(lastLayer->GetInput()->GetRow(), lastLayer->GetWeight()->GetCol()));
-	newLastLayer->SetWeight(new CMatrix(lastLayer->GetWeight()->GetCol(), 1));
+	const uint32& lastWeightCol = lastLayer->GetWeight()->GetCol();
+	newLastLayer->SetWeight(new CMatrix(lastWeightCol, 1));
+	newLastLayer->SetWeigthGradient(new CMatrix(lastWeightCol, 1));
+	newLastLayer->SetTransposedWeight(new CMatrix(lastWeightCol, 1));
 	layers.push_back(newLastLayer);
 
 	const uint32& lastNumLayers = layers.size();
@@ -65,15 +69,41 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 
 void CNeuralNetwork::SetInputNum(const uint32& number)
 {
-	ASSERT_CRASH(layers.size());
-	CLayer2D*& inputLayer = layers[0];
-	inputLayer->SetInput(new CMatrix(number, inputLayer->GetWeight()->GetRow()));
+	const uint32& numLayers = layers.size();
+	ASSERT_CRASH(numLayers - 1 > 0);
+
+	for (uint32 idx = 0; idx < numLayers - 1; ++idx)
+	{
+		CLayer2D*& thisLayer = layers[idx];
+		CLayer2D*& nextLayer = layers[idx + 1];
+
+		const uint32& thisWeightRow = thisLayer->GetWeight()->GetRow();
+		const uint32& thisWeightCol = thisLayer->GetWeight()->GetCol();
+		if (idx == 0)
+		{
+			thisLayer->SetInput(new CMatrix(number, thisWeightRow));
+			thisLayer->SetActivavtedInput(new CMatrix(number, thisWeightRow));
+			thisLayer->SetGradient(new CMatrix(number, thisWeightRow));
+			thisLayer->SetDerivativeActivatedInput(new CMatrix(number, thisWeightRow));
+			thisLayer->SetActivatedTransposedInput(new CMatrix(thisWeightRow, number));
+		}
+
+		const uint32& thisInputRow = thisLayer->GetInput()->GetRow();
+		const uint32& thisInputCol = thisLayer->GetInput()->GetCol();
+
+		nextLayer->SetInput(new CMatrix(thisInputRow, thisWeightCol));
+		nextLayer->SetActivavtedInput(new CMatrix(thisInputRow, thisWeightCol));
+		nextLayer->SetGradient(new CMatrix(thisInputRow, thisWeightCol));
+		nextLayer->SetDerivativeActivatedInput(new CMatrix(thisInputRow, thisWeightCol));
+		nextLayer->SetActivatedTransposedInput(new CMatrix(thisWeightCol, thisInputRow));
+	}
 }
 
 void CNeuralNetwork::SetActivationFunc(...)
 {
 	uint32 layerSize = layers.size();
 	ASSERT_CRASH(layerSize);
+
 	va_list ActiveIDs;
 	va_start(ActiveIDs, layerSize);
 
@@ -181,28 +211,37 @@ void CNeuralNetwork::BackwardPropagation()
 
 	while (calcLayer == nullptr)
 	{
-		CMatrix* derivativeActFunc = calcLayer->GetActivationFunc()->GetResult(calcLayer->GetInput());
-		CMatrix* weightTransposed = calcLayer->GetWeight()->GetTranspose();
-		CMatrix* activatedInputTransposed = calcLayer->GetActivatedInput()->GetTranspose();
-		CMatrix* weightGradient;
+		CMatrix*& inputMatrix = calcLayer->GetInput();
+		CMatrix*& weightMatrix = calcLayer->GetWeight();
+		CMatrix*& activatedInputMatrix = calcLayer->GetActivatedInput();
+		CMatrix*& gradientMatrix = calcLayer->GetGradient();
+
+		CMatrix*& derivativeActFunc = calcLayer->GetDerivativeActFunc();
+		CMatrix*& transposedWeight = calcLayer->GetTransposedWeight();
+		CMatrix*& activatedTransposedInput = calcLayer->GetActivatedTransposedInput();
+		CMatrix*& weightGradient = calcLayer->GetWeightGradient();
+
+		CActFunc*& CalcActFunc = calcLayer->GetActivationFunc();
+
+		CalcActFunc->CalcResult(derivativeActFunc, inputMatrix);
+		transposedWeight->Transpose(weightMatrix);
+		activatedTransposedInput->Transpose(activatedInputMatrix);
+
 		if (calcLayer->latter == nullptr)
 		{
 			derivativeActFunc->ElementWiseMul(derivativeActFunc, lossGradient);
-			weightGradient = activatedInputTransposed->GetMatMul(lossGradient);
+			weightGradient->MatMul(activatedTransposedInput, lossGradient);
 		}
 		else
 		{
 			derivativeActFunc->ElementWiseMul(derivativeActFunc, calcLayer->latter->GetGradient());
-			weightGradient = activatedInputTransposed->GetMatMul(calcLayer->latter->GetGradient());
+			weightGradient->MatMul(activatedTransposedInput, calcLayer->latter->GetGradient());
 		}
 
-		calcLayer->GetGradient()->MatMul(derivativeActFunc, weightTransposed);
-		calcLayer->GetWeight()->Subtract(weightGradient);
+		gradientMatrix->MatMul(derivativeActFunc, transposedWeight);
 		
-		DELETEPTR(derivativeActFunc);
-		DELETEPTR(weightTransposed);
-		DELETEPTR(activatedInputTransposed);
-		DELETEPTR(weightGradient);
+		// Updating
+		weightMatrix->Subtract(weightGradient);
 
 		calcLayer = calcLayer->former;
 	}

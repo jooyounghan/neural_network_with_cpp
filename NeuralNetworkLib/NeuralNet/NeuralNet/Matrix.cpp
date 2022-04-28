@@ -81,6 +81,15 @@ double* CMatrix::TransposeMatrixData()
 	return newMatrixData;
 }
 
+void CMatrix::Transpose(CMatrix* inputMat)
+{
+#ifdef PARALLEL
+	return TransposeParallel(this, inputMat);
+#else
+	return TransposeSerial(this, inputMat);
+#endif
+}
+
 double* CMatrix::TransposeParallel()
 {
 	double* newMatrixData = new double[dataNum];
@@ -120,6 +129,54 @@ double* CMatrix::TransposeSerial()
 		}
 	}
 	return newMatrixData;
+}
+
+void CMatrix::TransposeParallel(CMatrix* refMatrix, CMatrix* inputMat)
+{
+	const uint32& row = inputMat->GetRow();
+	const uint32& col = inputMat->GetCol();
+	const uint32& dataNum = inputMat->GetDataNum();
+
+	double* refMatrixData = refMatrix->GetMatrixData();
+	double* inputMatData = inputMat->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(dataNum) / THREADNUM));
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		int32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= dataNum)	break;
+					else
+					{
+						const int32 rowNow = idx / col;
+						const int32 colNow = idx % col;
+						refMatrixData[colNow * row + rowNow] = inputMatData[rowNow * col + colNow];
+					}
+				}
+			}));
+	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+
+void CMatrix::TransposeSerial(CMatrix* refMatrix, CMatrix* inputMat)
+{
+	const uint32& row = inputMat->GetRow();
+	const uint32& col = inputMat->GetCol();
+
+	double* refMatrixData = refMatrix->GetMatrixData();
+	double* inputMatData = inputMat->GetMatrixData();
+	for (uint32 r = 0; r < row; ++r)
+	{
+		for (uint32 c = 0; c < col; ++c)
+		{
+			refMatrixData[c * row + r] = inputMatData[r * col + c];
+		}
+	}
 }
 #pragma endregion
 /* --------------------------------------------------- */
@@ -247,13 +304,13 @@ double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
 	return newMatrixData;
 }
 
-void CMatrix::MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
+void CMatrix::MatmulParallel(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
 {
 	const uint32& newRow = matrix_1->row;
 	const uint32& newCol = matrix_2->col;
 	const uint32& kValue = matrix_1->col;
 
-	double*& newMatrixData = newMatrix->GetMatrixData();
+	double*& refMatrixData = refMatrix->GetMatrixData();
 	double*& matrix1Data = matrix_1->GetMatrixData();
 	double*& matrix2Data = matrix_2->GetMatrixData();
 
@@ -279,10 +336,10 @@ void CMatrix::MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* mat
 						for (uint32 colIdx = 0; colIdx < newCol; ++colIdx)
 						{
 							const int arrIdx = rowIdx * newCol + colIdx;
-							newMatrixData[arrIdx] = 0;
+							refMatrixData[arrIdx] = 0;
 							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
 							{
-								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+								refMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
 							}
 						}
 					}
@@ -295,10 +352,10 @@ void CMatrix::MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* mat
 						{
 							if (colIdx >= newCol)	break;
 							const int arrIdx = rowIdx * newCol + colIdx;
-							newMatrixData[arrIdx] = 0;
+							refMatrixData[arrIdx] = 0;
 							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
 							{
-								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+								refMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
 							}
 						}
 					}
@@ -309,13 +366,13 @@ void CMatrix::MatmulParallel(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* mat
 	return;
 }
 
-void CMatrix::MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
+void CMatrix::MatmulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matrix_2)
 {
 	const int& newRow = matrix_1->row;
 	const int& newCol = matrix_2->col;
 	const int& kValue = matrix_1->col;
 
-	double*& newMatrixData = newMatrix->GetMatrixData();
+	double*& refMatrixData = refMatrix->GetMatrixData();
 	double*& matrix1Data = matrix_1->GetMatrixData();
 	double*& matrix2Data = matrix_2->GetMatrixData();
 
@@ -324,10 +381,10 @@ void CMatrix::MatmulSerial(CMatrix* newMatrix, CMatrix* matrix_1, CMatrix* matri
 		for (int colIdx = 0; colIdx < newCol; ++colIdx)
 		{
 			const int arrIdx = rowIdx * newCol + colIdx;
-			newMatrixData[arrIdx] = 0;
+			refMatrixData[arrIdx] = 0;
 			for (int kIdx = 0; kIdx < kValue; ++kIdx)
 			{
-				newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
+				refMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
 			}
 		}
 	}
@@ -442,10 +499,10 @@ void CMatrix::CopySerial(CMatrix* refMat, CMatrix* inputMat)
 
 /* --------------------------------------------------- */
 #pragma region ElementWiseMul
-CMatrix* CMatrix::GetElementWiseMul(CMatrix* input)
+CMatrix* CMatrix::GetElementWiseMul(CMatrix* inputMat)
 {
 #ifdef PARALLEL
-	double* newMatrixData = ElementWiseMulParallel(input);
+	double* newMatrixData = ElementWiseMulParallel(inputMat);
 #else
 	double* newMatrixData = ElementWiseMulSerial(input);
 #endif
@@ -462,14 +519,14 @@ void CMatrix::ElementWiseMul(CMatrix* matrixA, CMatrix* matrixB)
 #endif
 }
 
-double* CMatrix::ElementWiseMulParallel(CMatrix* inputMatrix)
+double* CMatrix::ElementWiseMulParallel(CMatrix* inputMat)
 {
 	const uint32& refDataNum = this->GetDataNum();
-	const uint32& inputDataNum = inputMatrix->GetDataNum();
+	const uint32& inputDataNum = inputMat->GetDataNum();
 	ASSERT_CRASH(refDataNum == inputDataNum);
 
 	double*& refMatrixData = this->GetMatrixData();
-	double*& inputMatrixData = inputMatrix->GetMatrixData();
+	double*& inputMatrixData = inputMat->GetMatrixData();
 
 	double* newMatrixData = new double[inputDataNum]{ 0 };
 
@@ -496,14 +553,14 @@ double* CMatrix::ElementWiseMulParallel(CMatrix* inputMatrix)
 	return newMatrixData;
 }
 
-double* CMatrix::ElementWiseMulSerial(CMatrix* inputMatrix)
+double* CMatrix::ElementWiseMulSerial(CMatrix* inputMat)
 {
 	const uint32& refDataNum = this->GetDataNum();
-	const uint32& inputDataNum = inputMatrix->GetDataNum();
+	const uint32& inputDataNum = inputMat->GetDataNum();
 	ASSERT_CRASH(refDataNum == inputDataNum);
 
 	double*& refMatrixData = this->GetMatrixData();
-	double*& inputMatrixData = inputMatrix->GetMatrixData();
+	double*& inputMatrixData = inputMat->GetMatrixData();
 
 	double* newMatrixData = new double[inputDataNum] { 0 };
 

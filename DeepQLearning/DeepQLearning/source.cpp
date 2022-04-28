@@ -6,7 +6,7 @@ int main()
 	CMatrix* b = new CMatrix(64, 128);
 	a->XavierNormalInitialize(128, 128);
 	b->XavierNormalInitialize(128, 128);
-
+	
 	CLayer2D layer;
 	layer.SetInput(a);
 	layer.SetWeight(b);

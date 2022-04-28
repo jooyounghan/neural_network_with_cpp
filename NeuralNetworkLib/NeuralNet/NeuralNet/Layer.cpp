@@ -4,6 +4,7 @@
 #pragma region Constructor
 CLayer2D::CLayer2D() :
 	inputMatrix(nullptr), activatedMatrix(nullptr), weight(nullptr), gradient(nullptr),
+	derivativeActFunc(nullptr), transposedWeight(nullptr), activatedTransposedInput(nullptr), weightGradient(nullptr),
 	activationFunc(nullptr), former(nullptr), latter(nullptr)
 {
 
@@ -18,6 +19,12 @@ CLayer2D::~CLayer2D()
 	DELETEPTR(activatedMatrix);
 	DELETEPTR(weight);
 	DELETEPTR(gradient);
+
+	DELETEPTR(derivativeActFunc);
+	DELETEPTR(transposedWeight);
+	DELETEPTR(activatedTransposedInput);
+	DELETEPTR(weightGradient);
+
 	DELETEPTR(activationFunc);
 }
 #pragma endregion
@@ -45,7 +52,22 @@ CActFunc*& CLayer2D::GetActivationFunc()
 	return activationFunc;
 }
 
-
+CMatrix*& CLayer2D::GetDerivativeActFunc()
+{
+	return derivativeActFunc;
+}
+CMatrix*& CLayer2D::GetTransposedWeight()
+{
+	return transposedWeight;
+}
+CMatrix*& CLayer2D::GetActivatedTransposedInput()
+{
+	return activatedTransposedInput;
+}
+CMatrix*& CLayer2D::GetWeightGradient()
+{
+	return weightGradient;
+}
 #pragma endregion
 
 
@@ -55,6 +77,13 @@ void CLayer2D::SetInput(CMatrix* newInput)
 	DELETEPTR(inputMatrix);
 	inputMatrix = newInput;
 }
+
+void CLayer2D::SetActivavtedInput(CMatrix* newInput)
+{
+	DELETEPTR(activatedMatrix);
+	activatedMatrix = newInput;
+}
+
 void CLayer2D::SetWeight(CMatrix* newWeight)
 {
 	DELETEPTR(weight);
@@ -85,5 +114,28 @@ void CLayer2D::SetActivateFunc(uint16 ACTID)
 		break;
 	}
 	ASSERT_CRASH(activationFunc != nullptr);
+}
+
+void CLayer2D::SetDerivativeActivatedInput(CMatrix* newInput)
+{
+	DELETEPTR(derivativeActFunc);
+	derivativeActFunc = newInput;
+}
+void CLayer2D::SetTransposedWeight(CMatrix* newWeight)
+{
+	DELETEPTR(transposedWeight);
+	transposedWeight = newWeight;
+
+}
+void CLayer2D::SetActivatedTransposedInput(CMatrix* newInput)
+{
+	DELETEPTR(activatedTransposedInput);
+	activatedTransposedInput = newInput;
+}
+
+void CLayer2D::SetWeigthGradient(CMatrix* newWeight)
+{
+	DELETEPTR(weightGradient);
+	weightGradient = newWeight;
 }
 #pragma endregion

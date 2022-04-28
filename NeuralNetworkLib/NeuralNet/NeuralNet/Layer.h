@@ -10,6 +10,12 @@ private:
 	CMatrix* gradient;
 
 private:
+	CMatrix* derivativeActFunc;
+	CMatrix* transposedWeight;
+	CMatrix* activatedTransposedInput;
+	CMatrix* weightGradient;
+
+private:
 	CActFunc* activationFunc;
 
 public:
@@ -28,8 +34,20 @@ public:
 	CActFunc*& GetActivationFunc();
 
 public:
+	CMatrix*& GetDerivativeActFunc();
+	CMatrix*& GetTransposedWeight();
+	CMatrix*& GetActivatedTransposedInput();
+	CMatrix*& GetWeightGradient();
+
+public:
 	void SetInput(CMatrix* newInput);
+	void SetActivavtedInput(CMatrix* newInput);
 	void SetWeight(CMatrix* newWeight);
 	void SetGradient(CMatrix* newGradient);
 	void SetActivateFunc(uint16 ACTID);
+
+	void SetDerivativeActivatedInput(CMatrix* newInput);
+	void SetTransposedWeight(CMatrix* newWeight);
+	void SetActivatedTransposedInput(CMatrix* newInput);
+	void SetWeigthGradient(CMatrix* newWeight);
 };
