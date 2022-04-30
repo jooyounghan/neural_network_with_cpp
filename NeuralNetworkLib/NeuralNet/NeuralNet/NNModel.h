@@ -5,7 +5,8 @@ class NNModel
 {
 private:
 	CNeuralNetwork* NeuralNet;
-	std::vector<double> lossVector;
+	double loss;
+	std::function<void(CMatrix*, CMatrix*)> lossFucntion;
 
 public:
 
