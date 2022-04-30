@@ -3,34 +3,39 @@
 
 class CLossFunc
 {
+protected:
+	CMatrix* predictedMatrix;
+
+protected:
+	CLossFunc(CMatrix* outputMatrix);
 public:
-	std::mutex mtx;	
+	~CLossFunc() {}
 
 public:
-	virtual double GetResult(CMatrix* input, CMatrix* label) = 0;
-	virtual void CalcResult(double& refDouble, CMatrix* input, CMatrix* label) = 0;
-	/*virtual CMatrix* GetDeriviate(CMatrix* input) = 0;*/
-protected:
-	double ResultParallel(CMatrix* input, CMatrix* label, std::function<double(double&, double&)> func);
-	double ResultSerial(CMatrix* input, CMatrix* label, std::function<double(double&, double&)> func);
-	void ResultParallel(double& refDouble, CMatrix* input, CMatrix* label, std::function<double(double&, double&)> func);
-	void ResultSerial(double& refDouble, CMatrix* input, CMatrix* label, std::function<double(double&, double&)> func);
+	virtual void GetResult(CMatrix* inputMat, CMatrix* labelMat) = 0;
+	void GetLoss(double& refDouble, CMatrix* inputMat);
 };
 
-class CSumation: public CLossFunc
+class CSumation : public CLossFunc
 {
 public:
-	double GetResult(CMatrix* input, CMatrix* label);
-	void CalcResult(double& refDouble, CMatrix* input, CMatrix* label);
-	CMatrix* GetDeriviate(CMatrix* input, CMatrix* label);
+	CSumation(CMatrix* outputMatrix) : CLossFunc(outputMatrix) {};
+	~CSumation() {};
+public:
+	void GetResult(CMatrix* inputMat, CMatrix* labelMat);
+private:
+	static void ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
+	static void ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 };
 
 class CSoftmax : public CLossFunc
 {
 public:
-	double GetResult(CMatrix* input);
-	void CalcResult(double& refDouble, CMatrix* input, CMatrix* label);
-	CMatrix* GetDeriviate(CMatrix* input, CMatrix* label);
+	CSoftmax(CMatrix* outputMatrix) : CLossFunc(outputMatrix) {};
+	~CSoftmax() {};
+public:
+	void GetResult(CMatrix* inputMat, CMatrix* labelMat);
+private:
+	static void ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
+	static void ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 };
-
-
