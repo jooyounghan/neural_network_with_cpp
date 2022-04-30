@@ -10,12 +10,11 @@ public:
 protected:
 	CMatrix* ResultParallel(CMatrix* input, std::function<double(double&)> func);
 	CMatrix* ResultSerial(CMatrix* input, std::function<double(double&)> func);
-	void ResultParallel(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func);
-	void ResultSerial(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func);
+	static void ResultParallel(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func);
+	static void ResultSerial(CMatrix* refMat, CMatrix* input, std::function<double(double&)> func);
 };
 
-
-class Sigmoid : public CActFunc
+class CSigmoid : public CActFunc
 {
 public:
 	CMatrix* GetResult(CMatrix* input);
@@ -23,7 +22,7 @@ public:
 	CMatrix* GetDeriviate(CMatrix* input);
 };
 
-class Relu : public CActFunc
+class CRelu : public CActFunc
 {
 public:
 	CMatrix* GetResult(CMatrix* input);
@@ -31,17 +30,10 @@ public:
 	CMatrix* GetDeriviate(CMatrix* input);
 };
 
-class Identity : public CActFunc
+class CIdentity : public CActFunc
 {
 public:
 	CMatrix* GetResult(CMatrix* input);
 	void CalcResult(CMatrix* refMat, CMatrix* input);
 	CMatrix* GetDeriviate(CMatrix* input);
 };
-
-//class Softmax : public CActFunc
-//{
-//public:
-//	CMatrix* GetResult(CMatrix* input);
-//	CMatrix* GetDeriviate(CMatrix* input);
-//};

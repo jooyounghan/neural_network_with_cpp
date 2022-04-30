@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ActFunc.h" />
+    <ClInclude Include="LossFunc.h" />
     <ClInclude Include="NNModel.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="framework.h" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActFunc.cpp" />
+    <ClCompile Include="LossFunc.cpp" />
     <ClCompile Include="NNModel.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Layer.cpp" />

@@ -4,6 +4,7 @@
 #pragma region Parallel
 #define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
+#define LOCKGUARD(mtx)	std::lock_guard<std::mutex>{ mtx };
 
 #define WAITTHREADVECTOR(workThreadVector)						\
 																\
@@ -11,6 +12,7 @@ for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\
 {																\
 	workThreadVector[threadNum].wait();							\
 }																\
+
 /* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
@@ -18,8 +20,13 @@ for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\
 #define SIGMOID		1
 #define RELU		2
 #define IDENTITY	3
-#define	SUMATION	4
-#define SOFTMAX		5  
+#pragma endregion
+/* ------------------------------------------------------ */
+
+/* ------------------------------------------------------ */
+#pragma region LossFunctionID
+#define SUMATION	1
+#define SOFTMAX		2  
 #pragma endregion
 /* ------------------------------------------------------ */
 

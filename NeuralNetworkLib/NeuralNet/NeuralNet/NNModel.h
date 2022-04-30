@@ -1,22 +1,28 @@
 #pragma once
 #include "NeuralNet.h"
 
-class NNModel
+class CNNModel
 {
 private:
 	CNeuralNetwork* NeuralNet;
 	double loss;
-	std::function<void(CMatrix*, CMatrix*)> lossFucntion;
+
+public:
+	CNNModel(LOSSFUNCID lossFuncId);
+	~CNNModel();
 
 public:
 
 	// Pseudo Code of Training
-	//void Train()
+	//void Train(std::vector<CMatrix*> inputVector, const uint32& iterations)
 	//{
-	//	NeuralNet->SetInput(~);
-	//	NeuralNet->ForwardPropagation();
-	//	lossVector.push_back(~);
-	//	NeuralNet->SetLossGradient(~);
-	//	NeuralNet->BackwardPropagation();
+	//	for (uint32 iter = 0; iter < iterations; ++iter)
+	// {
+	//		NeuralNet->SetInput(~);
+	//		NeuralNet->ForwardPropagation();
+	//		lossVector.push_back(~);
+	//		NeuralNet->SetLossGradient(~);
+	//		NeuralNet->BackwardPropagation();
+	// }
 	//}
 };

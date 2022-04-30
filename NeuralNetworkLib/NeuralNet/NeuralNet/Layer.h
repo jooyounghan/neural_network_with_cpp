@@ -44,7 +44,7 @@ public:
 	void SetActivavtedInput(CMatrix* newInput);
 	void SetWeight(CMatrix* newWeight);
 	void SetGradient(CMatrix* newGradient);
-	void SetActivateFunc(uint16 ACTID);
+	void SetActivateFunc(ACTID actId);
 
 	void SetDerivativeActivatedInput(CMatrix* newInput);
 	void SetTransposedWeight(CMatrix* newWeight);

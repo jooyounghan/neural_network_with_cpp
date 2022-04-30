@@ -16,7 +16,7 @@
     <Filter Include="Model">
       <UniqueIdentifier>{6fd99bcf-b77c-43a6-b65b-30499ca6a2d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ActivateFunction">
+    <Filter Include="Function">
       <UniqueIdentifier>{a6d52110-34e6-47cd-814b-1778d0211a34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -40,7 +40,7 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="ActFunc.h">
-      <Filter>ActivateFunction</Filter>
+      <Filter>Function</Filter>
     </ClInclude>
     <ClInclude Include="RandomGenerator.h">
       <Filter>Util</Filter>
@@ -54,6 +54,9 @@
     <ClInclude Include="NNModel.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="LossFunc.h">
+      <Filter>Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,7 +69,7 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="ActFunc.cpp">
-      <Filter>ActivateFunction</Filter>
+      <Filter>Function</Filter>
     </ClCompile>
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Util</Filter>
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="NNModel.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="LossFunc.cpp">
+      <Filter>Function</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -96,19 +96,19 @@ void CLayer2D::SetGradient(CMatrix* newGradient)
 	gradient = newGradient;
 
 }
-void CLayer2D::SetActivateFunc(uint16 ACTID)
+void CLayer2D::SetActivateFunc(ACTID actId)
 {
 	DELETEPTR(activationFunc);
-	switch (ACTID)
+	switch (actId)
 	{
 	case SIGMOID:
-		activationFunc = new Sigmoid();
+		activationFunc = new CSigmoid();
 		break;
 	case RELU:
-		activationFunc = new Relu();
+		activationFunc = new CRelu();
 		break;
 	case IDENTITY:
-		activationFunc = new Identity();
+		activationFunc = new CIdentity();
 		break;
 	default:
 		break;
