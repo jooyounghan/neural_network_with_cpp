@@ -19,14 +19,12 @@ CNeuralNetwork::~CNeuralNetwork()
 
 
 #pragma region Setter
-void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, ...)
+void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, va_list& val)
 {
-	va_list layerInfoArgs;
-	va_start(layerInfoArgs, numLayers);
 	uint32 cmpInfo = dimension;
 	for (uint32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 	{
-		uint32 layerInfo = va_arg(layerInfoArgs, uint32);
+		uint32 layerInfo = va_arg(val, uint32);
 		CLayer2D* newLayer = new CLayer2D();
 
 		newLayer->SetWeight(new CMatrix(cmpInfo, layerInfo));
@@ -53,7 +51,7 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 		{
 			layer->latter = layers[layerIdx + 1];
 		}
-		else if (layerIdx == numLayers - 1)
+		else if (layerIdx == numLayers)
 		{
 			layer->former = layers[layerIdx - 1];
 		}
@@ -63,8 +61,6 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 			layer->latter = layers[layerIdx + 1];
 		}
 	}
-
-	va_end(layerInfoArgs);
 }
 
 void CNeuralNetwork::SetInputNum(const uint32& number)
@@ -97,15 +93,19 @@ void CNeuralNetwork::SetInputNum(const uint32& number)
 		nextLayer->SetDerivativeActivatedInput(new CMatrix(thisInputRow, thisWeightCol));
 		nextLayer->SetActivatedTransposedInput(new CMatrix(thisWeightCol, thisInputRow));
 	}
+
+	CLayer2D*& lastLayer = layers[layers.size() - 1];
+	const uint32& outputRow = lastLayer->GetInput()->GetRow();
+	const uint32& outputCol = lastLayer->GetWeight()->GetCol();
+
+	outputMatrix = new CMatrix(outputRow, outputCol);
+	lossGradient = new CMatrix(outputRow, outputCol);
 }
 
-void CNeuralNetwork::SetActivationFunc(...)
+void CNeuralNetwork::SetActivationFunc(va_list& ActiveIDs)
 {
 	uint32 layerSize = layers.size();
 	ASSERT_CRASH(layerSize);
-
-	va_list ActiveIDs;
-	va_start(ActiveIDs, layerSize);
 
 	for (uint32 layerIdx = 0; layerIdx < layerSize; ++layerIdx)
 	{
@@ -126,20 +126,39 @@ void CNeuralNetwork::SetLossGradient(CMatrix* inputGradient)
 	lossGradient = inputGradient;
 }
 
+void CNeuralNetwork::FlushInput()
+{
+	ASSERT_CRASH(layers.size());
+	layers[0]->SetInput(nullptr);
+}
 #pragma endregion
 
+#pragma region Getter
+CMatrix*& CNeuralNetwork::GetOutputMatrix()
+{
+	return outputMatrix;
+}
+
+CMatrix*& CNeuralNetwork::GetLossGradient()
+{
+	return lossGradient;
+}
+
+const uint32& CNeuralNetwork::GetLayersNum()
+{
+	return layers.size();
+}
+#pragma endregion
 
 #pragma region Initializer
-void CNeuralNetwork::InitializeWeight(...)
+void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 {
 	uint32 layerSize = layers.size();
 	ASSERT_CRASH(layerSize > 0);
-	va_list ActiveIDs;
-	va_start(ActiveIDs, layerSize);
 
 	for (uint32 layerIdx = 0; layerIdx < layerSize; ++layerIdx)
 	{
-		uint32 ActiveID = va_arg(ActiveIDs, uint32);
+		uint32 ActiveID = va_arg(InitializerIDs, uint32);
 		CMatrix* weight = layers[layerIdx]->GetWeight();
 		switch (ActiveID)
 		{
@@ -203,7 +222,7 @@ void CNeuralNetwork::ForwardPropagation()
 	outputMatrix->MatMul(lastLayer->GetInput(), lastLayer->GetWeight());
 }
 
-void CNeuralNetwork::BackwardPropagation()
+void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 {
 	ASSERT_CRASH(layers.size());
 	ASSERT_CRASH(lossGradient != nullptr);
@@ -241,6 +260,7 @@ void CNeuralNetwork::BackwardPropagation()
 		gradientMatrix->MatMul(derivativeActFunc, transposedWeight);
 		
 		// Updating
+		weightGradient->ConstantMul(learningRate);
 		weightMatrix->Subtract(weightGradient);
 
 		calcLayer = calcLayer->former;

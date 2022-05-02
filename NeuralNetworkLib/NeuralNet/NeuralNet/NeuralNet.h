@@ -16,16 +16,22 @@ public:
 	~CNeuralNetwork();
 
 public:
-	void SetLayers(const uint32& dimension, const uint32 numLayers, ...);
+	void SetLayers(const uint32& dimension, const uint32 numLayers, va_list& val);
 	void SetInputNum(const uint32& number);
 	void SetInput(CMatrix* inputMatrix);
 	void SetLossGradient(CMatrix* inputGradient);
+	void FlushInput();
 
 public:
-	void SetActivationFunc(...);
-	void InitializeWeight(...);
+	CMatrix*& GetOutputMatrix();
+	CMatrix*& GetLossGradient();
+	const uint32& GetLayersNum();
+
+public:
+	void SetActivationFunc(va_list& ActiveIDs);
+	void InitializeWeight(va_list& InitializerIDs);
 
 public:
 	void ForwardPropagation();
-	void BackwardPropagation();
+	void BackwardPropagation(const double& learningRate);
 };

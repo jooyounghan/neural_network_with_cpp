@@ -21,6 +21,7 @@ CMatrix* CActFunc::ResultParallel(CMatrix* input, std::function<double(double&)>
 					if (idx >= inputDataNum)	break;
 					else
 					{
+						newMatrixData[idx] = 0;
 						newMatrixData[idx] = func(matrixData[idx]);
 					}
 				}
@@ -41,6 +42,7 @@ CMatrix* CActFunc::ResultSerial(CMatrix* input, std::function<double(double&)> f
 	double* newMatrixData = new double[inputDataNum];
 	for (uint32 idx = 0; idx < inputDataNum; ++idx)
 	{
+		newMatrixData[idx] = 0;
 		newMatrixData[idx] = func(matrixData[idx]);
 	}
 	CMatrix* newMatrix = new CMatrix(input->GetRow(), input->GetCol(), newMatrixData);
@@ -66,6 +68,7 @@ void CActFunc::ResultParallel(CMatrix* refMat, CMatrix* input, std::function<dou
 					if (idx >= inputDataNum)	break;
 					else
 					{
+						newMatrixData[idx] = 0;
 						newMatrixData[idx] = func(matrixData[idx]);
 					}
 				}
@@ -83,6 +86,7 @@ void CActFunc::ResultSerial(CMatrix* refMat, CMatrix* input, std::function<doubl
 	double*& newMatrixData = refMat->GetMatrixData();
 	for (uint32 idx = 0; idx < inputDataNum; ++idx)
 	{
+		newMatrixData[idx] = 0;
 		newMatrixData[idx] = func(matrixData[idx]);
 	}
 }
@@ -236,17 +240,3 @@ CMatrix* CIdentity::GetDeriviate(CMatrix* input)
 #endif
 }
 #pragma endregion
-
-
-#pragma region Softmax
-//CMatrix* Softmax::GetResult(CMatrix* input)
-//{
-//	return ResultSerial(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
-//}
-
-//CMatrix* Softmax::GetDeriviate(CMatrix* input)
-//{
-//
-//}
-#pragma endregion
-

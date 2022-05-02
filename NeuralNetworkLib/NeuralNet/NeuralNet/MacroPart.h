@@ -17,16 +17,16 @@ for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\
 
 /* ------------------------------------------------------ */
 #pragma region ActivationFunctionID
-#define SIGMOID		1
-#define RELU		2
-#define IDENTITY	3
+#define AF_SIGMOID		1
+#define AF_RELU			2
+#define AF_IDENTITY		3
 #pragma endregion
 /* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
 #pragma region LossFunctionID
-#define SUMATION	1
-#define SOFTMAX		2  
+#define LF_SUMATION		1
+#define LF_SOFTMAX		2  
 #pragma endregion
 /* ------------------------------------------------------ */
 

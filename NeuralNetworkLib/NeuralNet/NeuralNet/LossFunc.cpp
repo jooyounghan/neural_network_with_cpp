@@ -3,18 +3,7 @@
 
 
 #pragma region LossFunction
-CLossFunc::CLossFunc(CMatrix* outputMatrix) : predictedMatrix(nullptr)
-{
-	ASSERT_CRASH(outputMatrix != nullptr);
-
-	const uint32& outputMatRow = outputMatrix->GetRow();
-	const uint32& outputMatCol = outputMatrix->GetCol();
-
-	ASSERT_CRASH(outputMatCol == 1);
-
-	DELETEPTR(predictedMatrix);
-	predictedMatrix = new CMatrix(outputMatRow, outputMatCol);
-}
+CLossFunc::CLossFunc() {}
 
 void CLossFunc::GetLoss(double& refDouble, CMatrix* inputMat)
 {
@@ -30,16 +19,21 @@ void CLossFunc::GetLoss(double& refDouble, CMatrix* inputMat)
 #pragma endregion
 
 #pragma region Sumation
-void CSumation::GetResult(CMatrix* inputMat, CMatrix* labelMat)
+void CSumation::GetResult(CMatrix* refMat, CMatrix* inputMat)
+{
+	return;
+}
+
+void CSumation::GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
 #ifdef PARALLEL
-	return ResultParallel(predictedMatrix, inputMat, labelMat);
+	return CSumation::LossGradientParallel(refMat, inputMat, labelMat);
 #else
-	return ResultSerial(predictedMatrix, inputMat, labelMat);
+	return CSumation::LossGradientSerial(refMat, inputMat, labelMat);
 #endif
 }
 
-void CSumation::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+void CSumation::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
 	const uint32& refMatDataNum = refMat->GetDataNum();
 	const uint32& inputMatDataNum = inputMat->GetDataNum();
@@ -65,6 +59,7 @@ void CSumation::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labe
 					if (idx >= inputMatDataNum)	break;
 					else
 					{
+						refMatData[idx] = 0;
 						refMatData[idx] = labelMatData[idx] - inputMatData[idx];
 					}
 				}
@@ -73,7 +68,7 @@ void CSumation::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labe
 	WAITTHREADVECTOR(workThreadVector);
 }
 
-void CSumation::ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+void CSumation::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
 	const uint32& refMatDataNum = refMat->GetDataNum();
 	const uint32& inputMatDataNum = inputMat->GetDataNum();
@@ -88,33 +83,40 @@ void CSumation::ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelM
 
 	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
 	{
+		refMatData[idx] = 0;
 		refMatData[idx] = labelMatData[idx] - inputMatData[idx];
 	}
 }
 #pragma endregion
 
 #pragma region Softmax
-void CSoftmax::GetResult(CMatrix* inputMat, CMatrix* labelMat)
+void CSoftmax::GetResult(CMatrix* refMat, CMatrix* inputMat)
 {
 #ifdef PARALLEL
-	return ResultParallel(predictedMatrix, inputMat, labelMat);
+	return CSoftmax::ResultParallel(refMat, inputMat);
 #else
-	return ResultSerial(predictedMatrix, inputMat, labelMat);
+	return CSoftmax::ResultSerial(refMat, inputMat);
 #endif
 }
 
-void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+void CSoftmax::GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+{
+#ifdef PARALLEL
+	return CSoftmax::LossGradientParallel(refMat, inputMat, labelMat);
+#else
+	return CSoftmax::LossGradientSerial(refMat, inputMat, labelMat);
+#endif
+}
+
+void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat)
 {
 	const uint32& refMatDataNum = refMat->GetDataNum();
 	const uint32& inputMatDataNum = inputMat->GetDataNum();
-	const uint32& labelMatDataNum = labelMat->GetDataNum();
 
 	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
-	ASSERT_CRASH(inputMatDataNum == labelMatDataNum);
 
 	double*& refMatData = refMat->GetMatrixData();
 	double*& inputMatData = inputMat->GetMatrixData();
-	double*& labelMatData = labelMat->GetMatrixData();
 
 	std::vector<std::future<void>> workThreadVector;
 	std::vector<std::future<double>> totalProThreadVector;
@@ -156,7 +158,8 @@ void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* label
 					if (idx >= inputMatDataNum)	break;
 					else
 					{
-						refMatData[idx] = labelMatData[idx] - std::exp(inputMatData[idx]) / totalProbability;
+						refMatData[idx] = 0;
+						refMatData[idx] = std::exp(inputMatData[idx]) / totalProbability;
 					}
 				}
 			}));
@@ -164,7 +167,30 @@ void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* label
 	WAITTHREADVECTOR(workThreadVector);
 }
 
-void CSoftmax::ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+void CSoftmax::ResultSerial(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+
+	double totalProbability = 0.0;
+	
+	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
+	{
+		totalProbability += std::exp(inputMatData[idx]);
+	}
+
+	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
+	{
+		refMatData[idx] = std::exp(inputMatData[idx]) / totalProbability;
+	}
+}
+
+void CSoftmax::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
 	const uint32& refMatDataNum = refMat->GetDataNum();
 	const uint32& inputMatDataNum = inputMat->GetDataNum();
@@ -177,16 +203,46 @@ void CSoftmax::ResultSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMa
 	double*& inputMatData = inputMat->GetMatrixData();
 	double*& labelMatData = labelMat->GetMatrixData();
 
-	double totalProbability = 0.0;
-	
-	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = std::ceil(static_cast<double>(inputMatDataNum) / THREADNUM);
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
 	{
-		totalProbability += std::exp(inputMatData[idx]);
+		int32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= inputMatDataNum)	break;
+					else
+					{
+						refMatData[idx] = 0;
+						refMatData[idx] = labelMatData[idx] - inputMatData[idx];
+					}
+				}
+			}));
 	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+
+void CSoftmax::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+	const uint32& labelMatDataNum = labelMat->GetDataNum();
+
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+	ASSERT_CRASH(inputMatDataNum == labelMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+	double*& labelMatData = labelMat->GetMatrixData();
 
 	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
 	{
-		refMatData[idx] = labelMatData[idx] - std::exp(inputMatData[idx]) / totalProbability;
+		refMatData[idx] = 0;
+		refMatData[idx] = labelMatData[idx] - inputMatData[idx];
 	}
 }
 #pragma endregion

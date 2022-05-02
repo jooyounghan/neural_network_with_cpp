@@ -71,6 +71,12 @@ private:
 	static void SubtractSerial(CMatrix* refMat, CMatrix* inputMat);
 
 public:
+	void ConstantMul(const double& constant);
+private:
+	static void ConstantMulParallel(CMatrix* refMat, const double& constant);
+	static void ConstantMulSerial(CMatrix* refMat, const double& constant);
+
+public:
 	void PrintData();
 
 public:

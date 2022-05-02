@@ -101,13 +101,13 @@ void CLayer2D::SetActivateFunc(ACTID actId)
 	DELETEPTR(activationFunc);
 	switch (actId)
 	{
-	case SIGMOID:
+	case AF_SIGMOID:
 		activationFunc = new CSigmoid();
 		break;
-	case RELU:
+	case AF_RELU:
 		activationFunc = new CRelu();
 		break;
-	case IDENTITY:
+	case AF_IDENTITY:
 		activationFunc = new CIdentity();
 		break;
 	default:

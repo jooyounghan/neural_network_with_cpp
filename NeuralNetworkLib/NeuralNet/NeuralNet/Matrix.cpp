@@ -251,6 +251,7 @@ double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 						for (uint32 colIdx = 0; colIdx < newCol; ++colIdx)
 						{
 							const int arrIdx = rowIdx * newCol + colIdx;
+							newMatrixData[arrIdx] = 0;
 							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
 							{
 								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
@@ -266,6 +267,7 @@ double* CMatrix::MatmulParallel(CMatrix* matrix_1, CMatrix* matrix_2)
 						{
 							if (colIdx >= newCol)	break;
 							const int arrIdx = rowIdx * newCol + colIdx;
+							newMatrixData[arrIdx] = 0;
 							for (uint32 kIdx = 0; kIdx < kValue; ++kIdx)
 							{
 								newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
@@ -295,6 +297,7 @@ double* CMatrix::MatmulSerial(CMatrix* matrix_1, CMatrix* matrix_2)
 		for (int colIdx = 0; colIdx < newCol; ++colIdx)
 		{
 			const int arrIdx = rowIdx * newCol + colIdx;
+			newMatrixData[arrIdx] = 0;
 			for (int kIdx = 0; kIdx < kValue; ++kIdx)
 			{
 				newMatrixData[arrIdx] += matrix1Data[rowIdx * kValue + kIdx] * matrix2Data[kIdx * newCol + colIdx];
@@ -676,6 +679,53 @@ void CMatrix::SubtractSerial(CMatrix* refMat, CMatrix* inputMat)
 	for (uint32 idx = 0; idx < refMatDataNum; ++idx)
 	{
 		refMatData[idx] = refMatData[idx] - inputMatData[idx];
+	}
+}
+#pragma endregion
+
+#pragma region ConstantMul
+void CMatrix::ConstantMul(const double& constant)
+{
+#ifdef PARALLEL
+	return CMatrix::ConstantMulParallel(this, constant);
+#else
+	return CMatrix::ConstantMulSerial(this, constant);
+#endif
+}
+void CMatrix::ConstantMulParallel(CMatrix* refMat, const double& constant)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	double*& refMatData = refMat->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(refMatDataNum) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= refMatDataNum)	break;
+					else
+					{
+						refMatData[idx] = refMatData[idx] * constant;
+					}
+				}
+			}));
+	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+void CMatrix::ConstantMulSerial(CMatrix* refMat, const double& constant)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	double*& refMatData = refMat->GetMatrixData();
+
+	for (uint32 idx = 0; idx < refMatDataNum; ++idx)
+	{
+		refMatData[idx] = refMatData[idx] * constant;
 	}
 }
 #pragma endregion
