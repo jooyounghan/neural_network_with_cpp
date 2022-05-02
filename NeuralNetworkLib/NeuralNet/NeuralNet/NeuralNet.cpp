@@ -104,7 +104,7 @@ void CNeuralNetwork::SetInputNum(const uint32& number)
 
 void CNeuralNetwork::SetActivationFunc(va_list& ActiveIDs)
 {
-	uint32 layerSize = layers.size();
+	const uint32& layerSize = layers.size();
 	ASSERT_CRASH(layerSize);
 
 	for (uint32 layerIdx = 0; layerIdx < layerSize; ++layerIdx)
@@ -144,7 +144,7 @@ CMatrix*& CNeuralNetwork::GetLossGradient()
 	return lossGradient;
 }
 
-const uint32& CNeuralNetwork::GetLayersNum()
+const uint32 CNeuralNetwork::GetLayersNum()
 {
 	return layers.size();
 }

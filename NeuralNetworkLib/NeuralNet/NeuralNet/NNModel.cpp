@@ -19,12 +19,12 @@ CNNModel::~CNNModel()
 	DELETEPTR(lossFunc);
 }
 
-void CNNModel::SetActivationFunc(...)
+void CNNModel::SetActivationFunc(const uint32 numLayers, ...)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
-	const uint32 layersNum = NeuralNet->GetLayersNum();
+	ASSERT_CRASH(numLayers == NeuralNet->GetLayersNum());
 	va_list val;
-	va_start(val, layersNum);
+	va_start(val, numLayers);
 	NeuralNet->SetActivationFunc(val);
 	va_end(val);
 }
@@ -45,12 +45,12 @@ void CNNModel::SetLossFunc(const LOSSFUNCID& lfID)
 	}
 }
 
-void CNNModel::InitializeWeights(...)
+void CNNModel::InitializeWeights(const uint32 numLayers, ...)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
-	const uint32 layersNum = NeuralNet->GetLayersNum();
+	ASSERT_CRASH(numLayers == NeuralNet->GetLayersNum());
 	va_list val;
-	va_start(val, layersNum);
+	va_start(val, numLayers);
 	NeuralNet->InitializeWeight(val);
 	va_end(val);
 }

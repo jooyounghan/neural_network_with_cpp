@@ -14,9 +14,10 @@ public:
 	~CNNModel();
 
 public:
-	void SetActivationFunc(...);
+	void SetActivationFunc(const uint32 numLayers, ...);
+	void InitializeWeights(const uint32 numLayers, ...);
 	void SetLossFunc(const LOSSFUNCID& lfID);
-	void InitializeWeights(...);
+
 
 public:
 	void Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labelVector, const uint32& iterations, const double& learningRate);

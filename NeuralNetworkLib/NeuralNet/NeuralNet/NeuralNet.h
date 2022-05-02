@@ -25,7 +25,7 @@ public:
 public:
 	CMatrix*& GetOutputMatrix();
 	CMatrix*& GetLossGradient();
-	const uint32& GetLayersNum();
+	const uint32 GetLayersNum();
 
 public:
 	void SetActivationFunc(va_list& ActiveIDs);
