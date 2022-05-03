@@ -67,36 +67,44 @@ void CNNModel::Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labe
 	for (uint32 iter = 0; iter < iterations; ++iter)
 	{
 		// Shuffle with Same Order
-		randGen.ShuffleVector(inputVector, 100);
-		randGen.ShuffleVector(labelVector, 100);
-		NeuralNet->FlushInput();
+		//randGen.ShuffleVector(inputVector, 100);
+		//randGen.ShuffleVector(labelVector, 100);
 		for (uint32 idx = 0; idx < inputVector.size(); ++idx)
 		{
-			NeuralNet->SetInput(&inputVector[idx]);
-			NeuralNet->ForwardPropagation();
-
-			CMatrix*& outputMatrix = NeuralNet->GetOutputMatrix();
-			CMatrix*& lossMatrix = NeuralNet->GetLossGradient();
-
-			lossFunc->GetResult(outputMatrix, &inputVector[idx]);
-			lossFunc->GetLossGradient(lossMatrix, outputMatrix, &labelVector[idx]);
-
-			NeuralNet->BackwardPropagation(learningRate);
-			NeuralNet->FlushInput();
+			Propagation(&inputVector[idx], &labelVector[idx], learningRate);
 		}
 	}
 }
 
-inline void CNNModel::PushInput(CMatrix inputMatrix, CMatrix labelMatrix)
+void CNNModel::PushInput(CMatrix inputMatrix, CMatrix labelMatrix, const double& learningRate)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
 	ASSERT_CRASH(lossFunc != nullptr);
+
+	Propagation(&inputMatrix, &labelMatrix, learningRate);
+}
+
+CMatrix* CNNModel::GetResult(CMatrix inputMatrix)
+{
 	NeuralNet->FlushInput();
 	NeuralNet->SetInput(&inputMatrix);
 	NeuralNet->ForwardPropagation();
+	CMatrix* ResultMatrix = NeuralNet->GetOutputMatrix()->GetCopyMatrix();
+	return ResultMatrix;
+}
+
+void CNNModel::Propagation(CMatrix* inputMatrix, CMatrix* labelMatrix, const double& learningRate)
+{
+	NeuralNet->FlushInput();
+	NeuralNet->SetInput(inputMatrix);
+	NeuralNet->ForwardPropagation();
 
 	CMatrix*& outputMatrix = NeuralNet->GetOutputMatrix();
-	lossFunc->GetResult(outputMatrix, &labelMatrix);
+	CMatrix*& lossMatrix = NeuralNet->GetLossGradient();
 
+	lossFunc->GetResult(outputMatrix, inputMatrix);
+	lossFunc->GetLossGradient(lossMatrix, outputMatrix, labelMatrix);
+
+	NeuralNet->BackwardPropagation(learningRate);
 	NeuralNet->FlushInput();
 }

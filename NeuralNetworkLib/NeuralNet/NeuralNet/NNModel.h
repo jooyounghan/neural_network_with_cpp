@@ -21,5 +21,11 @@ public:
 
 public:
 	void Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labelVector, const uint32& iterations, const double& learningRate);
-	void PushInput(CMatrix inputMatrix, CMatrix labelMatrix);
+	void PushInput(CMatrix inputMatrix, CMatrix labelMatrix, const double& learningRate);
+
+	CMatrix* GetResult(CMatrix inputMatrix);
+
+private:
+	void Propagation(CMatrix* inputMatrix, CMatrix* labelMatrix, const double& learningRate);
+
 };
