@@ -10,7 +10,7 @@ private:
 	double loss;
 
 public:
-	CNNModel(const uint32& inputCnt, const uint32& dimension, const uint32 numLayers, ...);
+	CNNModel(const uint32& inputCnt, const uint32& inputDimension, const uint32& outputDimension, const uint32 numLayers, ...);
 	~CNNModel();
 
 public:
@@ -24,7 +24,7 @@ public:
 	void PushInput(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
 
 	std::shared_ptr<CMatrix> GetResult(std::shared_ptr<CMatrix> inputMatrix);
-
+	const double& GetLoss();
 private:
 	void Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
 

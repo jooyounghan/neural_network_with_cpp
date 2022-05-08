@@ -518,7 +518,7 @@ CMatrix* CMatrix::GetElementWiseMul(CMatrix* inputMat)
 #ifdef PARALLEL
 	double* newMatrixData = ElementWiseMulParallel(inputMat);
 #else
-	double* newMatrixData = ElementWiseMulSerial(input);
+	double* newMatrixData = ElementWiseMulSerial(inputMat);
 #endif
 	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
 	return newMatrix;

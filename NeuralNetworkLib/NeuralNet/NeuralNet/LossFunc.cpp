@@ -5,15 +5,18 @@
 #pragma region LossFunction
 CLossFunc::CLossFunc() {}
 
-void CLossFunc::GetLoss(double& refDouble, CMatrix* inputMat)
+void CLossFunc::GetLoss(double& refDouble, CMatrix* resultMat, CMatrix* labelMat)
 {
-	const uint32& inputDataNum = inputMat->GetDataNum();
-	double*& inputMatrixData = inputMat->GetMatrixData();
+	const uint32& resultDataNum = resultMat->GetDataNum();
+	const uint32& labelDataNum = labelMat->GetDataNum();
+	ASSERT_CRASH(resultDataNum == labelDataNum);
 
+	double*& resultMatrixData = resultMat->GetMatrixData();
+	double*& labelMatrixData = labelMat->GetMatrixData();
 	refDouble = 0;
-	for (uint32 idx = 0; idx < inputDataNum; ++idx)
+	for (uint32 idx = 0; idx < resultDataNum; ++idx)
 	{
-		refDouble += std::pow(inputMatrixData[idx], 2) / 2.0;
+		refDouble += std::pow(resultMatrixData[idx] - labelMatrixData[idx], 2) / 2.0;
 	}
 }
 #pragma endregion
@@ -60,7 +63,7 @@ void CSumation::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix
 					else
 					{
 						refMatData[idx] = 0;
-						refMatData[idx] = labelMatData[idx] - inputMatData[idx];
+						refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 					}
 				}
 			}));
@@ -84,7 +87,7 @@ void CSumation::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* 
 	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
 	{
 		refMatData[idx] = 0;
-		refMatData[idx] = labelMatData[idx] - inputMatData[idx];
+		refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 	}
 }
 #pragma endregion
@@ -218,7 +221,7 @@ void CSoftmax::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix*
 					else
 					{
 						refMatData[idx] = 0;
-						refMatData[idx] = labelMatData[idx] - inputMatData[idx];
+						refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 					}
 				}
 			}));
@@ -242,7 +245,7 @@ void CSoftmax::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* l
 	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
 	{
 		refMatData[idx] = 0;
-		refMatData[idx] = labelMatData[idx] - inputMatData[idx];
+		refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 	}
 }
 #pragma endregion

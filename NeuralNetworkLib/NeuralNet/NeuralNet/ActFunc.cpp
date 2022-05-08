@@ -120,6 +120,15 @@ CMatrix* CSigmoid::GetDeriviate(CMatrix* input)
 	return ResultSerial(input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
 #endif
 }
+
+void CSigmoid::CalcDeriviate(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
+#else
+	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
+#endif
+}
 #pragma endregion
 
 
@@ -144,7 +153,7 @@ CMatrix* CRelu::GetResult(CMatrix* input)
 		{
 			if (variable > 0)
 			{
-				return 1.0;
+				return variable;
 			}
 			else
 			{
@@ -175,7 +184,7 @@ void CRelu::CalcResult(CMatrix* refMat, CMatrix* input)
 		{
 			if (variable > 0)
 			{
-				return 1.0;
+				return variable;
 			}
 			else
 			{
@@ -217,6 +226,37 @@ CMatrix* CRelu::GetDeriviate(CMatrix* input)
 
 #endif
 }
+
+void CRelu::CalcDeriviate(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return CActFunc::ResultParallel(refMat, input, [](double& variable)
+		{
+			if (variable > 0)
+			{
+				return 1.0;
+			}
+			else
+			{
+				return 0.0;
+			}
+		});
+
+#else
+	return CActFunc::ResultSerial(refMat, input, [](double& variable)
+		{
+			if (variable > 0)
+			{
+				return 1.0;
+			}
+			else
+			{
+				return 0.0;
+			}
+		});
+
+#endif
+}
 #pragma endregion
 
 
@@ -237,6 +277,16 @@ CMatrix* CIdentity::GetDeriviate(CMatrix* input)
 	return ResultParallel(input, [](double& variable) { return (1.0); });
 #else
 	return ResultSerial(input, [](double& variable) { return (1.0); });
+#endif
+}
+
+
+void CIdentity::CalcDeriviate(CMatrix* refMat, CMatrix* input)
+{
+#ifdef PARALLEL
+	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0); });
+#else
+	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0); });
 #endif
 }
 #pragma endregion

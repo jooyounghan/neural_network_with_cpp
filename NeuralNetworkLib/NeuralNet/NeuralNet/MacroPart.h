@@ -2,7 +2,7 @@
 
 /* ------------------------------------------------------ */
 #pragma region Parallel
-#define PARALLEL
+//#define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 #define LOCKGUARD(mtx)	std::lock_guard<std::mutex>{ mtx };
 
