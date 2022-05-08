@@ -409,6 +409,17 @@ CMatrix* CMatrix::GetCopyMatrix()
 	return newMatrix;
 }
 
+std::shared_ptr<CMatrix> CMatrix::GetSharedCopyMatrix()
+{
+#ifdef PARALLEL
+	double* newMatrixData = CopyParallel();
+#else
+	double* newMatrixData = CopySerial();
+#endif
+	std::shared_ptr<CMatrix> newMatrix = std::make_shared<CMatrix>(row, col, newMatrixData);
+	return newMatrix;
+}
+
 void CMatrix::CopyMatrix(CMatrix* input)
 {
 #ifdef PARALLEL

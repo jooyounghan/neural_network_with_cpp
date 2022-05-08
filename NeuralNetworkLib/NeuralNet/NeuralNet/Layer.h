@@ -4,50 +4,50 @@
 class CLayer2D
 {
 private:
-	CMatrix* inputMatrix;
-	CMatrix* activatedMatrix;
-	CMatrix* weight;
-	CMatrix* gradient;
+	std::shared_ptr<CMatrix> inputMatrix;
+	std::shared_ptr<CMatrix> activatedMatrix;
+	std::shared_ptr<CMatrix> weight;
+	std::shared_ptr<CMatrix> gradient;
 
 private:
-	CMatrix* derivativeActFunc;
-	CMatrix* transposedWeight;
-	CMatrix* activatedTransposedInput;
-	CMatrix* weightGradient;
+	std::shared_ptr<CMatrix> derivativeActFunc;
+	std::shared_ptr<CMatrix> transposedWeight;
+	std::shared_ptr<CMatrix> activatedTransposedInput;
+	std::shared_ptr<CMatrix> weightGradient;
 
 private:
-	CActFunc* activationFunc;
+	std::shared_ptr<CActFunc> activationFunc;
 
 public:
-	CLayer2D* former;
-	CLayer2D* latter;
+	std::shared_ptr <CLayer2D> former;
+	std::shared_ptr <CLayer2D> latter;
 
 public:
 	CLayer2D();
 	~CLayer2D();
 
 public:
-	CMatrix*& GetInput();
-	CMatrix*& GetActivatedInput();
-	CMatrix*& GetWeight();
-	CMatrix*& GetGradient();
-	CActFunc*& GetActivationFunc();
+	std::shared_ptr<CMatrix>& GetInput();
+	std::shared_ptr<CMatrix>& GetActivatedInput();
+	std::shared_ptr<CMatrix>& GetWeight();
+	std::shared_ptr<CMatrix>& GetGradient();
+	std::shared_ptr<CActFunc>& GetActivationFunc();
 
 public:
-	CMatrix*& GetDerivativeActFunc();
-	CMatrix*& GetTransposedWeight();
-	CMatrix*& GetActivatedTransposedInput();
-	CMatrix*& GetWeightGradient();
+	std::shared_ptr<CMatrix>& GetDerivativeActFunc();
+	std::shared_ptr<CMatrix>& GetTransposedWeight();
+	std::shared_ptr<CMatrix>& GetActivatedTransposedInput();
+	std::shared_ptr<CMatrix>& GetWeightGradient();
 
 public:
-	void SetInput(CMatrix* newInput);
-	void SetActivavtedInput(CMatrix* newInput);
-	void SetWeight(CMatrix* newWeight);
-	void SetGradient(CMatrix* newGradient);
+	void SetInput(std::shared_ptr<CMatrix> newInput);
+	void SetActivavtedInput(std::shared_ptr<CMatrix> newInput);
+	void SetWeight(std::shared_ptr<CMatrix> newWeight);
+	void SetGradient(std::shared_ptr<CMatrix> newGradient);
 	void SetActivateFunc(ACTID actId);
 
-	void SetDerivativeActivatedInput(CMatrix* newInput);
-	void SetTransposedWeight(CMatrix* newWeight);
-	void SetActivatedTransposedInput(CMatrix* newInput);
-	void SetWeigthGradient(CMatrix* newWeight);
+	void SetDerivativeActivatedInput(std::shared_ptr<CMatrix> newInput);
+	void SetTransposedWeight(std::shared_ptr<CMatrix> newWeight);
+	void SetActivatedTransposedInput(std::shared_ptr<CMatrix> newInput);
+	void SetWeigthGradient(std::shared_ptr<CMatrix> newWeight);
 };

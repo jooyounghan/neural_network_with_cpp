@@ -48,6 +48,7 @@ private:
 
 public:
 	CMatrix* GetCopyMatrix();
+	std::shared_ptr<CMatrix> GetSharedCopyMatrix();
 	void CopyMatrix(CMatrix* input);
 private:
 	double* CopyParallel();

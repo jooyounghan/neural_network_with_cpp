@@ -10,10 +10,6 @@ CNeuralNetwork::CNeuralNetwork() : outputMatrix(nullptr), lossGradient(nullptr) 
 #pragma region Destructor
 CNeuralNetwork::~CNeuralNetwork()
 {
-	for (CLayer2D*& layer : layers)
-	{
-		DELETEPTR(layer);
-	}
 }
 #pragma endregion
 
@@ -25,28 +21,28 @@ void CNeuralNetwork::SetLayers(const uint32& dimension, const uint32 numLayers, 
 	for (uint32 layerIdx = 0; layerIdx < numLayers; ++layerIdx)
 	{
 		uint32 layerInfo = va_arg(val, uint32);
-		CLayer2D* newLayer = new CLayer2D();
+		std::shared_ptr<CLayer2D> newLayer = std::make_shared<CLayer2D>();
 
-		newLayer->SetWeight(new CMatrix(cmpInfo, layerInfo));
-		newLayer->SetWeigthGradient(new CMatrix(cmpInfo, layerInfo));
-		newLayer->SetTransposedWeight(new CMatrix(layerInfo, cmpInfo));
+		newLayer->SetWeight(std::make_shared<CMatrix>(cmpInfo, layerInfo));
+		newLayer->SetWeigthGradient(std::make_shared <CMatrix>(cmpInfo, layerInfo));
+		newLayer->SetTransposedWeight(std::make_shared<CMatrix>(layerInfo, cmpInfo));
 		layers.push_back(newLayer);
 		cmpInfo = layerInfo;
 	}
 
-	CLayer2D*& lastLayer = layers[layers.size() - 1];
-	CLayer2D* newLastLayer = new CLayer2D();
+	std::shared_ptr<CLayer2D>& lastLayer = layers[layers.size() - 1];
+	std::shared_ptr<CLayer2D> newLastLayer = std::make_shared<CLayer2D>();
 
 	const uint32& lastWeightCol = lastLayer->GetWeight()->GetCol();
-	newLastLayer->SetWeight(new CMatrix(lastWeightCol, 1));
-	newLastLayer->SetWeigthGradient(new CMatrix(lastWeightCol, 1));
-	newLastLayer->SetTransposedWeight(new CMatrix(lastWeightCol, 1));
+	newLastLayer->SetWeight(std::make_shared<CMatrix>(lastWeightCol, 1));
+	newLastLayer->SetWeigthGradient(std::make_shared<CMatrix>(lastWeightCol, 1));
+	newLastLayer->SetTransposedWeight(std::make_shared<CMatrix>(lastWeightCol, 1));
 	layers.push_back(newLastLayer);
 
 	const uint32& lastNumLayers = layers.size();
 	for (uint32 layerIdx = 0; layerIdx < lastNumLayers; ++layerIdx)
 	{
-		CLayer2D*& layer = layers[layerIdx];
+		std::shared_ptr<CLayer2D>& layer = layers[layerIdx];
 		if (layerIdx == 0)
 		{
 			layer->latter = layers[layerIdx + 1];
@@ -70,36 +66,36 @@ void CNeuralNetwork::SetInputNum(const uint32& number)
 
 	for (uint32 idx = 0; idx < numLayers - 1; ++idx)
 	{
-		CLayer2D*& thisLayer = layers[idx];
-		CLayer2D*& nextLayer = layers[idx + 1];
+		std::shared_ptr<CLayer2D>& thisLayer = layers[idx];
+		std::shared_ptr<CLayer2D>& nextLayer = layers[idx + 1];
 
 		const uint32& thisWeightRow = thisLayer->GetWeight()->GetRow();
 		const uint32& thisWeightCol = thisLayer->GetWeight()->GetCol();
 		if (idx == 0)
 		{
-			thisLayer->SetInput(new CMatrix(number, thisWeightRow));
-			thisLayer->SetActivavtedInput(new CMatrix(number, thisWeightRow));
-			thisLayer->SetGradient(new CMatrix(number, thisWeightRow));
-			thisLayer->SetDerivativeActivatedInput(new CMatrix(number, thisWeightRow));
-			thisLayer->SetActivatedTransposedInput(new CMatrix(thisWeightRow, number));
+			thisLayer->SetInput(std::make_shared<CMatrix>(number, thisWeightRow));
+			thisLayer->SetActivavtedInput(std::make_shared<CMatrix>(number, thisWeightRow));
+			thisLayer->SetGradient(std::make_shared<CMatrix>(number, thisWeightRow));
+			thisLayer->SetDerivativeActivatedInput(std::make_shared<CMatrix>(number, thisWeightRow));
+			thisLayer->SetActivatedTransposedInput(std::make_shared<CMatrix>(thisWeightRow, number));
 		}
 
 		const uint32& thisInputRow = thisLayer->GetInput()->GetRow();
 		const uint32& thisInputCol = thisLayer->GetInput()->GetCol();
 
-		nextLayer->SetInput(new CMatrix(thisInputRow, thisWeightCol));
-		nextLayer->SetActivavtedInput(new CMatrix(thisInputRow, thisWeightCol));
-		nextLayer->SetGradient(new CMatrix(thisInputRow, thisWeightCol));
-		nextLayer->SetDerivativeActivatedInput(new CMatrix(thisInputRow, thisWeightCol));
-		nextLayer->SetActivatedTransposedInput(new CMatrix(thisWeightCol, thisInputRow));
+		nextLayer->SetInput(std::make_shared<CMatrix>(thisInputRow, thisWeightCol));
+		nextLayer->SetActivavtedInput(std::make_shared<CMatrix>(thisInputRow, thisWeightCol));
+		nextLayer->SetGradient(std::make_shared<CMatrix>(thisInputRow, thisWeightCol));
+		nextLayer->SetDerivativeActivatedInput(std::make_shared<CMatrix>(thisInputRow, thisWeightCol));
+		nextLayer->SetActivatedTransposedInput(std::make_shared<CMatrix>(thisWeightCol, thisInputRow));
 	}
 
-	CLayer2D*& lastLayer = layers[layers.size() - 1];
+	std::shared_ptr<CLayer2D>& lastLayer = layers[layers.size() - 1];
 	const uint32& outputRow = lastLayer->GetInput()->GetRow();
 	const uint32& outputCol = lastLayer->GetWeight()->GetCol();
 
-	outputMatrix = new CMatrix(outputRow, outputCol);
-	lossGradient = new CMatrix(outputRow, outputCol);
+	outputMatrix = std::make_shared<CMatrix>(outputRow, outputCol);
+	lossGradient = std::make_shared<CMatrix>(outputRow, outputCol);
 }
 
 void CNeuralNetwork::SetActivationFunc(va_list& ActiveIDs)
@@ -114,32 +110,27 @@ void CNeuralNetwork::SetActivationFunc(va_list& ActiveIDs)
 	}
 }
 
-void CNeuralNetwork::SetInput(CMatrix* inputMatrix)
+void CNeuralNetwork::SetInput(std::shared_ptr<CMatrix> inputMatrix)
 {
 	ASSERT_CRASH(layers.size());
 	layers[0]->SetInput(inputMatrix);
 }
 
-void CNeuralNetwork::SetLossGradient(CMatrix* inputGradient)
+void CNeuralNetwork::SetLossGradient(std::shared_ptr<CMatrix> inputGradient)
 {
 	ASSERT_CRASH(layers.size());
 	lossGradient = inputGradient;
 }
 
-void CNeuralNetwork::FlushInput()
-{
-	ASSERT_CRASH(layers.size());
-	layers[0]->SetInput(nullptr);
-}
 #pragma endregion
 
 #pragma region Getter
-CMatrix*& CNeuralNetwork::GetOutputMatrix()
+std::shared_ptr<CMatrix>& CNeuralNetwork::GetOutputMatrix()
 {
 	return outputMatrix;
 }
 
-CMatrix*& CNeuralNetwork::GetLossGradient()
+std::shared_ptr<CMatrix>& CNeuralNetwork::GetLossGradient()
 {
 	return lossGradient;
 }
@@ -159,7 +150,7 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 	for (uint32 layerIdx = 0; layerIdx < layerSize; ++layerIdx)
 	{
 		uint32 ActiveID = va_arg(InitializerIDs, uint32);
-		CMatrix* weight = layers[layerIdx]->GetWeight();
+		std::shared_ptr<CMatrix> weight = layers[layerIdx]->GetWeight();
 		switch (ActiveID)
 		{
 		case XAVIER:
@@ -201,67 +192,67 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 void CNeuralNetwork::ForwardPropagation()
 {
 	ASSERT_CRASH(layers.size());
-	CLayer2D*& calcLayer = layers[0];
+	std::shared_ptr<CLayer2D> calcLayer = layers[0];
 
 	while (calcLayer->latter != nullptr)
 	{
-		CActFunc*& activatedFunc = calcLayer->GetActivationFunc();
-		CMatrix*& activatedInputMatrix = calcLayer->GetActivatedInput();
-		CMatrix*& inputMatrix = calcLayer->GetInput();
-		CMatrix*& inputWeightMatrix = calcLayer->GetWeight();
+		std::shared_ptr<CActFunc>& activatedFunc = calcLayer->GetActivationFunc();
+		std::shared_ptr<CMatrix>& activatedInputMatrix = calcLayer->GetActivatedInput();
+		std::shared_ptr<CMatrix>& inputMatrix = calcLayer->GetInput();
+		std::shared_ptr<CMatrix>& inputWeightMatrix = calcLayer->GetWeight();
 
 		// Activation Function
-		activatedFunc->CalcResult(activatedInputMatrix, inputMatrix);
+		activatedFunc->CalcResult(activatedInputMatrix.get(), inputMatrix.get());
 
 		// Matrix Multiplication
-		calcLayer->latter->GetInput()->MatMul(inputMatrix, inputWeightMatrix);
+		calcLayer->latter->GetInput()->MatMul(inputMatrix.get(), inputWeightMatrix.get());
 		calcLayer = calcLayer->latter;
 	}
 
-	CLayer2D*& lastLayer = layers[layers.size() - 1];
-	outputMatrix->MatMul(lastLayer->GetInput(), lastLayer->GetWeight());
+	std::shared_ptr<CLayer2D>& lastLayer = layers[layers.size() - 1];
+	outputMatrix->MatMul(lastLayer->GetInput().get(), lastLayer->GetWeight().get());
 }
 
 void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 {
 	ASSERT_CRASH(layers.size());
 	ASSERT_CRASH(lossGradient != nullptr);
-	CLayer2D*& calcLayer = layers[layers.size() - 1];
+	std::shared_ptr<CLayer2D> calcLayer = layers[layers.size() - 1];
 
 	while (calcLayer == nullptr)
 	{
-		CMatrix*& inputMatrix = calcLayer->GetInput();
-		CMatrix*& weightMatrix = calcLayer->GetWeight();
-		CMatrix*& activatedInputMatrix = calcLayer->GetActivatedInput();
-		CMatrix*& gradientMatrix = calcLayer->GetGradient();
+		std::shared_ptr<CMatrix>& inputMatrix = calcLayer->GetInput();
+		std::shared_ptr<CMatrix>& weightMatrix = calcLayer->GetWeight();
+		std::shared_ptr<CMatrix>& activatedInputMatrix = calcLayer->GetActivatedInput();
+		std::shared_ptr<CMatrix>& gradientMatrix = calcLayer->GetGradient();
 
-		CMatrix*& derivativeActFunc = calcLayer->GetDerivativeActFunc();
-		CMatrix*& transposedWeight = calcLayer->GetTransposedWeight();
-		CMatrix*& activatedTransposedInput = calcLayer->GetActivatedTransposedInput();
-		CMatrix*& weightGradient = calcLayer->GetWeightGradient();
+		std::shared_ptr<CMatrix>& derivativeActFunc = calcLayer->GetDerivativeActFunc();
+		std::shared_ptr<CMatrix>& transposedWeight = calcLayer->GetTransposedWeight();
+		std::shared_ptr<CMatrix>& activatedTransposedInput = calcLayer->GetActivatedTransposedInput();
+		std::shared_ptr<CMatrix>& weightGradient = calcLayer->GetWeightGradient();
 
-		CActFunc*& CalcActFunc = calcLayer->GetActivationFunc();
+		std::shared_ptr<CActFunc>& CalcActFunc = calcLayer->GetActivationFunc();
 
-		CalcActFunc->CalcResult(derivativeActFunc, inputMatrix);
-		transposedWeight->Transpose(weightMatrix);
-		activatedTransposedInput->Transpose(activatedInputMatrix);
+		CalcActFunc->CalcResult(derivativeActFunc.get(), inputMatrix.get());
+		transposedWeight->Transpose(weightMatrix.get());
+		activatedTransposedInput->Transpose(activatedInputMatrix.get());
 
 		if (calcLayer->latter == nullptr)
 		{
-			derivativeActFunc->ElementWiseMul(derivativeActFunc, lossGradient);
-			weightGradient->MatMul(activatedTransposedInput, lossGradient);
+			derivativeActFunc->ElementWiseMul(derivativeActFunc.get(), lossGradient.get());
+			weightGradient->MatMul(activatedTransposedInput.get(), lossGradient.get());
 		}
 		else
 		{
-			derivativeActFunc->ElementWiseMul(derivativeActFunc, calcLayer->latter->GetGradient());
-			weightGradient->MatMul(activatedTransposedInput, calcLayer->latter->GetGradient());
+			derivativeActFunc->ElementWiseMul(derivativeActFunc.get(), calcLayer->latter->GetGradient().get());
+			weightGradient->MatMul(activatedTransposedInput.get(), calcLayer->latter->GetGradient().get());
 		}
 
-		gradientMatrix->MatMul(derivativeActFunc, transposedWeight);
+		gradientMatrix->MatMul(derivativeActFunc.get(), transposedWeight.get());
 		
 		// Updating
 		weightGradient->ConstantMul(learningRate);
-		weightMatrix->Subtract(weightGradient);
+		weightMatrix->Subtract(weightGradient.get());
 
 		calcLayer = calcLayer->former;
 	}

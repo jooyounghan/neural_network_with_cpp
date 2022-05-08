@@ -5,11 +5,11 @@
 class CNeuralNetwork
 {
 private:
-	std::vector<CLayer2D*> layers;
+	std::vector<std::shared_ptr<CLayer2D>> layers;
 
 private:
-	CMatrix* outputMatrix;
-	CMatrix* lossGradient;
+	std::shared_ptr <CMatrix> outputMatrix;
+	std::shared_ptr <CMatrix> lossGradient;
 
 public:
 	CNeuralNetwork();
@@ -18,13 +18,12 @@ public:
 public:
 	void SetLayers(const uint32& dimension, const uint32 numLayers, va_list& val);
 	void SetInputNum(const uint32& number);
-	void SetInput(CMatrix* inputMatrix);
-	void SetLossGradient(CMatrix* inputGradient);
-	void FlushInput();
+	void SetInput(std::shared_ptr <CMatrix> inputMatrix);
+	void SetLossGradient(std::shared_ptr <CMatrix> inputGradient);
 
 public:
-	CMatrix*& GetOutputMatrix();
-	CMatrix*& GetLossGradient();
+	std::shared_ptr<CMatrix>& GetOutputMatrix();
+	std::shared_ptr<CMatrix>& GetLossGradient();
 	const uint32 GetLayersNum();
 
 public:

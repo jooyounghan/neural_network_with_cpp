@@ -7,7 +7,7 @@ CNNModel::CNNModel(const uint32& inputCnt, const uint32& dimension, const uint32
 	va_list argsList;
 	va_start(argsList, numLayers);
 
-	NeuralNet = new CNeuralNetwork();
+	NeuralNet = std::make_shared<CNeuralNetwork>();
 	NeuralNet->SetLayers(dimension, numLayers, argsList);
 	NeuralNet->SetInputNum(inputCnt);
 	va_end(argsList);
@@ -15,8 +15,6 @@ CNNModel::CNNModel(const uint32& inputCnt, const uint32& dimension, const uint32
 
 CNNModel::~CNNModel()
 {
-	DELETEPTR(NeuralNet);
-	DELETEPTR(lossFunc);
 }
 
 void CNNModel::SetActivationFunc(const uint32 numLayers, ...)
@@ -31,14 +29,13 @@ void CNNModel::SetActivationFunc(const uint32 numLayers, ...)
 
 void CNNModel::SetLossFunc(const LOSSFUNCID& lfID)
 {
-	DELETEPTR(lossFunc);
 	switch (lfID)
 	{
 	case LF_SUMATION :
-		lossFunc = new CSumation();
+		lossFunc = std::make_shared<CSumation>();
 		break;
 	case LF_SOFTMAX :
-		lossFunc = new CSoftmax();
+		lossFunc = std::make_shared<CSoftmax>();
 		break;
 	default:
 		break;
@@ -55,7 +52,7 @@ void CNNModel::InitializeWeights(const uint32 numLayers, ...)
 	va_end(val);
 }
 
-void CNNModel::Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labelVector, const uint32& iterations, const double& learningRate)
+void CNNModel::Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vector<std::shared_ptr<CMatrix>> labelVector, const uint32& iterations, const double& learningRate)
 {
 	const uint32& inputSize = inputVector.size();
 	const uint32& labelSize = labelVector.size();
@@ -71,40 +68,37 @@ void CNNModel::Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labe
 		//randGen.ShuffleVector(labelVector, 100);
 		for (uint32 idx = 0; idx < inputVector.size(); ++idx)
 		{
-			Propagation(&inputVector[idx], &labelVector[idx], learningRate);
+			Propagation(inputVector[idx], labelVector[idx], learningRate);
 		}
 	}
 }
 
-void CNNModel::PushInput(CMatrix inputMatrix, CMatrix labelMatrix, const double& learningRate)
+void CNNModel::PushInput(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
 	ASSERT_CRASH(lossFunc != nullptr);
 
-	Propagation(&inputMatrix, &labelMatrix, learningRate);
+	Propagation(inputMatrix, labelMatrix, learningRate);
 }
 
-CMatrix* CNNModel::GetResult(CMatrix inputMatrix)
+std::shared_ptr<CMatrix> CNNModel::GetResult(std::shared_ptr<CMatrix> inputMatrix)
 {
-	NeuralNet->FlushInput();
-	NeuralNet->SetInput(&inputMatrix);
+	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
-	CMatrix* ResultMatrix = NeuralNet->GetOutputMatrix()->GetCopyMatrix();
+	std::shared_ptr<CMatrix> ResultMatrix = NeuralNet->GetOutputMatrix()->GetSharedCopyMatrix();
 	return ResultMatrix;
 }
 
-void CNNModel::Propagation(CMatrix* inputMatrix, CMatrix* labelMatrix, const double& learningRate)
+void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
-	NeuralNet->FlushInput();
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
 
-	CMatrix*& outputMatrix = NeuralNet->GetOutputMatrix();
-	CMatrix*& lossMatrix = NeuralNet->GetLossGradient();
+	std::shared_ptr<CMatrix>& outputMatrix = NeuralNet->GetOutputMatrix();
+	std::shared_ptr<CMatrix>& lossMatrix = NeuralNet->GetLossGradient();
 
-	lossFunc->GetResult(outputMatrix, inputMatrix);
-	lossFunc->GetLossGradient(lossMatrix, outputMatrix, labelMatrix);
+	lossFunc->GetResult(outputMatrix.get(), inputMatrix.get());
+	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
 
 	NeuralNet->BackwardPropagation(learningRate);
-	NeuralNet->FlushInput();
 }

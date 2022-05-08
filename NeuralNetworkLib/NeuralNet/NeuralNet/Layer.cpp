@@ -15,56 +15,45 @@ CLayer2D::CLayer2D() :
 #pragma region Destructor
 CLayer2D::~CLayer2D()
 {
-	DELETEPTR(inputMatrix);
-	DELETEPTR(activatedMatrix);
-	DELETEPTR(weight);
-	DELETEPTR(gradient);
-
-	DELETEPTR(derivativeActFunc);
-	DELETEPTR(transposedWeight);
-	DELETEPTR(activatedTransposedInput);
-	DELETEPTR(weightGradient);
-
-	DELETEPTR(activationFunc);
 }
 #pragma endregion
 
 #pragma region Getter
-CMatrix*& CLayer2D::GetInput()
+std::shared_ptr<CMatrix>& CLayer2D::GetInput()
 {
 	return inputMatrix;
 }
-CMatrix*& CLayer2D::GetActivatedInput()
+std::shared_ptr<CMatrix>& CLayer2D::GetActivatedInput()
 {
 	return activatedMatrix;
 }
-CMatrix*& CLayer2D::GetWeight()
+std::shared_ptr<CMatrix>& CLayer2D::GetWeight()
 {
 	return weight;
 }
-CMatrix*& CLayer2D::GetGradient()
+std::shared_ptr<CMatrix>& CLayer2D::GetGradient()
 {
 	return gradient;
 }
 
-CActFunc*& CLayer2D::GetActivationFunc()
+std::shared_ptr<CActFunc>& CLayer2D::GetActivationFunc()
 {
 	return activationFunc;
 }
 
-CMatrix*& CLayer2D::GetDerivativeActFunc()
+std::shared_ptr<CMatrix>& CLayer2D::GetDerivativeActFunc()
 {
 	return derivativeActFunc;
 }
-CMatrix*& CLayer2D::GetTransposedWeight()
+std::shared_ptr<CMatrix>& CLayer2D::GetTransposedWeight()
 {
 	return transposedWeight;
 }
-CMatrix*& CLayer2D::GetActivatedTransposedInput()
+std::shared_ptr<CMatrix>& CLayer2D::GetActivatedTransposedInput()
 {
 	return activatedTransposedInput;
 }
-CMatrix*& CLayer2D::GetWeightGradient()
+std::shared_ptr<CMatrix>& CLayer2D::GetWeightGradient()
 {
 	return weightGradient;
 }
@@ -72,43 +61,38 @@ CMatrix*& CLayer2D::GetWeightGradient()
 
 
 #pragma region Setter
-void CLayer2D::SetInput(CMatrix* newInput)
+void CLayer2D::SetInput(std::shared_ptr<CMatrix> newInput)
 {
-	DELETEPTR(inputMatrix);
 	inputMatrix = newInput;
 }
 
-void CLayer2D::SetActivavtedInput(CMatrix* newInput)
+void CLayer2D::SetActivavtedInput(std::shared_ptr<CMatrix> newInput)
 {
-	DELETEPTR(activatedMatrix);
 	activatedMatrix = newInput;
 }
 
-void CLayer2D::SetWeight(CMatrix* newWeight)
+void CLayer2D::SetWeight(std::shared_ptr<CMatrix> newWeight)
 {
-	DELETEPTR(weight);
 	weight = newWeight;
 
 }
-void CLayer2D::SetGradient(CMatrix* newGradient)
+void CLayer2D::SetGradient(std::shared_ptr<CMatrix> newGradient)
 {
-	DELETEPTR(gradient);
 	gradient = newGradient;
 
 }
 void CLayer2D::SetActivateFunc(ACTID actId)
 {
-	DELETEPTR(activationFunc);
 	switch (actId)
 	{
 	case AF_SIGMOID:
-		activationFunc = new CSigmoid();
+		activationFunc = std::make_shared<CSigmoid>();
 		break;
 	case AF_RELU:
-		activationFunc = new CRelu();
+		activationFunc = std::make_shared <CRelu>();
 		break;
 	case AF_IDENTITY:
-		activationFunc = new CIdentity();
+		activationFunc = std::make_shared <CIdentity>();
 		break;
 	default:
 		break;
@@ -116,26 +100,22 @@ void CLayer2D::SetActivateFunc(ACTID actId)
 	ASSERT_CRASH(activationFunc != nullptr);
 }
 
-void CLayer2D::SetDerivativeActivatedInput(CMatrix* newInput)
+void CLayer2D::SetDerivativeActivatedInput(std::shared_ptr<CMatrix> newInput)
 {
-	DELETEPTR(derivativeActFunc);
 	derivativeActFunc = newInput;
 }
-void CLayer2D::SetTransposedWeight(CMatrix* newWeight)
+void CLayer2D::SetTransposedWeight(std::shared_ptr<CMatrix> newWeight)
 {
-	DELETEPTR(transposedWeight);
 	transposedWeight = newWeight;
 
 }
-void CLayer2D::SetActivatedTransposedInput(CMatrix* newInput)
+void CLayer2D::SetActivatedTransposedInput(std::shared_ptr<CMatrix> newInput)
 {
-	DELETEPTR(activatedTransposedInput);
 	activatedTransposedInput = newInput;
 }
 
-void CLayer2D::SetWeigthGradient(CMatrix* newWeight)
+void CLayer2D::SetWeigthGradient(std::shared_ptr<CMatrix> newWeight)
 {
-	DELETEPTR(weightGradient);
 	weightGradient = newWeight;
 }
 #pragma endregion

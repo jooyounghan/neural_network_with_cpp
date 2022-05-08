@@ -5,8 +5,8 @@
 class CNNModel
 {
 private:
-	CNeuralNetwork* NeuralNet;
-	CLossFunc* lossFunc;
+	std::shared_ptr<CNeuralNetwork> NeuralNet;
+	std::shared_ptr<CLossFunc> lossFunc;
 	double loss;
 
 public:
@@ -20,12 +20,12 @@ public:
 
 
 public:
-	void Train(std::vector<CMatrix> inputVector, std::vector<CMatrix> labelVector, const uint32& iterations, const double& learningRate);
-	void PushInput(CMatrix inputMatrix, CMatrix labelMatrix, const double& learningRate);
+	void Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vector<std::shared_ptr<CMatrix>> labelVector, const uint32& iterations, const double& learningRate);
+	void PushInput(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
 
-	CMatrix* GetResult(CMatrix inputMatrix);
+	std::shared_ptr<CMatrix> GetResult(std::shared_ptr<CMatrix> inputMatrix);
 
 private:
-	void Propagation(CMatrix* inputMatrix, CMatrix* labelMatrix, const double& learningRate);
+	void Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
 
 };
