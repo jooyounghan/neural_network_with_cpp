@@ -32,9 +32,11 @@ void CNNModel::SetLossFunc(const LOSSFUNCID& lfID)
 	switch (lfID)
 	{
 	case LF_SUMATION:
+		ASSERT_CRASH(GetNeuralNetwork()->GetOutputMatrix()->GetCol() == 1)
 		lossFunc = std::make_shared<CSumation>();
 		break;
 	case LF_SOFTMAX:
+		ASSERT_CRASH(GetNeuralNetwork()->GetOutputMatrix()->GetCol() != 1)
 		lossFunc = std::make_shared<CSoftmax>();
 		break;
 	default:
@@ -83,6 +85,7 @@ std::shared_ptr<CMatrix> CNNModel::GetResult(std::shared_ptr<CMatrix> inputMatri
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
 	std::shared_ptr<CMatrix> ResultMatrix = NeuralNet->GetOutputMatrix();
+	lossFunc->GetResult(ResultMatrix.get(), ResultMatrix.get());
 	return ResultMatrix;
 }
 
@@ -91,16 +94,23 @@ const double& CNNModel::GetLoss()
 	return loss;
 }
 
+std::shared_ptr<CNeuralNetwork> CNNModel::GetNeuralNetwork()
+{
+	return NeuralNet;
+}
+
 void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
-	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
 
 	std::shared_ptr<CMatrix>& outputMatrix = NeuralNet->GetOutputMatrix();
 	std::shared_ptr<CMatrix>& lossMatrix = NeuralNet->GetLossGradient();
 
+	lossFunc->GetResult(outputMatrix.get(), outputMatrix.get());
 	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
+
+	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
 	NeuralNet->BackwardPropagation(learningRate);
 	
 }

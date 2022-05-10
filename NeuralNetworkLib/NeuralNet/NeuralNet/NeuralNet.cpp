@@ -154,7 +154,7 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 		switch (ActiveID)
 		{
 		case NORMAL:
-			weight->NormalInitialize(0, 1);
+			weight->NormalInitialize(0, 0.1);
 			break;
 		case XAVIER:
 			if (layerIdx == 0)
@@ -173,8 +173,8 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 		case HE:
 			if (layerIdx == 0)
 			{
-				weight->HeNormalInitialize(2);
-				// Average : 0, Sigma : 1
+				weight->HeNormalInitialize(200);
+				// Average : 0, Sigma : 0.1
 			}
 			else if (layerIdx == layerSize - 1)
 			{

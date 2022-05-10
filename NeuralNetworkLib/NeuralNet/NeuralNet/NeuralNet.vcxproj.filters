@@ -7,9 +7,6 @@
     <Filter Include="Util">
       <UniqueIdentifier>{c2f8bf3c-0445-4659-96d3-f8224d61e8ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Layer">
-      <UniqueIdentifier>{71c241fb-fdd6-41f0-8c2c-8ad71560776d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network">
       <UniqueIdentifier>{e83f101f-0537-49c1-b182-c8158676cd08}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     <ClInclude Include="pch.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.h">
-      <Filter>Layer</Filter>
-    </ClInclude>
     <ClInclude Include="IncludePart.h">
       <Filter>Util</Filter>
     </ClInclude>
@@ -45,9 +39,6 @@
     <ClInclude Include="RandomGenerator.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Layer</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Util</Filter>
     </ClInclude>
@@ -57,13 +48,19 @@
     <ClInclude Include="LossFunc.h">
       <Filter>Function</Filter>
     </ClInclude>
+    <ClInclude Include="ExcelManager.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="Layer.cpp">
-      <Filter>Layer</Filter>
     </ClCompile>
     <ClCompile Include="NeuralNet.cpp">
       <Filter>Network</Filter>
@@ -74,9 +71,6 @@
     <ClCompile Include="RandomGenerator.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>Layer</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Util</Filter>
     </ClCompile>
@@ -85,6 +79,15 @@
     </ClCompile>
     <ClCompile Include="LossFunc.cpp">
       <Filter>Function</Filter>
+    </ClCompile>
+    <ClCompile Include="ExcelManager.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
