@@ -241,9 +241,9 @@ void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 		std::shared_ptr<CMatrix>& activatedTransposedInput = calcLayer->GetActivatedTransposedInput();
 		std::shared_ptr<CMatrix>& weightGradient = calcLayer->GetWeightGradient();
 
-		std::shared_ptr<CActFunc>& CalcActFunc = calcLayer->GetActivationFunc();
+		std::shared_ptr<CActFunc>& calcActFunc = calcLayer->GetActivationFunc();
 
-		CalcActFunc->CalcDeriviate(derivativeActFunc.get(), inputMatrix.get());
+		calcActFunc->CalcDeriviate(derivativeActFunc.get(), inputMatrix.get());
 		transposedWeight->Transpose(weightMatrix.get());
 		activatedTransposedInput->Transpose(activatedInputMatrix.get());
 
@@ -256,9 +256,8 @@ void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 		{
 			gradientMatrix->MatMul(calcLayer->latter->GetGradient().get(), transposedWeight.get());
 			weightGradient->MatMul(activatedTransposedInput.get(), calcLayer->latter->GetGradient().get());
+			gradientMatrix->ElementWiseMul(derivativeActFunc.get(), gradientMatrix.get());
 		}
-
-		gradientMatrix->ElementWiseMul(derivativeActFunc.get(), gradientMatrix.get());
 		
 		// Updating
 		weightGradient->ConstantMul(learningRate);

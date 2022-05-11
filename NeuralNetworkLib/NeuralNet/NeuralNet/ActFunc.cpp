@@ -263,12 +263,20 @@ void CRelu::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 #pragma region CIdentity
 CMatrix* CIdentity::GetResult(CMatrix* input)
 {
-	return input->GetCopyMatrix();
+#ifdef PARALLEL
+	return ResultParallel(input, [](double& variable) { return (variable); });
+#else
+	return ResultSerial(input, [](double& variable) { return (variable); });
+#endif
 }
 
 void CIdentity::CalcResult(CMatrix* refMat, CMatrix* input)
 {
-	return refMat->CopyMatrix(input);
+#ifdef PARALLEL
+	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (variable); });
+#else
+	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (variable); });
+#endif
 }
 
 CMatrix* CIdentity::GetDeriviate(CMatrix* input)
