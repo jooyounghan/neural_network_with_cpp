@@ -2,10 +2,10 @@
 
 /* ------------------------------------------------------ */
 #pragma region Parallel
-//#define PARALLEL
+#define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 #define LOCKGUARD(mtx)	std::lock_guard<std::mutex>{ mtx };
-
+//#define PARALLELLIMIT	THREADNUM * 256
 #define WAITTHREADVECTOR(workThreadVector)						\
 																\
 for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\

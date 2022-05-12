@@ -198,7 +198,7 @@ void CNeuralNetwork::ForwardPropagation()
 	ASSERT_CRASH(layers.size());
 	std::shared_ptr<CLayer2D> calcLayer = layers[0];
 
-	while (calcLayer->latter != nullptr)
+	while (calcLayer->latter.lock() != nullptr)
 	{
 		std::shared_ptr<CActFunc>& activatedFunc = calcLayer->GetActivationFunc();
 		std::shared_ptr<CMatrix>& activatedInputMatrix = calcLayer->GetActivatedInput();
@@ -209,8 +209,8 @@ void CNeuralNetwork::ForwardPropagation()
 		activatedFunc->CalcResult(activatedInputMatrix.get(), inputMatrix.get());
 
 		// Matrix Multiplication
-		calcLayer->latter->GetInput()->MatMul(activatedInputMatrix.get(), inputWeightMatrix.get());
-		calcLayer = calcLayer->latter;
+		calcLayer->latter.lock()->GetInput()->MatMul(activatedInputMatrix.get(), inputWeightMatrix.get());
+		calcLayer = calcLayer->latter.lock();
 	}
 
 	std::shared_ptr<CLayer2D>& lastLayer = layers[layers.size() - 1];
@@ -247,15 +247,15 @@ void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 		transposedWeight->Transpose(weightMatrix.get());
 		activatedTransposedInput->Transpose(activatedInputMatrix.get());
 
-		if (calcLayer->latter == nullptr)
+		if (calcLayer->latter.lock() == nullptr)
 		{
 			gradientMatrix->MatMul(lossGradient.get(), transposedWeight.get());
 			weightGradient->MatMul(activatedTransposedInput.get(), lossGradient.get());
 		}
 		else
 		{
-			gradientMatrix->MatMul(calcLayer->latter->GetGradient().get(), transposedWeight.get());
-			weightGradient->MatMul(activatedTransposedInput.get(), calcLayer->latter->GetGradient().get());
+			gradientMatrix->MatMul(calcLayer->latter.lock()->GetGradient().get(), transposedWeight.get());
+			weightGradient->MatMul(activatedTransposedInput.get(), calcLayer->latter.lock()->GetGradient().get());
 			gradientMatrix->ElementWiseMul(derivativeActFunc.get(), gradientMatrix.get());
 		}
 		
@@ -263,7 +263,7 @@ void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 		weightGradient->ConstantMul(learningRate);
 		weightMatrix->Subtract(weightGradient.get());
 
-		calcLayer = calcLayer->former;
+		calcLayer = calcLayer->former.lock();
 	}
 }
 

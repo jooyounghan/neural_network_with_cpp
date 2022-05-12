@@ -56,12 +56,12 @@ int main()
 {
 	while (true)
 	{
-		CNNModel model = CNNModel(1, 2, 2, 5, 32, 64, 128, 64, 32);
-		model.SetActivationFunc(6, AF_RELU, AF_RELU, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
-		model.InitializeWeights(6, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL);
+		CNNModel model = CNNModel(1, 2, 2, 3, 128, 256, 128);
+		model.SetActivationFunc(4, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
+		model.InitializeWeights(4, NORMAL, NORMAL, NORMAL, NORMAL);
 		model.SetLossFunc(LF_SOFTMAX);
 
-		for (uint32 iter = 0; iter < 1000; ++iter)
+		for (uint32 iter = 0; iter < 100; ++iter)
 		{
 			std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(1, 2, new double[]{ 1, 2 });
 			std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(1, 2, new double[] { 0, 1 });
@@ -95,7 +95,7 @@ int main()
 			std::shared_ptr<CMatrix> b8 = std::make_shared<CMatrix>(1, 2, new double[] { 1, 0 });
 			model.PushInput(a8, b8, 0.01);
 
-			if (iter % 200 == 0)
+			if (iter % 20 == 0)
 				std::cout << "iterations : " << iter << " Loss : " << model.GetLoss() << std::endl;
 		}
 		std::shared_ptr<CMatrix> a9 = std::make_shared<CMatrix>(1, 2, new double[]{ 8, 14 });

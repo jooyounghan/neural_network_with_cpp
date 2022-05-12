@@ -19,8 +19,8 @@ private:
 	std::shared_ptr<CActFunc> activationFunc;
 
 public:
-	std::shared_ptr <CLayer2D> former;
-	std::shared_ptr <CLayer2D> latter;
+	std::weak_ptr <CLayer2D> former;
+	std::weak_ptr <CLayer2D> latter;
 
 public:
 	CLayer2D();

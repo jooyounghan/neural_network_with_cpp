@@ -161,7 +161,6 @@ void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat)
 					if (idx >= inputMatDataNum)	break;
 					else
 					{
-						refMatData[idx] = 0;
 						refMatData[idx] = std::exp(inputMatData[idx]) / totalProbability;
 					}
 				}
@@ -220,7 +219,6 @@ void CSoftmax::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix*
 					if (idx >= inputMatDataNum)	break;
 					else
 					{
-						refMatData[idx] = 0;
 						refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 					}
 				}
@@ -244,7 +242,6 @@ void CSoftmax::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* l
 
 	for (uint32 idx = 0; idx < inputMatDataNum; ++idx)
 	{
-		refMatData[idx] = 0;
 		refMatData[idx] = inputMatData[idx] - labelMatData[idx];
 	}
 }

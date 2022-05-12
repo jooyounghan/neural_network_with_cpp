@@ -4,8 +4,8 @@
 #pragma region Constructor
 CLayer2D::CLayer2D() :
 	inputMatrix(nullptr), activatedMatrix(nullptr), weight(nullptr), gradient(nullptr),
-	derivativeActFunc(nullptr), transposedWeight(nullptr), activatedTransposedInput(nullptr), weightGradient(nullptr),
-	activationFunc(nullptr), former(nullptr), latter(nullptr)
+	derivativeActFunc(nullptr), transposedWeight(nullptr), activatedTransposedInput(nullptr),
+	weightGradient(nullptr), activationFunc(nullptr)
 {
 
 }
