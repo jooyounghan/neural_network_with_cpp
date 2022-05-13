@@ -63,31 +63,29 @@ void CMatrix::SetMatrixData(double* matrix_data)
 #pragma region Transpose
 CMatrix* CMatrix::GetTranspose()
 {
-#ifdef PARALLEL
-	double* newMatrixData = TransposeParallel();
-#else
-	double* newMatrixData = TransposeSerial();
-#endif
-	return new CMatrix(col, row, newMatrixData);
+	PARALLELBRANCH(
+		dataNum,
+		new CMatrix(col, row, TransposeParallel()),
+		new CMatrix(col, row, TransposeSerial())
+	);
 }
 
 double* CMatrix::TransposeMatrixData()
 {
-#ifdef PARALLEL
-	double* newMatrixData = TransposeParallel();
-#else
-	double* newMatrixData = TransposeSerial();
-#endif
-	return newMatrixData;
+	PARALLELBRANCH(
+		dataNum,
+		TransposeParallel(),
+		TransposeSerial()
+	);
 }
 
 void CMatrix::Transpose(CMatrix* inputMat)
 {
-#ifdef PARALLEL
-	return TransposeParallel(this, inputMat);
-#else
-	return TransposeSerial(this, inputMat);
-#endif
+	PARALLELBRANCH(
+		inputMat->GetDataNum(),
+		TransposeParallel(this, inputMat),
+		TransposeSerial(this, inputMat)
+	);
 }
 
 double* CMatrix::TransposeParallel()
@@ -186,35 +184,32 @@ void CMatrix::TransposeSerial(CMatrix* refMatrix, CMatrix* inputMat)
 CMatrix* CMatrix::GetMatMul(CMatrix* matrix)
 {
 	ASSERT_CRASH(this->col == matrix->row);
-#ifdef PARALLEL
-	double* newMatrixData = MatmulParallel(this, matrix);
-#else
-	double* newMatrixData = MatmulSerial(this, matrix);
-#endif
-	CMatrix* newMatrix = new CMatrix(this->row, matrix->col, newMatrixData);
-	return newMatrix;
+	PARALLELBRANCH(
+		dataNum,
+		new CMatrix(this->row, matrix->col, MatmulParallel(this, matrix)),
+		new CMatrix(this->row, matrix->col, MatmulSerial(this, matrix))
+	);
 }
 
 void CMatrix::MatMul(CMatrix* matrixA, CMatrix* matrixB)
 {
 	ASSERT_CRASH(this->row == matrixA->row && this->col == matrixB->col);
 	ASSERT_CRASH(matrixA->col == matrixB->row);
-#ifdef PARALLEL
-	return CMatrix::MatmulParallel(this, matrixA, matrixB);
-#else
-	return CMatrix::MatmulSerial(this, matrixA, matrixB);
-#endif
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::MatmulParallel(this, matrixA, matrixB),
+		CMatrix::MatmulSerial(this, matrixA, matrixB)
+	);
 }
 
 double* CMatrix::GetMatMulData(CMatrix* matrix)
 {
 	ASSERT_CRASH(this->col == matrix->row);
-#ifdef PARALLEL
-	double* newMatrixData = MatmulParallel(this, matrix);
-#else
-	double* newMatrixData = MatmulSerial(this, matrix);
-#endif
-	return newMatrixData;
+	PARALLELBRANCH(
+		dataNum,
+		MatmulParallel(this, matrix),
+		MatmulSerial(this, matrix)
+	);
 }
 
 // assume that we can multiply matrix_1 and matrix_2
@@ -400,33 +395,29 @@ void CMatrix::MatmulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatrix* matri
 #pragma region Copy
 CMatrix* CMatrix::GetCopyMatrix()
 {
-#ifdef PARALLEL
-	double* newMatrixData = CopyParallel();
-#else
-	double* newMatrixData = CopySerial();
-#endif
-	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
-	return newMatrix;
+	PARALLELBRANCH(
+		dataNum,
+		new CMatrix(row, col, CopyParallel()),
+		new CMatrix(row, col, CopySerial())
+	);
 }
 
 std::shared_ptr<CMatrix> CMatrix::GetSharedCopyMatrix()
 {
-#ifdef PARALLEL
-	double* newMatrixData = CopyParallel();
-#else
-	double* newMatrixData = CopySerial();
-#endif
-	std::shared_ptr<CMatrix> newMatrix = std::make_shared<CMatrix>(row, col, newMatrixData);
-	return newMatrix;
+	PARALLELBRANCH(
+		dataNum,
+		std::make_shared<CMatrix>(row, col, CopyParallel()),
+		std::make_shared<CMatrix>(row, col, CopySerial())
+	);
 }
 
 void CMatrix::CopyMatrix(CMatrix* input)
 {
-#ifdef PARALLEL
-	return CMatrix::CopyParallel(this, input);
-#else
-	return CMatrix::CopySerial(this, input);
-#endif
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::CopyParallel(this, input),
+		CMatrix::CopySerial(this, input)
+	);
 }
 
 double* CMatrix::CopyParallel()
@@ -515,22 +506,20 @@ void CMatrix::CopySerial(CMatrix* refMat, CMatrix* inputMat)
 #pragma region ElementWiseMul
 CMatrix* CMatrix::GetElementWiseMul(CMatrix* inputMat)
 {
-#ifdef PARALLEL
-	double* newMatrixData = ElementWiseMulParallel(inputMat);
-#else
-	double* newMatrixData = ElementWiseMulSerial(inputMat);
-#endif
-	CMatrix* newMatrix = new CMatrix(row, col, newMatrixData);
-	return newMatrix;
+	PARALLELBRANCH(
+		dataNum,
+		new CMatrix(row, col, ElementWiseMulParallel(inputMat)),
+		new CMatrix(row, col, ElementWiseMulSerial(inputMat))
+	);
 }
 
 void CMatrix::ElementWiseMul(CMatrix* matrixA, CMatrix* matrixB)
 {
-#ifdef PARALLEL
-	return CMatrix::ElementWiseMulParallel(this, matrixA, matrixB);
-#else
-	return CMatrix::ElementWiseMulSerial(this, matrixA, matrixB);
-#endif
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::ElementWiseMulParallel(this, matrixA, matrixB),
+		CMatrix::ElementWiseMulSerial(this, matrixA, matrixB)
+	);
 }
 
 double* CMatrix::ElementWiseMulParallel(CMatrix* inputMat)
@@ -641,11 +630,11 @@ void CMatrix::ElementWiseMulSerial(CMatrix* refMatrix, CMatrix* matrix_1, CMatri
 #pragma region Subtract
 void CMatrix::Subtract(CMatrix* input)
 {
-#ifdef PARALLEL
-	return CMatrix::SubtractParallel(this, input);
-#else
-	return CMatrix::SubtractSerial(this, input);
-#endif
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::SubtractParallel(this, input),
+		CMatrix::SubtractSerial(this, input)
+	);
 }
 
 void CMatrix::SubtractParallel(CMatrix* refMat, CMatrix* inputMat)
@@ -697,12 +686,13 @@ void CMatrix::SubtractSerial(CMatrix* refMat, CMatrix* inputMat)
 #pragma region ConstantMul
 void CMatrix::ConstantMul(const double& constant)
 {
-#ifdef PARALLEL
-	return CMatrix::ConstantMulParallel(this, constant);
-#else
-	return CMatrix::ConstantMulSerial(this, constant);
-#endif
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::ConstantMulParallel(this, constant),
+		CMatrix::ConstantMulSerial(this, constant)
+	);
 }
+
 void CMatrix::ConstantMulParallel(CMatrix* refMat, const double& constant)
 {
 	const uint32& refMatDataNum = refMat->GetDataNum();

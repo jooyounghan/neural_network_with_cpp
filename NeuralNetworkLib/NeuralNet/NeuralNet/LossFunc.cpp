@@ -29,11 +29,11 @@ void CSumation::GetResult(CMatrix* refMat, CMatrix* inputMat)
 
 void CSumation::GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
-#ifdef PARALLEL
-	return CSumation::LossGradientParallel(refMat, inputMat, labelMat);
-#else
-	return CSumation::LossGradientSerial(refMat, inputMat, labelMat);
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CSumation::LossGradientParallel(refMat, inputMat, labelMat),
+		CSumation::LossGradientSerial(refMat, inputMat, labelMat)
+	);
 }
 
 void CSumation::LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
@@ -95,20 +95,20 @@ void CSumation::LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* 
 #pragma region Softmax
 void CSoftmax::GetResult(CMatrix* refMat, CMatrix* inputMat)
 {
-#ifdef PARALLEL
-	return CSoftmax::ResultParallel(refMat, inputMat);
-#else
-	return CSoftmax::ResultSerial(refMat, inputMat);
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CSoftmax::ResultParallel(refMat, inputMat),
+		CSoftmax::ResultSerial(refMat, inputMat)
+	);
 }
 
 void CSoftmax::GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat)
 {
-#ifdef PARALLEL
-	return CSoftmax::LossGradientParallel(refMat, inputMat, labelMat);
-#else
-	return CSoftmax::LossGradientSerial(refMat, inputMat, labelMat);
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CSoftmax::LossGradientParallel(refMat, inputMat, labelMat),
+		CSoftmax::LossGradientSerial(refMat, inputMat, labelMat)
+	);
 }
 
 void CSoftmax::ResultParallel(CMatrix* refMat, CMatrix* inputMat)

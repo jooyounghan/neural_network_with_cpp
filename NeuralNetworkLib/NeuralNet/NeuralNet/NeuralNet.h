@@ -11,6 +11,7 @@ private:
 	std::shared_ptr <CMatrix> outputMatrix;
 	std::shared_ptr <CMatrix> lossGradient;
 
+
 public:
 	CNeuralNetwork();
 	~CNeuralNetwork();

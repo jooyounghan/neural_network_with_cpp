@@ -3,11 +3,7 @@
 
 CTimer::CTimer()
 {
-#ifdef PARALLEL
-	std::cout << "Parallel Mode Detected\n";
-#else
-	std::cout << "Serial Mode Detected\n";
-#endif
+
 }
 
 void CTimer::StartCheck()

@@ -7,7 +7,6 @@ CLayer2D::CLayer2D() :
 	derivativeActFunc(nullptr), transposedWeight(nullptr), activatedTransposedInput(nullptr),
 	weightGradient(nullptr), activationFunc(nullptr)
 {
-
 }
 #pragma endregion
 

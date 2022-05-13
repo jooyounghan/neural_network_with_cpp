@@ -56,9 +56,9 @@ int main()
 {
 	while (true)
 	{
-		CNNModel model = CNNModel(1, 2, 2, 3, 128, 256, 128);
-		model.SetActivationFunc(4, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
-		model.InitializeWeights(4, NORMAL, NORMAL, NORMAL, NORMAL);
+		CNNModel model = CNNModel(1, 2, 2, 4, 1024, 512, 512, 128);
+		model.SetActivationFunc(5, AF_RELU, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
+		model.InitializeWeights(5, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL);
 		model.SetLossFunc(LF_SOFTMAX);
 
 		for (uint32 iter = 0; iter < 100; ++iter)

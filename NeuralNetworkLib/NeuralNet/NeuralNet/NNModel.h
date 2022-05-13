@@ -9,6 +9,10 @@ private:
 	std::shared_ptr<CLossFunc> lossFunc;
 	double loss;
 
+private:
+	std::thread forwardThread;
+	std::thread backwardThread;
+
 public:
 	CNNModel(const uint32& inputCnt, const uint32& inputDimension, const uint32& outputDimension, const uint32 numLayers, ...);
 	~CNNModel();
@@ -30,4 +34,6 @@ public:
 private:
 	void Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
 
+private:
+	void JoinThread();
 };

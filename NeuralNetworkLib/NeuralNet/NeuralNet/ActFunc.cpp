@@ -92,38 +92,38 @@ void CActFunc::ResultSerial(CMatrix* refMat, CMatrix* input, std::function<doubl
 #pragma region CSigmoid
 CMatrix* CSigmoid::GetResult(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
-#else
-	return ResultSerial(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
-#endif
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); }),
+		ResultSerial(input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); })
+	);
 }
 
 void CSigmoid::CalcResult(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); });
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); }),
+		CActFunc::ResultSerial(refMat, input, [](double& variable) { return 1.0 / (1.0 + exp(-variable)); })
+	);
 }
 
 CMatrix* CSigmoid::GetDeriviate(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
-#else
-	return ResultSerial(input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
-#endif
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); }),
+		ResultSerial(input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); })
+	);
 }
 
 void CSigmoid::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); });
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); }),
+		CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0 / (1.0 + exp(-variable))) * (1.0 - 1.0 / (1.0 + exp(-variable))); })
+	);
 }
 #pragma endregion
 
@@ -131,127 +131,119 @@ void CSigmoid::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 #pragma region CRelu
 CMatrix* CRelu::GetResult(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable)
-		{
-			if (variable > 0)
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable)
 			{
-				return variable;
-			}
-			else
+				if (variable > 0)
+				{
+					return variable;
+				}
+				else
+				{
+					return 0.0;
+				}
+			}),
+		ResultSerial(input, [](double& variable)
 			{
-				return 0.0;
-			}
-		});
-
-#else
-	return ResultSerial(input, [](double& variable)
-		{
-			if (variable > 0)
-			{
-				return variable;
-			}
-			else
-			{
-				return 0.0;
-			}
-		});
-
-#endif
+				if (variable > 0)
+				{
+					return variable;
+				}
+				else
+				{
+					return 0.0;
+				}
+			})
+		);
 }
 
 void CRelu::CalcResult(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable)
-		{
-			if (variable > 0)
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable)
 			{
-				return variable;
-			}
-			else
+				if (variable > 0)
+				{
+					return variable;
+				}
+				else
+				{
+					return 0.0;
+				}
+			}),
+		CActFunc::ResultSerial(refMat, input, [](double& variable)
 			{
-				return 0.0;
-			}
-		});
-
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable)
-		{
-			if (variable > 0)
-			{
-				return variable;
-			}
-			else
-			{
-				return 0.0;
-			}
-		});
-
-#endif
+				if (variable > 0)
+				{
+					return variable;
+				}
+				else
+				{
+					return 0.0;
+				}
+			})	
+	);
 }
 
 
 CMatrix* CRelu::GetDeriviate(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable)
-		{
-			if (variable > 0)
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable)
 			{
-				return 1.0;
-			}
-			else
+				if (variable > 0)
+				{
+					return 1.0;
+				}
+				else
+				{
+					return 0.0;
+				}
+			}),
+		ResultSerial(input, [](double& variable)
 			{
-				return 0.0;
-			}
-		});
-
-#else
-	return ResultSerial(input, [](double& variable)
-		{
-			if (variable > 0)
-			{
-				return 1.0;
-			}
-			else
-			{
-				return 0.0;
-			}
-		});
-
-#endif
+				if (variable > 0)
+				{
+					return 1.0;
+				}
+				else
+				{
+					return 0.0;
+				}
+			})
+	);
 }
 
 void CRelu::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable)
-		{
-			if (variable > 0)
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable)
 			{
-				return 1.0;
-			}
-			else
+				if (variable > 0)
+				{
+					return 1.0;
+				}
+				else
+				{
+					return 0.0;
+				}
+			}),
+		CActFunc::ResultSerial(refMat, input, [](double& variable)
 			{
-				return 0.0;
-			}
-		});
-
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable)
-		{
-			if (variable > 0)
-			{
-				return 1.0;
-			}
-			else
-			{
-				return 0.0;
-			}
-		});
-
-#endif
+				if (variable > 0)
+				{
+					return 1.0;
+				}
+				else
+				{
+					return 0.0;
+				}
+			})
+		);
 }
 #pragma endregion
 
@@ -259,38 +251,38 @@ void CRelu::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 #pragma region CIdentity
 CMatrix* CIdentity::GetResult(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable) { return (variable); });
-#else
-	return ResultSerial(input, [](double& variable) { return (variable); });
-#endif
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable) { return (variable); }),
+		ResultSerial(input, [](double& variable) { return (variable); })
+	);
 }
 
 void CIdentity::CalcResult(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (variable); });
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (variable); });
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable) { return (variable); }),
+		CActFunc::ResultSerial(refMat, input, [](double& variable) { return (variable); })
+	);
 }
 
 CMatrix* CIdentity::GetDeriviate(CMatrix* input)
 {
-#ifdef PARALLEL
-	return ResultParallel(input, [](double& variable) { return (1.0); });
-#else
-	return ResultSerial(input, [](double& variable) { return (1.0); });
-#endif
+	PARALLELBRANCH(
+		input->GetDataNum(),
+		ResultParallel(input, [](double& variable) { return (1.0); }),
+		ResultSerial(input, [](double& variable) { return (1.0); })
+	);
 }
 
 
 void CIdentity::CalcDeriviate(CMatrix* refMat, CMatrix* input)
 {
-#ifdef PARALLEL
-	return CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0); });
-#else
-	return CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0); });
-#endif
+	PARALLELBRANCH(
+		refMat->GetDataNum(),
+		CActFunc::ResultParallel(refMat, input, [](double& variable) { return (1.0); }),
+		CActFunc::ResultSerial(refMat, input, [](double& variable) { return (1.0); })
+	);
 }
 #pragma endregion

@@ -2,16 +2,20 @@
 
 /* ------------------------------------------------------ */
 #pragma region Parallel
-#define PARALLEL
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 #define LOCKGUARD(mtx)	std::lock_guard<std::mutex>{ mtx };
-//#define PARALLELLIMIT	THREADNUM * 256
-#define WAITTHREADVECTOR(workThreadVector)						\
-																\
-for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)	\
-{																\
-	workThreadVector[threadNum].wait();							\
-}																\
+#define PARALLELLIMIT	1E6
+
+#define PARALLELBRANCH(conditionvar, parallel, serial)				\
+if (conditionvar > PARALLELLIMIT) { return parallel; }				\
+else { return serial; }												\
+
+
+#define WAITTHREADVECTOR(workThreadVector)							\
+for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)		\
+{																	\
+	workThreadVector[threadNum].wait();								\
+}																	\
 
 /* ------------------------------------------------------ */
 
