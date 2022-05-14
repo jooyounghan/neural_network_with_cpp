@@ -4,7 +4,7 @@
 #pragma region Parallel
 #define THREADNUM		(std::thread::hardware_concurrency() / 2)
 #define LOCKGUARD(mtx)	std::lock_guard<std::mutex>{ mtx };
-#define PARALLELLIMIT	1E6
+#define PARALLELLIMIT	1E4
 
 #define PARALLELBRANCH(conditionvar, parallel, serial)				\
 if (conditionvar > PARALLELLIMIT) { return parallel; }				\

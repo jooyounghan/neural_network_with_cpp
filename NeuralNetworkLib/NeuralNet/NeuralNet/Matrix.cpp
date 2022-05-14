@@ -185,7 +185,7 @@ CMatrix* CMatrix::GetMatMul(CMatrix* matrix)
 {
 	ASSERT_CRASH(this->col == matrix->row);
 	PARALLELBRANCH(
-		dataNum,
+		row * col * matrix->GetCol(),
 		new CMatrix(this->row, matrix->col, MatmulParallel(this, matrix)),
 		new CMatrix(this->row, matrix->col, MatmulSerial(this, matrix))
 	);
@@ -196,7 +196,7 @@ void CMatrix::MatMul(CMatrix* matrixA, CMatrix* matrixB)
 	ASSERT_CRASH(this->row == matrixA->row && this->col == matrixB->col);
 	ASSERT_CRASH(matrixA->col == matrixB->row);
 	PARALLELBRANCH(
-		dataNum,
+		matrixA->GetRow() * matrixA->GetCol() * matrixB->GetCol(),
 		CMatrix::MatmulParallel(this, matrixA, matrixB),
 		CMatrix::MatmulSerial(this, matrixA, matrixB)
 	);
@@ -206,7 +206,7 @@ double* CMatrix::GetMatMulData(CMatrix* matrix)
 {
 	ASSERT_CRASH(this->col == matrix->row);
 	PARALLELBRANCH(
-		dataNum,
+		row * col * matrix->GetCol(),
 		MatmulParallel(this, matrix),
 		MatmulSerial(this, matrix)
 	);

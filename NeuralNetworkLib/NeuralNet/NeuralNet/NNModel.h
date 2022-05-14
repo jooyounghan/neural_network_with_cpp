@@ -2,6 +2,11 @@
 #include "NeuralNet.h"
 #include "LossFunc.h"
 
+#define SYNCINPUT(NeuralNet, inputMatrix)										\
+const uint32 newInputNum = inputMatrix->GetRow();					\
+if (NeuralNet->GetLayer()[0]->GetInput()->GetRow() != newInputNum)	\
+NeuralNet->SetInputNum(newInputNum);								\
+
 class CNNModel
 {
 private:
@@ -9,9 +14,6 @@ private:
 	std::shared_ptr<CLossFunc> lossFunc;
 	double loss;
 
-private:
-	std::thread forwardThread;
-	std::thread backwardThread;
 
 public:
 	CNNModel(const uint32& inputCnt, const uint32& inputDimension, const uint32& outputDimension, const uint32 numLayers, ...);
@@ -33,7 +35,4 @@ public:
 	std::shared_ptr<CNeuralNetwork> GetNeuralNetwork();
 private:
 	void Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate);
-
-private:
-	void JoinThread();
 };

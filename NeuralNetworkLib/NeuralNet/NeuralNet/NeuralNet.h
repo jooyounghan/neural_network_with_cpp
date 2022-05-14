@@ -11,7 +11,6 @@ private:
 	std::shared_ptr <CMatrix> outputMatrix;
 	std::shared_ptr <CMatrix> lossGradient;
 
-
 public:
 	CNeuralNetwork();
 	~CNeuralNetwork();
@@ -26,6 +25,7 @@ public:
 	std::shared_ptr<CMatrix>& GetOutputMatrix();
 	std::shared_ptr<CMatrix>& GetLossGradient();
 	const uint32 GetLayersNum();
+	std::vector<std::shared_ptr<CLayer2D>>& GetLayer();
 
 public:
 	void SetActivationFunc(va_list& ActiveIDs);

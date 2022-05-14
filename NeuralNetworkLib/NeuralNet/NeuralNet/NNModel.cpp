@@ -69,6 +69,7 @@ void CNNModel::Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vec
 		//randGen.ShuffleVector(labelVector, 100);
 		for (uint32 idx = 0; idx < inputVector.size(); ++idx)
 		{
+			SYNCINPUT(NeuralNet, inputVector[idx]);
 			Propagation(inputVector[idx], labelVector[idx], learningRate);
 		}
 	}
@@ -77,11 +78,13 @@ void CNNModel::Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vec
 void CNNModel::PushInput(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
+	SYNCINPUT(NeuralNet, inputMatrix);
 	Propagation(inputMatrix, labelMatrix, learningRate);
 }
 
 std::shared_ptr<CMatrix> CNNModel::GetResult(std::shared_ptr<CMatrix> inputMatrix)
 {
+	SYNCINPUT(NeuralNet, inputMatrix);
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
 	std::shared_ptr<CMatrix> ResultMatrix = NeuralNet->GetOutputMatrix();
@@ -101,7 +104,6 @@ std::shared_ptr<CNeuralNetwork> CNNModel::GetNeuralNetwork()
 
 void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
-
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
 
@@ -111,18 +113,6 @@ void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr
 	lossFunc->GetResult(outputMatrix.get(), outputMatrix.get());
 	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
 
-	/*
-	TODO : FORWARD BACKWARD 확실히 구분하고 스레드 확인하기
-	
-	*/
-
 	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
 	NeuralNet->BackwardPropagation(learningRate);
-	
-}
-
-void CNNModel::JoinThread()
-{
-	forwardThread.join();
-	backwardThread.join();
 }

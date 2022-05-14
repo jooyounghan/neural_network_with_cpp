@@ -37,8 +37,6 @@ public:
 	void GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 	
 private:
-	static void ResultParallel(CMatrix* refMat, CMatrix* inputMat);
-	static void ResultSerial(CMatrix* refMat, CMatrix* inputMat);
 	static void LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 	static void LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 };

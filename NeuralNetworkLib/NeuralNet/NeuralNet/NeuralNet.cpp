@@ -139,6 +139,11 @@ const uint32 CNeuralNetwork::GetLayersNum()
 	return layers.size();
 }
 
+std::vector<std::shared_ptr<CLayer2D>>& CNeuralNetwork::GetLayer()
+{
+	return layers;
+}
+
 #pragma endregion
 
 #pragma region Initializer
