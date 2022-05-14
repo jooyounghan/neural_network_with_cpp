@@ -228,7 +228,7 @@ void CNeuralNetwork::ForwardPropagation()
 	outputMatrix->MatMul(lastActivatedInputMatrix.get(), lastInputWeightMatrix.get());
 }
 
-void CNeuralNetwork::BackwardPropagation(const double& learningRate)
+void CNeuralNetwork::BackwardPropagation()
 {
 	ASSERT_CRASH(layers.size());
 	ASSERT_CRASH(lossGradient != nullptr);
@@ -263,11 +263,6 @@ void CNeuralNetwork::BackwardPropagation(const double& learningRate)
 			weightGradient->MatMul(activatedTransposedInput.get(), calcLayer->latter.lock()->GetGradient().get());
 			gradientMatrix->ElementWiseMul(derivativeActFunc.get(), gradientMatrix.get());
 		}
-		
-		// Updating
-		weightGradient->ConstantMul(learningRate);
-		weightMatrix->Subtract(weightGradient.get());
-
 		calcLayer = calcLayer->former.lock();
 	}
 }

@@ -114,5 +114,7 @@ void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr
 	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
 
 	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
-	NeuralNet->BackwardPropagation(learningRate);
+	NeuralNet->BackwardPropagation();
+
+	optimizer->Update(NeuralNet, learningRate);
 }

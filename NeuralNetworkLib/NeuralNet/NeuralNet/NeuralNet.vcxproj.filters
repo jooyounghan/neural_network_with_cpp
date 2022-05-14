@@ -57,6 +57,9 @@
     <ClInclude Include="Matrix.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>Function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Optimizer.cpp">
+      <Filter>Function</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

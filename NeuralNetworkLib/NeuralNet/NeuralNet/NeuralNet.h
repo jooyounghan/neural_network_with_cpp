@@ -11,6 +11,8 @@ private:
 	std::shared_ptr <CMatrix> outputMatrix;
 	std::shared_ptr <CMatrix> lossGradient;
 
+
+
 public:
 	CNeuralNetwork();
 	~CNeuralNetwork();
@@ -33,5 +35,5 @@ public:
 
 public:
 	void ForwardPropagation();
-	void BackwardPropagation(const double& learningRate);
+	void BackwardPropagation();
 };

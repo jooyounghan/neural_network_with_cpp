@@ -20,8 +20,8 @@ public:
 	CSumation() {};
 	~CSumation() {};
 public:
-	void GetResult(CMatrix* refMat, CMatrix* inputMat);
-	void GetLossGradient (CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
+	void GetResult(CMatrix* refMat, CMatrix* inputMat) override;
+	void GetLossGradient (CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat) override;
 private:
 	static void LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
 	static void LossGradientSerial(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
@@ -33,8 +33,8 @@ public:
 	CSoftmax() {};
 	~CSoftmax() {};
 public:
-	void GetResult(CMatrix* refMat, CMatrix* inputMat);
-	void GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);
+	void GetResult(CMatrix* refMat, CMatrix* inputMat) override;
+	void GetLossGradient(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat) override;
 	
 private:
 	static void LossGradientParallel(CMatrix* refMat, CMatrix* inputMat, CMatrix* labelMat);

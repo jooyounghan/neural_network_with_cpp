@@ -1,8 +1,9 @@
 #pragma once
 #include "NeuralNet.h"
 #include "LossFunc.h"
+#include "Optimizer.h"
 
-#define SYNCINPUT(NeuralNet, inputMatrix)										\
+#define SYNCINPUT(NeuralNet, inputMatrix)							\
 const uint32 newInputNum = inputMatrix->GetRow();					\
 if (NeuralNet->GetLayer()[0]->GetInput()->GetRow() != newInputNum)	\
 NeuralNet->SetInputNum(newInputNum);								\
@@ -12,6 +13,7 @@ class CNNModel
 private:
 	std::shared_ptr<CNeuralNetwork> NeuralNet;
 	std::shared_ptr<CLossFunc> lossFunc;
+	std::shared_ptr<COptimizer> optimizer;
 	double loss;
 
 

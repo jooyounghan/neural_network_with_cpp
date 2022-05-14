@@ -18,26 +18,26 @@ protected:
 class CSigmoid : public CActFunc
 {
 public:
-	CMatrix* GetResult(CMatrix* input);
-	void CalcResult(CMatrix* refMat, CMatrix* input);
-	CMatrix* GetDeriviate(CMatrix* input);
-	void CalcDeriviate(CMatrix* refMat, CMatrix* input);
+	CMatrix* GetResult(CMatrix* input) override;
+	void CalcResult(CMatrix* refMat, CMatrix* input) override;
+	CMatrix* GetDeriviate(CMatrix* input) override;
+	void CalcDeriviate(CMatrix* refMat, CMatrix* input) override;
 };
 
 class CRelu : public CActFunc
 {
 public:
-	CMatrix* GetResult(CMatrix* input);
-	void CalcResult(CMatrix* refMat, CMatrix* input);
-	CMatrix* GetDeriviate(CMatrix* input);
-	void CalcDeriviate(CMatrix* refMat, CMatrix* input);
+	CMatrix* GetResult(CMatrix* input) override;
+	void CalcResult(CMatrix* refMat, CMatrix* input) override;
+	CMatrix* GetDeriviate(CMatrix* input) override;
+	void CalcDeriviate(CMatrix* refMat, CMatrix* input) override;
 };
 
 class CIdentity : public CActFunc
 {
 public:
-	CMatrix* GetResult(CMatrix* input);
-	void CalcResult(CMatrix* refMat, CMatrix* input);
-	CMatrix* GetDeriviate(CMatrix* input);
-	void CalcDeriviate(CMatrix* refMat, CMatrix* input);
+	CMatrix* GetResult(CMatrix* input) override;
+	void CalcResult(CMatrix* refMat, CMatrix* input) override;
+	CMatrix* GetDeriviate(CMatrix* input) override;
+	void CalcDeriviate(CMatrix* refMat, CMatrix* input) override;
 };
