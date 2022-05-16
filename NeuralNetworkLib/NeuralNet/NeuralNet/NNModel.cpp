@@ -145,6 +145,7 @@ void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr
 	lossFunc->GetResult(outputMatrix.get(), outputMatrix.get());
 	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
 
+	// outputMatrix 데이터가 0으로 바뀌어 버림
 	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
 	NeuralNet->BackwardPropagation();
 
