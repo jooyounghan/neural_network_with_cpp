@@ -84,13 +84,13 @@ void CLayer2D::SetActivateFunc(ACTID actId)
 {
 	switch (actId)
 	{
-	case AF_SIGMOID:
+	case CActFunc::ActID::SIGMOID:
 		activationFunc = std::make_shared<CSigmoid>();
 		break;
-	case AF_RELU:
+	case CActFunc::ActID::RELU:
 		activationFunc = std::make_shared <CRelu>();
 		break;
-	case AF_IDENTITY:
+	case CActFunc::ActID::IDENTITY:
 		activationFunc = std::make_shared <CIdentity>();
 		break;
 	default:

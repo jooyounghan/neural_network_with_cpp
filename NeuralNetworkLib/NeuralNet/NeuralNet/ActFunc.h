@@ -1,8 +1,18 @@
 #pragma once
 #include "Matrix.h"
 
+using ACTID = unsigned short;
+
 class CActFunc
 {
+public:
+	enum ActID
+	{
+		SIGMOID,
+		RELU,
+		IDENTITY
+	};
+
 public:
 	virtual CMatrix* GetResult(CMatrix* input) = 0;
 	virtual void CalcResult(CMatrix* refMat, CMatrix* input) = 0;

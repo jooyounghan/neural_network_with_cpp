@@ -2,8 +2,17 @@
 #include "RandomGenerator.h"
 #include "IncludePart.h"
 
+
 class CMatrix
 {
+public:
+	enum Initializer
+	{
+		NORMAL,
+		XAVIER,
+		HE
+	};
+
 private:
 	uint32 row;
 	uint32 col;

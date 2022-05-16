@@ -27,7 +27,7 @@ public:
 	std::shared_ptr<CMatrix>& GetOutputMatrix();
 	std::shared_ptr<CMatrix>& GetLossGradient();
 	const uint32 GetLayersNum();
-	std::vector<std::shared_ptr<CLayer2D>>& GetLayer();
+	std::vector<std::shared_ptr<CLayer2D>>& GetLayers();
 
 public:
 	void SetActivationFunc(va_list& ActiveIDs);

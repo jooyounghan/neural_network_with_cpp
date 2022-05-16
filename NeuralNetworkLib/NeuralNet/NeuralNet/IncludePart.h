@@ -28,7 +28,5 @@ using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
 
-using ACTID = unsigned short;
-using LOSSFUNCID = unsigned short;
 
 using timepoint = std::chrono::system_clock::time_point;

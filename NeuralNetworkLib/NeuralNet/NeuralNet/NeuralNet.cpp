@@ -139,7 +139,7 @@ const uint32 CNeuralNetwork::GetLayersNum()
 	return layers.size();
 }
 
-std::vector<std::shared_ptr<CLayer2D>>& CNeuralNetwork::GetLayer()
+std::vector<std::shared_ptr<CLayer2D>>& CNeuralNetwork::GetLayers()
 {
 	return layers;
 }
@@ -158,10 +158,10 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 		std::shared_ptr<CMatrix> weight = layers[layerIdx]->GetWeight();
 		switch (ActiveID)
 		{
-		case NORMAL:
+		case CMatrix::Initializer::NORMAL:
 			weight->NormalInitialize(0, 0.1);
 			break;
-		case XAVIER:
+		case CMatrix::Initializer::XAVIER:
 			if (layerIdx == 0)
 			{
 				weight->XavierNormalInitialize(0, layers[layerIdx + 1]->GetWeight()->GetDataNum());
@@ -175,7 +175,7 @@ void CNeuralNetwork::InitializeWeight(va_list& InitializerIDs)
 				weight->XavierNormalInitialize(layers[layerIdx - 1]->GetWeight()->GetDataNum(), layers[layerIdx + 1]->GetWeight()->GetDataNum());
 			}
 			break;
-		case HE:
+		case CMatrix::Initializer::HE:
 			if (layerIdx == 0)
 			{
 				weight->HeNormalInitialize(200);

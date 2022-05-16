@@ -31,13 +31,34 @@ void CNNModel::SetLossFunc(const LOSSFUNCID& lfID)
 {
 	switch (lfID)
 	{
-	case LF_SUMATION:
+	case CLossFunc::LossID::SUMATION:
 		ASSERT_CRASH(GetNeuralNetwork()->GetOutputMatrix()->GetCol() == 1)
 		lossFunc = std::make_shared<CSumation>();
 		break;
-	case LF_SOFTMAX:
+	case CLossFunc::LossID::SOFTMAX:
 		ASSERT_CRASH(GetNeuralNetwork()->GetOutputMatrix()->GetCol() != 1)
 		lossFunc = std::make_shared<CSoftmax>();
+		break;
+	default:
+		break;
+	}
+}
+
+void CNNModel::SetOptimizer(const OPTIMIZERID& optID)
+{
+	switch (optID)
+	{
+	case COptimizer::OptimizerId::GD:
+		optimizer = std::make_shared<CGD>();
+		break;
+	case COptimizer::OptimizerId::NAG:
+		optimizer = std::make_shared<CNAG>();
+		break;
+	case COptimizer::OptimizerId::ADAGRAD:
+		optimizer = std::make_shared<CAdagrad>();
+		break;
+	case COptimizer::OptimizerId::ADAM:
+		optimizer = std::make_shared<CAdam>();
 		break;
 	default:
 		break;
@@ -60,6 +81,8 @@ void CNNModel::Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vec
 	const uint32& labelSize = labelVector.size();
 	ASSERT_CRASH(NeuralNet != nullptr);
 	ASSERT_CRASH(inputSize == labelSize);
+	ASSERT_CRASH(lossFunc != nullptr);
+	ASSERT_CRASH(optimizer != nullptr);
 
 	CRandomGenerator randGen;
 	for (uint32 iter = 0; iter < iterations; ++iter)
@@ -78,12 +101,17 @@ void CNNModel::Train(std::vector<std::shared_ptr<CMatrix>> inputVector, std::vec
 void CNNModel::PushInput(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
 	ASSERT_CRASH(NeuralNet != nullptr);
+	ASSERT_CRASH(lossFunc != nullptr);
+	ASSERT_CRASH(optimizer != nullptr);
+
 	SYNCINPUT(NeuralNet, inputMatrix);
 	Propagation(inputMatrix, labelMatrix, learningRate);
 }
 
 std::shared_ptr<CMatrix> CNNModel::GetResult(std::shared_ptr<CMatrix> inputMatrix)
 {
+	ASSERT_CRASH(lossFunc.get() != nullptr);
+
 	SYNCINPUT(NeuralNet, inputMatrix);
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
@@ -104,6 +132,10 @@ std::shared_ptr<CNeuralNetwork> CNNModel::GetNeuralNetwork()
 
 void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr<CMatrix> labelMatrix, const double& learningRate)
 {
+	ASSERT_CRASH(NeuralNet != nullptr);
+	ASSERT_CRASH(lossFunc != nullptr);
+	ASSERT_CRASH(optimizer != nullptr);
+
 	NeuralNet->SetInput(inputMatrix);
 	NeuralNet->ForwardPropagation();
 

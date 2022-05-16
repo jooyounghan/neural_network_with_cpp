@@ -1,11 +1,19 @@
 #pragma once
 #include "Matrix.h"
 
+using LOSSFUNCID = unsigned short;
+
 class CLossFunc
 {
-protected:
-	CLossFunc();
 public:
+	enum LossID
+	{
+		SUMATION,
+		SOFTMAX,
+	};
+
+public:
+	CLossFunc();
 	~CLossFunc() {}
 
 public:

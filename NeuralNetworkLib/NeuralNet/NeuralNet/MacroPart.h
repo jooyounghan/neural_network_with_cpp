@@ -20,29 +20,6 @@ for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)		\
 /* ------------------------------------------------------ */
 
 /* ------------------------------------------------------ */
-#pragma region ActivationFunctionID
-#define AF_SIGMOID		1
-#define AF_RELU			2
-#define AF_IDENTITY		3
-#pragma endregion
-/* ------------------------------------------------------ */
-
-/* ------------------------------------------------------ */
-#pragma region LossFunctionID
-#define LF_SUMATION		1
-#define LF_SOFTMAX		2  
-#pragma endregion
-/* ------------------------------------------------------ */
-
-/* ------------------------------------------------------ */
-#pragma region InitializeID
-#define NORMAL		1
-#define XAVIER		2
-#define HE			3  
-#pragma endregion
-/* ------------------------------------------------------ */
-
-/* ------------------------------------------------------ */
 #pragma region Crash
 #define CRASH(cause)						\
 {											\

@@ -6,59 +6,54 @@ int main()
 	{
 		CTimer timer;
 		timer.StartCheck();
-		CNNModel model{ 7, 1, 1, 4, 1024, 512, 512, 128 };
-		model.SetActivationFunc(5, AF_RELU, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
-		model.InitializeWeights(5, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL);
-		model.SetLossFunc(LF_SUMATION);
-
+		CNNModel model{ 20, 1, 1, 5, 128, 254, 254, 128, 64 };
+		model.SetActivationFunc(6, 1, 1, 1, 1, 1, 1);
+		model.InitializeWeights(6, 0, 0, 0, 0, 0, 0);
+		model.SetLossFunc(0);
+		model.SetOptimizer(0);
 		for (uint32 iter = 0; iter < 100; ++iter)
 		{
-			//std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(1, 1, new double{ 1 });
-			//std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(1, 1, new double{ 2 });
-			//model.PushInput(a1, b1, 0.01);
+			std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(1, 1, new double{ 1 });
+			std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(1, 1, new double{ 2 });
+			model.PushInput(a1, b1, 0.01);
 
-			//std::shared_ptr<CMatrix> a2 = std::make_shared<CMatrix>(1, 1, new double{ 2.1 });
-			//std::shared_ptr<CMatrix> b2 = std::make_shared<CMatrix>(1, 1, new double{ 4.2 });
-			//model.PushInput(a2, b2, 0.01);
+			std::shared_ptr<CMatrix> a2 = std::make_shared<CMatrix>(1, 1, new double{ 2.1 });
+			std::shared_ptr<CMatrix> b2 = std::make_shared<CMatrix>(1, 1, new double{ 4.2 });
+			model.PushInput(a2, b2, 0.01);
 
-			//std::shared_ptr<CMatrix> a3 = std::make_shared<CMatrix>(1, 1, new double{ 3 });
-			//std::shared_ptr<CMatrix> b3 = std::make_shared<CMatrix>(1, 1, new double{ 6 });
-			//model.PushInput(a3, b3, 0.01);
+			std::shared_ptr<CMatrix> a3 = std::make_shared<CMatrix>(1, 1, new double{ 3 });
+			std::shared_ptr<CMatrix> b3 = std::make_shared<CMatrix>(1, 1, new double{ 6 });
+			model.PushInput(a3, b3, 0.01);
 
-			//std::shared_ptr<CMatrix> a4 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
-			//std::shared_ptr<CMatrix> b4 = std::make_shared<CMatrix>(1, 1, new double{ 6.8 });
-			//model.PushInput(a4, b4, 0.01);
+			std::shared_ptr<CMatrix> a4 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
+			std::shared_ptr<CMatrix> b4 = std::make_shared<CMatrix>(1, 1, new double{ 6.8 });
+			model.PushInput(a4, b4, 0.01);
 
-			//std::shared_ptr<CMatrix> a5 = std::make_shared<CMatrix>(1, 1, new double{ 1.7 });
-			//std::shared_ptr<CMatrix> b5 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
-			//model.PushInput(a5, b5, 0.01);
+			std::shared_ptr<CMatrix> a5 = std::make_shared<CMatrix>(1, 1, new double{ 1.7 });
+			std::shared_ptr<CMatrix> b5 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
+			model.PushInput(a5, b5, 0.01);
 
-			//std::shared_ptr<CMatrix> a6 = std::make_shared<CMatrix>(1, 1, new double{ 3.7 });
-			//std::shared_ptr<CMatrix> b6 = std::make_shared<CMatrix>(1, 1, new double{ 7.4 });
-			//model.PushInput(a6, b6, 0.01);
+			std::shared_ptr<CMatrix> a6 = std::make_shared<CMatrix>(1, 1, new double{ 3.7 });
+			std::shared_ptr<CMatrix> b6 = std::make_shared<CMatrix>(1, 1, new double{ 7.4 });
+			model.PushInput(a6, b6, 0.01);
 
-			//std::shared_ptr<CMatrix> a7 = std::make_shared<CMatrix>(1, 1, new double{ 2.9 });
-			//std::shared_ptr<CMatrix> b7 = std::make_shared<CMatrix>(1, 1, new double{ 5.8 });
-			//model.PushInput(a7, b7, 0.01);
-
-			std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(7, 1, new double[]{ 1, 2.1, 3, 3.4, 1.7, 3.7, 2.9 });
-			std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(7, 1, new double[]{ 2, 4.2, 6, 6.8, 3.4, 7.4, 5.8 });
-			model.PushInput(a1, b1, 10E-6);
+			std::shared_ptr<CMatrix> a7 = std::make_shared<CMatrix>(1, 1, new double{ 2.9 });
+			std::shared_ptr<CMatrix> b7 = std::make_shared<CMatrix>(1, 1, new double{ 5.8 });
+			model.PushInput(a7, b7, 0.01);
 
 			if (iter % 20 == 0)
 				std::cout << "iterations : " << iter << " Loss : " << model.GetLoss() << std::endl;
 		}
 		timer.EndCheck();
 		timer.PrintElapsedTime("Time Spent : ");
-		std::shared_ptr<CMatrix> a8 = std::make_shared<CMatrix>(1, 1, new double{ 3.5 });
+		std::shared_ptr<CMatrix> a8 = std::make_shared<CMatrix>(1, 1, new double{ 21 });
 		std::shared_ptr<CMatrix> result = model.GetResult(a8);
 		std::cout << "result of 3.5 : ";
 		result.get()->PrintData();
 	}
 }
 
-//#include <pch.h>
-//
+
 //int main()
 //{
 //	while (true)
@@ -66,9 +61,10 @@ int main()
 //		CTimer timer;
 //		timer.StartCheck();
 //		CNNModel model{ 8, 2, 2, 4, 1024, 512, 512, 128 };
-//		model.SetActivationFunc(5, AF_RELU, AF_RELU, AF_RELU, AF_RELU, AF_RELU);
-//		model.InitializeWeights(5, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL);
-//		model.SetLossFunc(LF_SOFTMAX);
+//		model.SetActivationFunc(5, 2, 2, 2, 2, 2);
+//		model.InitializeWeights(5, 0, 0, 0, 0, 0, 0);
+//		model.SetLossFunc(1);
+//		model.SetOptimizer(0);
 //
 //		for (uint32 iter = 0; iter < 100; ++iter)
 //		{
