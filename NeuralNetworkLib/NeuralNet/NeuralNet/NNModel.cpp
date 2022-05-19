@@ -51,8 +51,8 @@ void CNNModel::SetOptimizer(const OPTIMIZERID& optID)
 	case COptimizer::OptimizerId::GD:
 		optimizer = std::make_shared<CGD>();
 		break;
-	case COptimizer::OptimizerId::NAG:
-		optimizer = std::make_shared<CNAG>();
+	case COptimizer::OptimizerId::MOMENTUM:
+		optimizer = std::make_shared<CMOMENTUM>();
 		break;
 	case COptimizer::OptimizerId::ADAGRAD:
 		optimizer = std::make_shared<CAdagrad>();
@@ -145,7 +145,6 @@ void CNNModel::Propagation(std::shared_ptr<CMatrix> inputMatrix, std::shared_ptr
 	lossFunc->GetResult(outputMatrix.get(), outputMatrix.get());
 	lossFunc->GetLossGradient(lossMatrix.get(), outputMatrix.get(), labelMatrix.get());
 
-	// outputMatrix 데이터가 0으로 바뀌어 버림
 	CLossFunc::GetLoss(loss, NeuralNet->GetOutputMatrix().get(), labelMatrix.get());
 	NeuralNet->BackwardPropagation();
 

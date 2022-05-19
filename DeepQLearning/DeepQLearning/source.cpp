@@ -10,62 +10,62 @@ int main()
 		model.SetActivationFunc(3, CActFunc::ActID::RELU, CActFunc::ActID::RELU, CActFunc::ActID::RELU);
 		model.InitializeWeights(3, CMatrix::Initializer::XAVIER, CMatrix::Initializer::XAVIER, CMatrix::Initializer::XAVIER);
 		model.SetLossFunc(CLossFunc::LossID::SUMATION);
-		model.SetOptimizer(COptimizer::OptimizerId::GD);
+		model.SetOptimizer(COptimizer::OptimizerId::MOMENTUM);
 		for (uint32 iter = 0; iter < 100; ++iter)
 		{
-			//std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(1, 1, new double{ 1 });
-			//std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(1, 1, new double{ 2 });
-			//model.PushInput(a1, b1, 0.01);
+			std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(1, 1, new double{ 1 });
+			std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(1, 1, new double{ 2 });
+			model.PushInput(a1, b1, 0.001);
 
-			//std::shared_ptr<CMatrix> a2 = std::make_shared<CMatrix>(1, 1, new double{ 2.1 });
-			//std::shared_ptr<CMatrix> b2 = std::make_shared<CMatrix>(1, 1, new double{ 4.2 });
-			//model.PushInput(a2, b2, 0.01);
+			std::shared_ptr<CMatrix> a2 = std::make_shared<CMatrix>(1, 1, new double{ 2.1 });
+			std::shared_ptr<CMatrix> b2 = std::make_shared<CMatrix>(1, 1, new double{ 4.2 });
+			model.PushInput(a2, b2, 0.001);
 
-			//std::shared_ptr<CMatrix> a3 = std::make_shared<CMatrix>(1, 1, new double{ 3 });
-			//std::shared_ptr<CMatrix> b3 = std::make_shared<CMatrix>(1, 1, new double{ 6 });
-			//model.PushInput(a3, b3, 0.01);
+			std::shared_ptr<CMatrix> a3 = std::make_shared<CMatrix>(1, 1, new double{ 3 });
+			std::shared_ptr<CMatrix> b3 = std::make_shared<CMatrix>(1, 1, new double{ 6 });
+			model.PushInput(a3, b3, 0.001);
 
-			//std::shared_ptr<CMatrix> a4 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
-			//std::shared_ptr<CMatrix> b4 = std::make_shared<CMatrix>(1, 1, new double{ 6.8 });
-			//model.PushInput(a4, b4, 0.01);
+			std::shared_ptr<CMatrix> a4 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
+			std::shared_ptr<CMatrix> b4 = std::make_shared<CMatrix>(1, 1, new double{ 6.8 });
+			model.PushInput(a4, b4, 0.001);
 
-			//std::shared_ptr<CMatrix> a5 = std::make_shared<CMatrix>(1, 1, new double{ 1.7 });
-			//std::shared_ptr<CMatrix> b5 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
-			//model.PushInput(a5, b5, 0.01);
+			std::shared_ptr<CMatrix> a5 = std::make_shared<CMatrix>(1, 1, new double{ 1.7 });
+			std::shared_ptr<CMatrix> b5 = std::make_shared<CMatrix>(1, 1, new double{ 3.4 });
+			model.PushInput(a5, b5, 0.001);
 
-			//std::shared_ptr<CMatrix> a6 = std::make_shared<CMatrix>(1, 1, new double{ 3.7 });
-			//std::shared_ptr<CMatrix> b6 = std::make_shared<CMatrix>(1, 1, new double{ 7.4 });
-			//model.PushInput(a6, b6, 0.01);
+			std::shared_ptr<CMatrix> a6 = std::make_shared<CMatrix>(1, 1, new double{ 3.7 });
+			std::shared_ptr<CMatrix> b6 = std::make_shared<CMatrix>(1, 1, new double{ 7.4 });
+			model.PushInput(a6, b6, 0.001);
 
-			//std::shared_ptr<CMatrix> a7 = std::make_shared<CMatrix>(1, 1, new double{ 2.9 });
-			//std::shared_ptr<CMatrix> b7 = std::make_shared<CMatrix>(1, 1, new double{ 5.8 });
-			//model.PushInput(a7, b7, 0.01);
+			std::shared_ptr<CMatrix> a7 = std::make_shared<CMatrix>(1, 1, new double{ 2.9 });
+			std::shared_ptr<CMatrix> b7 = std::make_shared<CMatrix>(1, 1, new double{ 5.8 });
+			model.PushInput(a7, b7, 0.001);
 
-			std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(10, 1, new double[]{
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8,
-				9,
-				10
-				});
-			std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(10, 1, new double[]{
-				0.841470985,
-				0.909297427,
-				0.141120008,
-				- 0.756802495,
-				- 0.958924275,
-				- 0.279415498,
-				0.656986599,
-				0.989358247,
-				0.412118485,
-				- 0.544021111
-				});
-			model.PushInput(a1, b1, 0.1);
+		//	std::shared_ptr<CMatrix> a1 = std::make_shared<CMatrix>(10, 1, new double[]{
+		//		1,
+		//		2,
+		//		3,
+		//		4,
+		//		5,
+		//		6,
+		//		7,
+		//		8,
+		//		9,
+		//		10
+		//		});
+		//	std::shared_ptr<CMatrix> b1 = std::make_shared<CMatrix>(10, 1, new double[]{
+		//		0.841470985,
+		//		0.909297427,
+		//		0.141120008,
+		//		- 0.756802495,
+		//		- 0.958924275,
+		//		- 0.279415498,
+		//		0.656986599,
+		//		0.989358247,
+		//		0.412118485,
+		//		- 0.544021111
+		//		});
+		//	model.PushInput(a1, b1, 0.1);
 			if (iter % 20 == 0)
 				std::cout << "iterations : " << iter << " Loss : " << model.GetLoss() << std::endl;
 		}

@@ -12,10 +12,13 @@ public:
 	enum OptimizerId
 	{
 		GD,
-		NAG,
+		MOMENTUM,
 		ADAGRAD,
 		ADAM
 	};
+
+protected:
+	std::vector<std::shared_ptr<CMatrix>> lastGradient;
 
 public:
 	virtual void Update(std::shared_ptr<CNeuralNetwork>& neuralNet, const double& lr) = 0;
@@ -24,25 +27,16 @@ public:
 class CGD : public COptimizer
 {
 public:
-	void Update(std::shared_ptr<CNeuralNetwork>& neuralNet, const double& lr) override
-	{
-		for (auto& layer : neuralNet->GetLayers())
-		{
-			std::shared_ptr<CMatrix>& weight = layer->GetWeight();
-			std::shared_ptr<CMatrix>& weightGradient = layer->GetWeightGradient();
-			weightGradient->ConstantMul(lr);
-			weight->Subtract(weightGradient.get());
-		}
-	}
+	void Update(std::shared_ptr<CNeuralNetwork>& neuralNet, const double& lr) override;
 };
 
-class CNAG : public COptimizer
+class CMOMENTUM : public COptimizer
 {
-public:
-	void Update(std::shared_ptr<CNeuralNetwork>& neuralNet, const double& lr) override
-	{
+private:
+	float momentum = 0.9;
 
-	}
+public:
+	void Update(std::shared_ptr<CNeuralNetwork>& neuralNet, const double& lr) override;
 };
 
 class CAdagrad : public COptimizer

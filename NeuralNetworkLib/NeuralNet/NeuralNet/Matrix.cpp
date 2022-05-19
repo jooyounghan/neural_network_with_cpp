@@ -683,6 +683,62 @@ void CMatrix::SubtractSerial(CMatrix* refMat, CMatrix* inputMat)
 }
 #pragma endregion
 
+
+#pragma region Addition
+void CMatrix::Add(CMatrix* input)
+{
+	PARALLELBRANCH(
+		dataNum,
+		CMatrix::AddParallel(this, input),
+		CMatrix::AddSerial(this, input)
+	);
+}
+void CMatrix::AddParallel(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+
+	std::vector<std::future<void>> workThreadVector;
+
+	uint32 workSize = static_cast<uint32>(std::ceil(static_cast<double>(refMatDataNum) / THREADNUM));
+
+	for (uint32 threadNum = 0; threadNum < THREADNUM; ++threadNum)
+	{
+		uint32 startIdx = threadNum * workSize;
+		workThreadVector.push_back(std::async([&, startIdx]()
+			{
+				for (uint32 idx = startIdx; idx < startIdx + workSize; ++idx)
+				{
+					if (idx >= refMatDataNum)	break;
+					else
+					{
+						refMatData[idx] = refMatData[idx] + inputMatData[idx];
+					}
+				}
+			}));
+	}
+	WAITTHREADVECTOR(workThreadVector);
+}
+void CMatrix::AddSerial(CMatrix* refMat, CMatrix* inputMat)
+{
+	const uint32& refMatDataNum = refMat->GetDataNum();
+	const uint32& inputMatDataNum = inputMat->GetDataNum();
+	ASSERT_CRASH(refMatDataNum == inputMatDataNum);
+
+	double*& refMatData = refMat->GetMatrixData();
+	double*& inputMatData = inputMat->GetMatrixData();
+
+	for (uint32 idx = 0; idx < refMatDataNum; ++idx)
+	{
+		refMatData[idx] = refMatData[idx] + inputMatData[idx];
+	}
+}
+#pragma endregion
+
 #pragma region ConstantMul
 void CMatrix::ConstantMul(const double& constant)
 {
