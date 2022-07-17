@@ -13,14 +13,38 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\Matrix">
-      <UniqueIdentifier>{e07a7280-8b21-4bec-978a-1db2fcbf4937}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Matrix">
       <UniqueIdentifier>{b76999c2-d812-4192-acb8-d4c78fba2f37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Matrix">
+      <UniqueIdentifier>{e07a7280-8b21-4bec-978a-1db2fcbf4937}</UniqueIdentifier>
+    </Filter>
     <Filter Include="헤더 파일\Macro">
       <UniqueIdentifier>{c0a51a22-e26e-4ee9-8326-35e700093d73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Layers">
+      <UniqueIdentifier>{aa2d1260-bd63-4938-9a3e-068ee00a8d56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Layers\Specific">
+      <UniqueIdentifier>{15e9d7d0-2a57-4027-9d17-79d25688e98f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Layers">
+      <UniqueIdentifier>{18dfcddf-bb26-4707-910c-675eb31077a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Layers\Specific">
+      <UniqueIdentifier>{c9b6b277-38e9-43a3-8069-cd0c84fe79ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Layers\Specific\Activation">
+      <UniqueIdentifier>{c1a82160-4326-4ad1-9826-4a54169eb192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Layers\Specific\Loss">
+      <UniqueIdentifier>{d1683ff8-0410-4b87-837b-a9f02562f5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Layers\Specific\Activation">
+      <UniqueIdentifier>{ca84e3a6-0b67-48d0-808f-e8b3721bbd6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Layers\Specific\Loss">
+      <UniqueIdentifier>{78820c48-9a3b-4de1-94b8-1f6d83b32c07}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +63,24 @@
     <ClInclude Include="Macro.h">
       <Filter>헤더 파일\Macro</Filter>
     </ClInclude>
+    <ClInclude Include="CLayer.h">
+      <Filter>헤더 파일\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="CActivationLayer.h">
+      <Filter>헤더 파일\Layers\Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="CHiddenLayer.h">
+      <Filter>헤더 파일\Layers\Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="CLossLayer.h">
+      <Filter>헤더 파일\Layers\Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="CRelu.h">
+      <Filter>헤더 파일\Layers\Specific\Activation</Filter>
+    </ClInclude>
+    <ClInclude Include="CSigmoid.h">
+      <Filter>헤더 파일\Layers\Specific\Activation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -49,6 +91,24 @@
     </ClCompile>
     <ClCompile Include="CInitializer.cpp">
       <Filter>소스 파일\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="CLayer.cpp">
+      <Filter>소스 파일\Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="CActivationLayer.cpp">
+      <Filter>소스 파일\Layers\Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="CHiddenLayer.cpp">
+      <Filter>소스 파일\Layers\Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="CLossLayer.cpp">
+      <Filter>소스 파일\Layers\Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="CRelu.cpp">
+      <Filter>소스 파일\Layers\Specific\Activation</Filter>
+    </ClCompile>
+    <ClCompile Include="CSigmoid.cpp">
+      <Filter>소스 파일\Layers\Specific\Activation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

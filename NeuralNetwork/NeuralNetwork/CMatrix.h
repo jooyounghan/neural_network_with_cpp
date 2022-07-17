@@ -1,17 +1,19 @@
 #pragma once
 
 class CMatrix
-{
-private:
-	unsigned int row;
-	unsigned int col;
-	unsigned int size;
+{	
+friend class CInitializer;
+
+protected:
+	UINT row;
+	UINT col;
+	UINT size;
 	float* data;
 
 public:
 	CMatrix(const CMatrix& mat);
 	CMatrix(CMatrix&& mat) noexcept;
-	CMatrix(const unsigned int& row, const unsigned int& col);
+	CMatrix(const UINT& row, const UINT& col);
 	~CMatrix();
 
 public:
@@ -25,32 +27,23 @@ public:
 	CMatrix operator+(const CMatrix& mat);
 	CMatrix operator-(const CMatrix& mat);
 	CMatrix operator*(const CMatrix& mat);
+	float& operator[](const UINT& idx);
 
 	CMatrix MatMul(const CMatrix& mat);
 	CMatrix Transpose();
 
-	void RefAdd(const CMatrix& mat, CMatrix& ref)
-	{
+	void RefAdd(const CMatrix& mat, CMatrix& ref);
+	void RefSub(const CMatrix& mat, CMatrix& ref);
+	void RefElementwiseMul(const CMatrix& mat, CMatrix& ref);
 
-	}
+	void RefMatMul(const CMatrix& mat, CMatrix& ref);
+	void RefTranspose(CMatrix& ref);
 
-	void RefSub(const CMatrix& mat, CMatrix& ref)
-	{
+	void PrintData();
 
-	}
-
-	void RefElementwiseMul(const CMatrix& mat, CMatrix& ref)
-	{
-
-	}
-
-	void RefMatMul(const CMatrix& mat, CMatrix& ref)
-	{
-
-	}
-	void RefTranspose(const CMatrix& mat, CMatrix& ref)
-	{
-
-	}
+	const UINT& GetRow();
+	const UINT& GetCol();
+	float* GetData();
 };
+
 

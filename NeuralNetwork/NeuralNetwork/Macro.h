@@ -1,10 +1,9 @@
 #pragma once
-#include <Windows.h>
-// Crash Macro
 
+// Crash Macro -----------------------------------
 #define CRASH(cause)						\
 {											\
-	unsigned int*	crash = nullptr;		\
+	UINT*	crash = nullptr;				\
 	__analysis_assume(crash != nullptr);	\
 	*crash = 0xDEADBEEF;					\
 }											\
@@ -16,3 +15,25 @@
 		__analysis_assume(expr);			\
 	}										\
 }											\
+// ------------------------------------Crash Macro
+
+
+// Delete Macro -----------------------------------
+#define DELETEPTR(ptr)							\
+{												\
+	if (ptr != nullptr)							\
+	{											\
+		delete ptr;								\
+		ptr = nullptr;							\
+	}											\
+}												\
+
+#define DELETEARRAYPTR(ptr)						\
+{												\
+	if (ptr != nullptr)							\
+	{											\
+		delete[] ptr;							\
+		ptr = nullptr;							\
+	}											\
+}												\
+// ------------------------------------Delete Macro

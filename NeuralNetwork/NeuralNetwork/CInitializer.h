@@ -1,5 +1,6 @@
 #pragma once
-#include <random>
+
+class CMatrix;
 
 class CInitializer
 {
@@ -8,12 +9,18 @@ private:
 	static std::mt19937 mersenne;
 
 public:
-	static void NormalInitialize(const unsigned int& size, float* data);
+	enum INITTYPE
+	{
+		NORMAL,
+		HE,
+		XAVIER
+	};
 
-	static void HeInitialize(const unsigned int& size, float* data, const unsigned int& numIn);
+public:
+	static void NormalInitialize(CMatrix& mat);
 
+	static void HeInitialize(CMatrix& mat, const UINT& numIn);
 
-	static void XavierInitialize(const unsigned int& size, float* data, const unsigned int& numIn, const unsigned int& numOut);
-
+	static void XavierInitialize(CMatrix& mat, const UINT& numIn, const UINT& numOut);
 };
 

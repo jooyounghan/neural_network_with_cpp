@@ -1,31 +1,33 @@
 #include "pch.h"
 #include "CInitializer.h"
+#include "CMatrix.h"
 
+std::random_device CInitializer::rd{};
 std::mt19937 CInitializer::mersenne = std::mt19937{ CInitializer::rd() };
 
-void CInitializer::NormalInitialize(const unsigned int& size, float* data)
+void CInitializer::NormalInitialize(CMatrix& mat)
 {
-	std::normal_distribution<float> dist{ 0.0, 10.0 };
-	for (unsigned int idx = 0; idx < size; ++idx)
+	std::normal_distribution<float> dist{ 0.0, 1.0 };
+	for (UINT idx = 0; idx < mat.size; ++idx)
 	{
-		data[idx] = dist(CInitializer::mersenne);
+		mat.data[idx] = dist(CInitializer::mersenne);
 	}
 }
 
-void CInitializer::HeInitialize(const unsigned int& size, float* data, const unsigned int& numIn)
+void CInitializer::HeInitialize(CMatrix& mat, const UINT& numIn)
 {
 	std::normal_distribution<float> dist{ 0.0, std::sqrt(2.0f / static_cast<float>(numIn)) };
-	for (unsigned int idx = 0; idx < size; ++idx)
+	for (UINT idx = 0; idx < mat.size; ++idx)
 	{
-		data[idx] = dist(CInitializer::mersenne);
+		mat.data[idx] = dist(CInitializer::mersenne);
 	}
 }
 
-void CInitializer::XavierInitialize(const unsigned int& size, float* data, const unsigned int& numIn, const unsigned int& numOut)
+void CInitializer::XavierInitialize(CMatrix& mat, const UINT& numIn, const UINT& numOut)
 {
 	std::normal_distribution<float> dist{ 0.0, std::sqrt(2.0f / (static_cast<float>(numIn) + static_cast<float>(numOut))) };
-	for (unsigned int idx = 0; idx < size; ++idx)
+	for (UINT idx = 0; idx < mat.size; ++idx)
 	{
-		data[idx] = dist(CInitializer::mersenne);
+		mat.data[idx] = dist(CInitializer::mersenne);
 	}
 }
