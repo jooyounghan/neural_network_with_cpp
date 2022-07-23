@@ -1,6 +1,7 @@
 #pragma once
 
 // Crash Macro -----------------------------------
+#ifdef _DEBUG
 #define CRASH(cause)						\
 {											\
 	UINT*	crash = nullptr;				\
@@ -16,6 +17,9 @@
 	}										\
 }											\
 // ------------------------------------Crash Macro
+#endif // DEBUG
+
+
 
 
 // Delete Macro -----------------------------------

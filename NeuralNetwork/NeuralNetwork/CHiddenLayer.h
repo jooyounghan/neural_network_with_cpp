@@ -17,6 +17,8 @@ public:
 	void ForwardProp() override;
 	CMatrix BackwardProp(CLayer* layer) override;
 
+	CMatrix* GetWeight();
+	CMatrix GetWeightGradient(CLayer* layer);
 public:
 	void InitializeWeight(const UINT& type);
 };

@@ -16,17 +16,39 @@ CHiddenLayer::~CHiddenLayer()
 
 void CHiddenLayer::SetOutput()
 {
-
+	ASSERT_CRASH(input != nullptr);
+	DELETEPTR(output);
+	output = new CMatrix(outputDim, input->GetCol());
 }
 
 void CHiddenLayer::ForwardProp()
 {
-
+	ASSERT_CRASH(input != nullptr);
+	ASSERT_CRASH(output != nullptr);
+	input->RefMatMul(*weight, *output);
 }
 
-CMatrix CHiddenLayer::BackwardProp()
+CMatrix CHiddenLayer::BackwardProp(CLayer* layer)
 {
+	ASSERT_CRASH(input != nullptr);
+	ASSERT_CRASH(weight != nullptr)
+	CMatrix& postLayerGradient = *(layer->GetGradient());
+	CMatrix& weightMatrix = *(weight);
 
+	return weightMatrix.Transpose() * input->Transpose();
+}
+
+CMatrix* CHiddenLayer::GetWeight()
+{
+	return weight;
+}
+
+CMatrix CHiddenLayer::GetWeightGradient(CLayer* layer)
+{
+	ASSERT_CRASH(input != nullptr);
+	ASSERT_CRASH(weight != nullptr)
+	CMatrix& postLayerGradient = *(layer->GetGradient());
+	return postLayerGradient * input->Transpose();
 }
 
 void CHiddenLayer::InitializeWeight(const UINT& type)

@@ -30,7 +30,6 @@ CMatrix CRelu::BackwardProp(CLayer* layer)
 {
 	CMatrix& postLayerGradient = *(layer->GetGradient());
 	return postLayerGradient * GetDeriviated();
-	
 }
 
 CMatrix CRelu::GetDeriviated()

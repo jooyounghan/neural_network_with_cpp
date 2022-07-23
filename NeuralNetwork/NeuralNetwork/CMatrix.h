@@ -8,9 +8,10 @@ protected:
 	UINT row;
 	UINT col;
 	UINT size;
-	float* data;
+	double* data;
 
 public:
+	CMatrix();
 	CMatrix(const CMatrix& mat);
 	CMatrix(CMatrix&& mat) noexcept;
 	CMatrix(const UINT& row, const UINT& col);
@@ -27,7 +28,7 @@ public:
 	CMatrix operator+(const CMatrix& mat);
 	CMatrix operator-(const CMatrix& mat);
 	CMatrix operator*(const CMatrix& mat);
-	float& operator[](const UINT& idx);
+	double& operator[](const UINT& idx);
 
 	CMatrix MatMul(const CMatrix& mat);
 	CMatrix Transpose();
@@ -43,7 +44,10 @@ public:
 
 	const UINT& GetRow();
 	const UINT& GetCol();
-	float* GetData();
+	double* GetData();
+
+	CMatrix Copy();
+	double GetSum();
 };
 
 

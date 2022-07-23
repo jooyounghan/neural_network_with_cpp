@@ -1,16 +1,15 @@
 #include "pch.h"
 #include "CLayer.h"
-#include "CMatrix.h"
 
-CLayer::CLayer() : input(nullptr), output(nullptr), gradient(nullptr), frontLayer(nullptr), rearLayer(nullptr) {}
+CLayer::CLayer() : input(nullptr), output(nullptr) {}
 
-// ¼Ò¸êÀÚ¿¡ ´ëÇÑ °í¹Î ÇÊ¿ä1
-CLayer::~CLayer() {}
+// TODO : ¼Ò¸êÀÚ¿¡ ´ëÇÑ °í¹Î ÇÊ¿ä
+CLayer::~CLayer()
+{
+}
 
 void CLayer::SetInput(CMatrix* newInput)
 {
-	// Has to be the first Layer
-	ASSERT_CRASH(frontLayer == nullptr);
 	DELETEPTR(input);
 	input = newInput;
 }
@@ -28,8 +27,16 @@ void CLayer::Connect(CLayer* layer)
 		this->SetOutput();
 	}
 	layer->input = this->output;
-	this->rearLayer = layer;
-	layer->frontLayer = this;
+}
+
+CMatrix* CLayer::GetInput()
+{
+	return input;
+}
+
+CMatrix* CLayer::GetOutput()
+{
+	return output;
 }
 
 CMatrix* CLayer::GetGradient() { return gradient; }

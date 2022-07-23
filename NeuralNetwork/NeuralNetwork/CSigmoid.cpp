@@ -26,9 +26,10 @@ void CSigmoid::ForwardProp()
 	}
 }
 
-CMatrix CSigmoid::BackwardProp()
+CMatrix CSigmoid::BackwardProp(CLayer* layer)
 {
-
+	CMatrix& postLayerGradient = *(layer->GetGradient());
+	return postLayerGradient * GetDeriviated();
 }
 
 CMatrix CSigmoid::GetDeriviated()
@@ -41,7 +42,7 @@ CMatrix CSigmoid::GetDeriviated()
 	{
 		for (UINT cIdx = 0; cIdx < colNum; ++cIdx)
 		{
-			const float& sigmoid = 1 / (1 + std::exp(-inputData[rIdx * colNum + cIdx]));
+			const double& sigmoid = 1 / (1 + std::exp(-inputData[rIdx * colNum + cIdx]));
 			result[rIdx * colNum + cIdx] = sigmoid * (1 - sigmoid);
 		}
 	}

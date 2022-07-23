@@ -1,4 +1,7 @@
 #pragma once
+
+#include "CMatrix.h"
+
 class CMatrix;
 
 class CLayer
@@ -10,23 +13,25 @@ protected:
 	CMatrix* output;
 	CMatrix* gradient;
 
-protected:
-	CLayer* frontLayer;
-	CLayer* rearLayer;
-
 public:
 	CLayer();
 	~CLayer();
+
 public:
 	void SetInput(CMatrix* newInput);
 	virtual void SetOutput() = 0;
 	void SetGradient(CMatrix* newGradient);
 
+public:
 	void Connect(CLayer* layer);
 
+public:
 	virtual void ForwardProp() = 0;
 	virtual CMatrix BackwardProp(CLayer* layer) = 0;
 
+public:
+	CMatrix* GetInput();
+	CMatrix* GetOutput();
 	CMatrix* GetGradient();
 };
 

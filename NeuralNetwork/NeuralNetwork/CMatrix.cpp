@@ -2,6 +2,10 @@
 #include "CMatrix.h"
 
 
+CMatrix::CMatrix()
+{
+}
+
 CMatrix::CMatrix(const CMatrix& mat)
 {
 	*this = mat;
@@ -15,7 +19,7 @@ CMatrix::CMatrix(CMatrix&& mat) noexcept
 CMatrix::CMatrix(const UINT& row, const UINT& col)
 	: row(row), col(col), size(row* col), data(nullptr)
 {
-	data = new float[size];
+	data = new double[size];
 }
 
 CMatrix::~CMatrix() { if (data != nullptr) delete[] data; }
@@ -33,7 +37,7 @@ CMatrix& CMatrix::operator= (const CMatrix& mat)
 
 	DeleteData();
 
-	data = new float[size];
+	data = new double[size];
 	for (UINT idx = 0; idx < size; ++idx)
 	{
 		data[idx] = mat.data[idx];
@@ -87,7 +91,7 @@ CMatrix CMatrix::operator*(const CMatrix& mat)
 	return result;
 }
 
-float& CMatrix::operator[](const UINT& idx)
+double& CMatrix::operator[](const UINT& idx)
 {
 	return data[idx];
 }
@@ -205,4 +209,27 @@ const UINT& CMatrix::GetRow() { return row; }
 
 const UINT& CMatrix::GetCol() { return col; }
 
-float* CMatrix::GetData() { return data; }
+double* CMatrix::GetData() { return data; }
+
+CMatrix CMatrix::Copy()
+{
+	CMatrix result = CMatrix{ row, col };
+	for (UINT rIdx = 0; rIdx < row; ++rIdx)
+	{
+		for (UINT cIdx = 0; cIdx < col; ++cIdx)
+		{
+			result.data[cIdx * row + rIdx] = data[rIdx * col + cIdx];
+		}
+	}
+	return result;
+}
+
+double CMatrix::GetSum()
+{
+	double result = 0;
+	for (UINT idx = 0; idx < size; ++idx)
+	{
+		result += data[idx];
+	}
+	return result;
+}

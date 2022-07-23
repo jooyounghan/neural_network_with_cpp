@@ -9,12 +9,8 @@ CLossLayer::~CLossLayer()
 {
 }
 
-void CLossLayer::ForwardProp()
+void CLossLayer::SetLabel(CMatrix* label)
 {
-
-}
-
-CMatrix CLossLayer::BackwardProp()
-{
-
+	DELETEPTR(labelMatrix);
+	labelMatrix = label;
 }

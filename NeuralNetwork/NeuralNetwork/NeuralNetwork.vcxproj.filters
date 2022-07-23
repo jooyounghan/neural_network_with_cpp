@@ -46,6 +46,18 @@
     <Filter Include="헤더 파일\Layers\Specific\Loss">
       <UniqueIdentifier>{78820c48-9a3b-4de1-94b8-1f6d83b32c07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Model">
+      <UniqueIdentifier>{846e9114-5bcd-4641-9c29-d5830d3cc1a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Model">
+      <UniqueIdentifier>{5241d042-c917-4a18-bc73-b6344d246bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Optimizer">
+      <UniqueIdentifier>{d8eb6df4-b91e-4d35-995b-7430bec31189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Optimizer">
+      <UniqueIdentifier>{1aa0cfbc-1f90-4b71-845b-4ffea4cc4a96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -81,6 +93,21 @@
     <ClInclude Include="CSigmoid.h">
       <Filter>헤더 파일\Layers\Specific\Activation</Filter>
     </ClInclude>
+    <ClInclude Include="CLeastSquare.h">
+      <Filter>헤더 파일\Layers\Specific\Loss</Filter>
+    </ClInclude>
+    <ClInclude Include="CSoftMax.h">
+      <Filter>헤더 파일\Layers\Specific\Activation</Filter>
+    </ClInclude>
+    <ClInclude Include="CCrossEntropy.h">
+      <Filter>헤더 파일\Layers\Specific\Loss</Filter>
+    </ClInclude>
+    <ClInclude Include="CNeuralNetwork.h">
+      <Filter>헤더 파일\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="COptimizer.h">
+      <Filter>헤더 파일\Optimizer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -109,6 +136,21 @@
     </ClCompile>
     <ClCompile Include="CSigmoid.cpp">
       <Filter>소스 파일\Layers\Specific\Activation</Filter>
+    </ClCompile>
+    <ClCompile Include="CLeastSquare.cpp">
+      <Filter>소스 파일\Layers\Specific\Loss</Filter>
+    </ClCompile>
+    <ClCompile Include="CSoftMax.cpp">
+      <Filter>소스 파일\Layers\Specific\Activation</Filter>
+    </ClCompile>
+    <ClCompile Include="CCrossEntropy.cpp">
+      <Filter>소스 파일\Layers\Specific\Loss</Filter>
+    </ClCompile>
+    <ClCompile Include="CNeuralNetwork.cpp">
+      <Filter>소스 파일\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="COptimizer.cpp">
+      <Filter>소스 파일\Optimizer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

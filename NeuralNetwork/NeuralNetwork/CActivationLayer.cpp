@@ -11,7 +11,7 @@ CActivationLayer::~CActivationLayer()
 
 void CActivationLayer::SetOutput()
 {
-	ASSERT_CRASH(input != nullptr)
+	ASSERT_CRASH(input != nullptr);
 	DELETEPTR(output);
 	output = new CMatrix(input->GetRow(), input->GetCol());
 }

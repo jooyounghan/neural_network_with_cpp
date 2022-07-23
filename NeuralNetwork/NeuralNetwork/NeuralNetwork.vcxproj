@@ -152,26 +152,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CActivationLayer.h" />
+    <ClInclude Include="CCrossEntropy.h" />
     <ClInclude Include="CHiddenLayer.h" />
     <ClInclude Include="CInitializer.h" />
     <ClInclude Include="CLayer.h" />
+    <ClInclude Include="CLeastSquare.h" />
     <ClInclude Include="CLossLayer.h" />
     <ClInclude Include="CMatrix.h" />
+    <ClInclude Include="CNeuralNetwork.h" />
+    <ClInclude Include="COptimizer.h" />
     <ClInclude Include="CRelu.h" />
     <ClInclude Include="CSigmoid.h" />
+    <ClInclude Include="CSoftMax.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CActivationLayer.cpp" />
+    <ClCompile Include="CCrossEntropy.cpp" />
     <ClCompile Include="CHiddenLayer.cpp" />
     <ClCompile Include="CInitializer.cpp" />
     <ClCompile Include="CLayer.cpp" />
+    <ClCompile Include="CLeastSquare.cpp" />
     <ClCompile Include="CLossLayer.cpp" />
     <ClCompile Include="CMatrix.cpp" />
+    <ClCompile Include="CNeuralNetwork.cpp" />
+    <ClCompile Include="COptimizer.cpp" />
     <ClCompile Include="CRelu.cpp" />
     <ClCompile Include="CSigmoid.cpp" />
+    <ClCompile Include="CSoftMax.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
