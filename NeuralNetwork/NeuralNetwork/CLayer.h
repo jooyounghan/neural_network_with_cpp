@@ -9,18 +9,18 @@ class CLayer
 friend class CInitializer;
 
 protected:
-	CMatrix* input;
-	CMatrix* output;
-	CMatrix* gradient;
+	std::shared_ptr<CMatrix> input;
+	std::shared_ptr<CMatrix> output;
+	std::shared_ptr<CMatrix> gradient;
 
 public:
 	CLayer();
-	~CLayer();
+	virtual ~CLayer();
 
 public:
-	void SetInput(CMatrix* newInput);
+	void SetInput(std::shared_ptr<CMatrix> newInput);
 	virtual void SetOutput() = 0;
-	void SetGradient(CMatrix* newGradient);
+	void SetGradient(std::shared_ptr<CMatrix> newGradient);
 
 public:
 	void Connect(CLayer* layer);
@@ -30,8 +30,8 @@ public:
 	virtual CMatrix BackwardProp(CLayer* layer) = 0;
 
 public:
-	CMatrix* GetInput();
-	CMatrix* GetOutput();
-	CMatrix* GetGradient();
+	std::shared_ptr<CMatrix> GetInput();
+	std::shared_ptr<CMatrix> GetOutput();
+	std::shared_ptr<CMatrix> GetGradient();
 };
 

@@ -12,6 +12,5 @@ CActivationLayer::~CActivationLayer()
 void CActivationLayer::SetOutput()
 {
 	ASSERT_CRASH(input != nullptr);
-	DELETEPTR(output);
-	output = new CMatrix(input->GetRow(), input->GetCol());
+	output = std::make_shared<CMatrix>(input->GetRow(), input->GetCol());
 }

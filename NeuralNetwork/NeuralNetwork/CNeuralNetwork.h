@@ -1,4 +1,5 @@
 #pragma once
+#include "CInitializer.h"
 
 class CMatrix;
 class CLayer;
@@ -33,12 +34,16 @@ public:
 	bool AddLossLayer(LOSSTYPE type);
 	bool AddHiddenLayer(const UINT& dim);
 
-protected:
-	bool SetInputProperties(const UINT& inputDim, const UINT& num);
-	bool CompareInputProperties(CMatrix* input);
 
 public:
-	CMatrix Predict(CMatrix* input);
-	double Train(CMatrix* input);
+	bool SetInputProperties(const UINT& inputDim, const UINT& num);
+	bool InitializeWeight(CInitializer::INITTYPE type);
+
+protected:
+	bool CompareInputProperties(std::shared_ptr<CMatrix> input);
+
+public:
+	CMatrix Predict(std::shared_ptr<CMatrix> input);
+	double Train(std::shared_ptr<CMatrix> input, std::shared_ptr<CMatrix> label);
 };
 

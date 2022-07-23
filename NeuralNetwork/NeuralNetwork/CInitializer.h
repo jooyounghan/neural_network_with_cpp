@@ -9,7 +9,7 @@ private:
 	static std::mt19937 mersenne;
 
 public:
-	enum INITTYPE
+	enum class INITTYPE : int
 	{
 		NORMAL,
 		HE,

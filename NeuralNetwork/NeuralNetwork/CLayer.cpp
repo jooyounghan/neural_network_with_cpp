@@ -1,22 +1,20 @@
 #include "pch.h"
 #include "CLayer.h"
 
-CLayer::CLayer() : input(nullptr), output(nullptr) {}
+CLayer::CLayer() : input(nullptr), output(nullptr), gradient(nullptr) {}
 
 // TODO : º“∏Í¿⁄ø° ¥Î«— ∞ÌπŒ « ø‰
 CLayer::~CLayer()
 {
 }
 
-void CLayer::SetInput(CMatrix* newInput)
+void CLayer::SetInput(std::shared_ptr<CMatrix> newInput)
 {
-	DELETEPTR(input);
 	input = newInput;
 }
 
-void CLayer::SetGradient(CMatrix* newGradient)
+void CLayer::SetGradient(std::shared_ptr<CMatrix> newGradient)
 {
-	DELETEPTR(gradient);
 	gradient = newGradient;
 }
 
@@ -29,16 +27,16 @@ void CLayer::Connect(CLayer* layer)
 	layer->input = this->output;
 }
 
-CMatrix* CLayer::GetInput()
+std::shared_ptr<CMatrix> CLayer::GetInput()
 {
 	return input;
 }
 
-CMatrix* CLayer::GetOutput()
+std::shared_ptr<CMatrix> CLayer::GetOutput()
 {
 	return output;
 }
 
-CMatrix* CLayer::GetGradient() { return gradient; }
+std::shared_ptr<CMatrix> CLayer::GetGradient() { return gradient; }
 
 

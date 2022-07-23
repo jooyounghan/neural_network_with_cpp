@@ -20,5 +20,4 @@
 #include <memory>
 #include <Windows.h>
 
-
 #endif //PCH_H

@@ -12,13 +12,13 @@ CHiddenLayer::CHiddenLayer(const UINT outputDim)
 
 CHiddenLayer::~CHiddenLayer()
 {
+	DELETEPTR(weight);
 }
 
 void CHiddenLayer::SetOutput()
 {
 	ASSERT_CRASH(input != nullptr);
-	DELETEPTR(output);
-	output = new CMatrix(outputDim, input->GetCol());
+	output = std::make_shared<CMatrix>(outputDim, input->GetCol());
 }
 
 void CHiddenLayer::ForwardProp()
@@ -51,13 +51,12 @@ CMatrix CHiddenLayer::GetWeightGradient(CLayer* layer)
 	return postLayerGradient * input->Transpose();
 }
 
-void CHiddenLayer::InitializeWeight(const UINT& type)
+void CHiddenLayer::InitializeWeight(CInitializer::INITTYPE type)
 {
 	ASSERT_CRASH(input != nullptr);
 	const UINT& inputDim = input->GetRow();
 
-	DELETEARRAYPTR(weight);
-
+	DELETEPTR(weight);
 	weight = new CMatrix{ outputDim, inputDim };
 
 	switch (type)

@@ -18,7 +18,12 @@ CNeuralNetwork::CNeuralNetwork() : optimizer(nullptr)
 
 CNeuralNetwork::~CNeuralNetwork()
 {
-
+	for (auto& layer : layers)
+	{
+		DELETEPTR(layer);
+	}
+	layers.clear();
+	DELETEPTR(optimizer);
 }
 
 bool CNeuralNetwork::AddActivationLayer(ACTTYPE type)
@@ -77,7 +82,7 @@ bool CNeuralNetwork::SetInputProperties(const UINT& inputDim, const UINT& inputD
 
 	CLayer& firstLayer = *layers[0];
 	CLayer& lastLayer = *layers[0];
-	CMatrix* newInput = new CMatrix(inputDim, inputDatanum);
+	std::shared_ptr<CMatrix> newInput = std::make_unique<CMatrix>(inputDim, inputDatanum);
 
 	firstLayer.SetInput(newInput);
 	for (UINT idx = 0; idx < layerNum - 1; ++idx)
@@ -89,13 +94,27 @@ bool CNeuralNetwork::SetInputProperties(const UINT& inputDim, const UINT& inputD
 	return true;
 }
 
-bool CNeuralNetwork::CompareInputProperties(CMatrix* input)
+bool CNeuralNetwork::InitializeWeight(CInitializer::INITTYPE type)
+{
+	for (auto layerIter = layers.begin(); layerIter != layers.end(); ++layerIter)
+	{
+		CLayer* layer = *layerIter;
+		if (typeid(CHiddenLayer).name() == typeid(*layer).name())
+		{
+			CHiddenLayer* hiddenLayer = reinterpret_cast<CHiddenLayer*>(layer);
+			hiddenLayer->InitializeWeight(type);
+		}
+	}
+	return true;
+}
+
+bool CNeuralNetwork::CompareInputProperties(std::shared_ptr<CMatrix> input)
 {
 	const UINT& layerNum = layers.size();
 	ASSERT_CRASH(layerNum > 0);
 
 	CLayer& firstLayer = *layers[0];
-	CMatrix* firstLayerInput = firstLayer.GetInput();
+	std::shared_ptr<CMatrix> firstLayerInput = firstLayer.GetInput();
 
 	if (firstLayerInput != nullptr && firstLayerInput->GetCol() == input->GetCol())
 		return false;
@@ -104,7 +123,7 @@ bool CNeuralNetwork::CompareInputProperties(CMatrix* input)
 	
 }
 
-CMatrix CNeuralNetwork::Predict(CMatrix* input)
+CMatrix CNeuralNetwork::Predict(std::shared_ptr<CMatrix> input)
 {
 	if (CompareInputProperties(input))
 	{
@@ -117,7 +136,7 @@ CMatrix CNeuralNetwork::Predict(CMatrix* input)
 	ASSERT_CRASH(layerNum > 0);
 
 	CLayer& firstLayer = *layers[0];
-	CMatrix* firstLayerInput = firstLayer.GetInput();
+	std::shared_ptr<CMatrix> firstLayerInput = firstLayer.GetInput();
 
 	firstLayer.SetInput(input);
 	for (UINT idx = 0; idx < layerNum; ++idx)
@@ -125,12 +144,12 @@ CMatrix CNeuralNetwork::Predict(CMatrix* input)
 		layers[idx]->ForwardProp();
 	}
 	CLayer& lastLayer = *layers[layerNum - 1];
-	CMatrix* lastLayerOutput = lastLayer.GetOutput();
+	std::shared_ptr<CMatrix> lastLayerOutput = lastLayer.GetOutput();
 
 	return lastLayerOutput->Copy();
 }
 
-double CNeuralNetwork::Train(CMatrix* input)
+double CNeuralNetwork::Train(std::shared_ptr<CMatrix> input, std::shared_ptr<CMatrix> label)
 {
 	if (CompareInputProperties(input))
 	{
@@ -143,7 +162,7 @@ double CNeuralNetwork::Train(CMatrix* input)
 	ASSERT_CRASH(layerNum > 0);
 
 	CLayer& firstLayer = *layers[0];
-	CMatrix* firstLayerInput = firstLayer.GetInput();
+	std::shared_ptr<CMatrix> firstLayerInput = firstLayer.GetInput();
 
 	firstLayer.SetInput(input);
 	for (auto layerIter = layers.begin(); layerIter != layers.end(); ++layerIter)
@@ -152,22 +171,22 @@ double CNeuralNetwork::Train(CMatrix* input)
 	}
 
 	CLayer& lastLayer = *layers[layerNum - 1];
-	CMatrix* lastLayerOutput = lastLayer.GetOutput();
+	std::shared_ptr<CMatrix> lastLayerOutput = lastLayer.GetOutput();
 
 	double loss = lastLayerOutput->GetSum();
 
 	for (auto layerIter = layers.rbegin(); layerIter != layers.rend(); ++layerIter)
 	{
-		CMatrix* backwardMatrix;
+		std::shared_ptr<CMatrix> backwardMatrix;
 		CLayer* layer = *layerIter;
 		if (layerIter == layers.rbegin())
 		{
-			backwardMatrix = new CMatrix(layer->BackwardProp(nullptr));
+			backwardMatrix = std::make_shared<CMatrix>(layer->BackwardProp(nullptr));
 		}
 		else
 		{
 			CLayer* latterLayer = *(layerIter--);
-			backwardMatrix = new CMatrix(layer->BackwardProp(latterLayer));
+			backwardMatrix = std::make_shared<CMatrix>(layer->BackwardProp(latterLayer));
 
 			if (typeid(CHiddenLayer).name() == typeid(*layer).name())
 			{

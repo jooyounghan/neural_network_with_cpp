@@ -14,8 +14,7 @@ CLeastSquare::~CLeastSquare()
 void CLeastSquare::SetOutput()
 {
 	ASSERT_CRASH(input != nullptr)
-	DELETEPTR(output);
-	output = new CMatrix(1, input->GetCol());
+	output = std::make_shared<CMatrix>(1, input->GetCol());
 }
 
 void CLeastSquare::ForwardProp()

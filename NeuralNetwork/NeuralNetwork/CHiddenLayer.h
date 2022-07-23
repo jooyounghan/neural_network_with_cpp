@@ -1,5 +1,6 @@
 #pragma once
 #include "CLayer.h"
+#include "CInitializer.h"
 
 class CMatrix;
 
@@ -11,7 +12,7 @@ protected:
 
 public:
 	CHiddenLayer(const UINT outputDim);
-	~CHiddenLayer();
+	~CHiddenLayer() override;
 public:
 	void SetOutput();
 	void ForwardProp() override;
@@ -20,6 +21,6 @@ public:
 	CMatrix* GetWeight();
 	CMatrix GetWeightGradient(CLayer* layer);
 public:
-	void InitializeWeight(const UINT& type);
+	void InitializeWeight(CInitializer::INITTYPE type);
 };
 
